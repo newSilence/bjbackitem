@@ -4,6 +4,7 @@ import Home from '@/pages/home/Home'
 import Index from '@/Index'
 import Anthor from '@/pages/author/Anthor'
 import Login from '@/pages/login/Login'
+import ConsultManage from '@/pages/consultManage'
 import Error from '@/pages/notFound/Error'
 Vue.use(Router)
 const routerAll=new Router({
@@ -22,9 +23,13 @@ const routerAll=new Router({
           name: 'Anthor',
           component: Anthor
         },
+        {
+          path:'consultManage',
+          name:'ConsultManage',
+          component:ConsultManage,
+        },
       ]
     },
-    
     {
       path:'/login',
       name:'Login',
