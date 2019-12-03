@@ -8,7 +8,7 @@ const state={
   navbarData:[
     {icon:'el-icon-phone',path:'/index',title:'首页'},
     {icon:'el-icon-user',path:'/index/author',title:'权限'},
-    {icon:'el-icon-office-building',path:'/index/consultManage',title:'咨询管理'},
+    {icon:'el-icon-office-building',path:'/index/consultManage',title:'资讯管理'},
   ]
 }
 const mutations={

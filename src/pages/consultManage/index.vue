@@ -66,11 +66,11 @@
                 <el-form-item label="发布时间">
                     <el-form-item prop="publishDate">
                         <el-col :span="10">
-                            <el-date-picker style="width:100%" placeholder="选择时间" v-model="ruleForm.publishDate"></el-date-picker>
+                            <el-date-picker value-format="yyyy-MM-dd" style="width:100%" placeholder="选择时间" v-model="ruleForm.publishDate"></el-date-picker>
                         </el-col>
                     </el-form-item>
                 </el-form-item>
-                <el-form-item v-if="ruleForm.category=='热点新闻'" label="封面地图" prop="delivery">
+                <el-form-item v-if="ruleForm.category=='热点新闻'" label="封面图" prop="delivery">
                     <el-upload
                         class="upload-demo"
                         :action="baseUrl+'/fileUpload'"
@@ -154,7 +154,7 @@
                         { required: true, message: '请选择资讯类别', trigger: 'change' }
                     ],
                     publishDate: [
-                        { type: 'date', required: true, message: '请选择发布时间', trigger: 'change' }
+                        {  required: true, message: '请选择发布时间', trigger: 'change' }
                     ],
                     detail: [
                         { required: true, message: '请输入资讯详情', trigger: 'blur' }
@@ -248,11 +248,16 @@
                 this.$refs["ruleForm"].validate((valid) => {
                 if (valid) {
                     console.log(this.ruleForm);
-                    console.log('addNewsForm',addNewsForm);
+                    this.ruleForm.uName="ceshi02";
+                    // console.log('addNewsForm',addNewsForm);
                     addNewsForm(this.ruleForm).then(res=>{
                         console.log(res);
+                        if(res.data.code=='0'){
+                            this.closeDialog();
+                            this.fetchData();
+                        }
                     })
-                    alert('submit!');
+                    // alert('submit!');
                 } else {
                     console.log('error submit!!');
                     return false;
