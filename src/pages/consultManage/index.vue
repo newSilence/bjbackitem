@@ -87,6 +87,13 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item  class="edit_container">
+                    <el-upload
+                        class="avatar-uploader quill-img"
+                        :action="baseUrl+'/fileUpload'"
+                        :show-file-list="false"
+                        :on-success="quillImgSuccess"
+                        >
+                    </el-upload>
                     <quill-editor 
                         v-model="ruleForm.detail" 
                         ref="myQuillEditor" 
@@ -110,11 +117,31 @@
 
 <script>
     import { addNewsForm , searchNewsTable } from "./app.js"
+    import  uploadUrl  from '@/request/uploadUrl'
     export default {
         data() {
             return {
-                editorOption:{},
-                baseUrl:'http://192.168.20.24:8088/',
+                editorOption: {
+                    placeholder: '',
+                    theme: 'snow',  // or 'bubble'
+                    modules: {
+                    toolbar: {
+                        container: uploadUrl.toolbarOptions,  // 工具栏
+                        handlers: {
+                        'image': function (value) {
+                        if (value) {
+                            // 触发input框选择图片文件
+                            document.querySelector('.quill-img input').click()
+                        } else {
+                            this.quill.format('image', false);
+                        }
+                        }
+                        }
+                    }
+                    }
+                },
+                baseUrl:uploadUrl.uploadUrl,
+                // baseUrl:'http://192.168.20.24:8088/',
                 rowId:'',//根据rowId判断是编辑还是新增
                 newsCategoryData:[
                     {key:'全部',value:''},
@@ -208,6 +235,25 @@
             },
             onEditorChange(){//内容改变事件
             },
+            quillImgSuccess(res, file) { // 富文本编辑框图片上传
+                // console.log(URL.createObjectURL(file.raw));
+                // this.form.icon = URL.createObjectURL(file.raw);
+                // res为图片服务器返回的数据
+                // 获取富文本组件实例
+                let quill = this.$refs.myQuillEditor.quill;
+                console.log(res);
+                // 如果上传成功
+                if (res.code == '0') {
+                    // 获取光标所在位置
+                    let length = quill.getSelection().index;
+                    // 插入图片  res.data为服务器返回的图片地址
+                    quill.insertEmbed(length, 'image', res.data)
+                    // 调整光标到最后
+                    quill.setSelection(length + 1)
+                } else {
+                    this.$message.error('图片插入失败')
+                }
+            },
             //图片上传事件
             handleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -266,6 +312,7 @@
             },
         },
         created () {
+            console.log("baseUrl",uploadUrl.uploadUrl);
             this.fetchData();
         },
     }
