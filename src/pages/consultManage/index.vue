@@ -58,6 +58,11 @@
                         <el-input v-model="ruleForm.title"></el-input>
                     </el-col>
                 </el-form-item>
+                <el-form-item label="摘要" prop="summary">
+                    <el-col :span="10">
+                        <el-input v-model="ruleForm.summary"></el-input>
+                    </el-col>
+                </el-form-item>
                 <el-form-item label="信息来源" prop="resource">
                     <el-col :span="10">
                         <el-input v-model="ruleForm.resource"></el-input>
@@ -166,6 +171,7 @@
                     resource:'',
                     publishDate:'',
                     detail:'',
+                    summary:'',
                     uName:'ceshi02'
                 },
                 rules:{
@@ -175,6 +181,10 @@
                     ],
                     resource: [
                         { required: true, message: '请输入资讯来源', trigger: 'blur' },
+                        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+                    ],
+                    summary: [
+                        { required: true, message: '请输入资讯摘要', trigger: 'blur' },
                         { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
                     ],
                     category: [
