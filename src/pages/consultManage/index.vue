@@ -1,7 +1,7 @@
 <template>
     <div class="news" style="overflow:auto">
         <el-form :model="searchForm" :inline="true" ref="searchForm" label-width="100px">
-            <el-form-item label="咨询类别：">
+            <el-form-item label="资讯类别：">
                 <el-select v-model="searchForm.category" placeholder="请选择活动区域">
                     <el-option v-for="(item,index) in newsCategoryData" :key="index" :label="item.key" :value="item.value"></el-option>
                 </el-select>
@@ -321,8 +321,12 @@
                 });
             },
         },
+        mounted () {
+            console.log("consultManage mounted");
+        },
         created () {
             console.log("baseUrl",uploadUrl.uploadUrl);
+            console.log(this);
             this.fetchData();
         },
     }

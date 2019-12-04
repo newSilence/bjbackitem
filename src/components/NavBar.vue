@@ -40,6 +40,9 @@ export default {
             this.$store.commit('changeMenuCollapse');
         }
     },
+    mounted () {
+        console.log("navBar mounted");
+    },
 }
 </script>
 

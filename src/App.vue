@@ -19,6 +19,9 @@ export default {
   computed: {
     ...mapState(['menuTitle','navbarData','routerWidth']),
   },
+  mounted () {
+    console.log("app mounetd");
+  },
   created () {
     // console.log(location.href.split('#')[1]);
     //纠正页面刚加载显示title
