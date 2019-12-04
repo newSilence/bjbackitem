@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import store from '@/vuex/store'
+// import store from '@/vuex/store'
 import {mapState,mapMutations,mapGetters,mapActions} from 'vuex'
 export default {
     data() {
@@ -28,7 +28,7 @@ export default {
         //     return this.data 
         // }
     },
-    store,
+    // store,
     methods: {
         menuClick(key,keyPath){
             let title=this.navbarData.filter((val)=>{
@@ -49,10 +49,12 @@ export default {
 <style scoped>
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 9vw;
+    min-width: 155px;
     min-height: 400px;
   }
   .el-menu-vertical-demo.el-menu--collapse {
     width: 4vw;
+    min-width: 55px;
     min-height: 400px;
   }
 </style>

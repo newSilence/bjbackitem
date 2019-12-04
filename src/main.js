@@ -10,6 +10,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import App from './App'
 import router from './router'
+import store from './vuex/store'
 // import {http} from './request/http'
 Vue.config.productionTip = false
 Vue.use(ElementUI);
@@ -18,6 +19,7 @@ Vue.use(VueQuillEditor)
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

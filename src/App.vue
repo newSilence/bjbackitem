@@ -5,11 +5,11 @@
 </template>
 
 <script>
-import store from '@/vuex/store'
+// import store from '@/vuex/store'
 import {mapState,mapMutations,mapGetters,mapActions} from 'vuex'
 export default {
   name: 'App',
-  store,
+  // store,
   data() {
     return {
       // routerWidth:"88vw"
