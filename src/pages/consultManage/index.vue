@@ -177,7 +177,7 @@
                 rules:{
                     title: [
                         { required: true, message: '请输入资讯标题', trigger: 'blur' },
-                        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+                        { min: 1, max: 50, message: '长度在 1 到 100 个字符', trigger: 'blur' }
                     ],
                     resource: [
                         { required: true, message: '请输入资讯来源', trigger: 'blur' },
@@ -185,7 +185,7 @@
                     ],
                     summary: [
                         { required: true, message: '请输入资讯摘要', trigger: 'blur' },
-                        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+                        { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
                     ],
                     category: [
                         { required: true, message: '请选择资讯类别', trigger: 'change' }
