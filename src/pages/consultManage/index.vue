@@ -94,7 +94,7 @@
                  <el-form-item key="下载中心" v-if="ruleForm.category=='下载中心'" label="附件上传" prop="delivery">
                     <el-upload
                         class="upload-demo"
-                        :action="baseUrl+'/document/upDocument/'"
+                        :action="baseUrl+'/news/upDocument/'"
                         :on-preview="handlePreview"
                         :on-remove="handleRemove"
                         :on-success="handleSuccess"
@@ -329,8 +329,13 @@
                     console.log(this.ruleForm);
                     this.ruleForm.uName="ceshi02";
                     // console.log('addNewsForm',addNewsForm);
-                    let addUrlInter=this.ruleForm.category=="下载中心"?addUploadForm:addNewsForm;
-                    addUrlInter(this.ruleForm).then(res=>{
+                    // let addUrlInter=this.ruleForm.category=="下载中心"?addUploadForm:addNewsForm;
+                    // if(this.ruleForm.category=="下载中心"){
+                    //     this.ruleForm.address=this.ruleForm.cover;
+                    // }
+                    // console.log(this.ruleForm);
+                    // return
+                    addNewsForm(this.ruleForm).then(res=>{
                         console.log(res);
                         if(res.data.code=='0'){
                             this.closeDialog();
