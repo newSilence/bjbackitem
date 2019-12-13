@@ -8,6 +8,14 @@ export function addNewsForm(data){
         method:'post'
     })
 }
+//新增下载中心的接口
+export function addUploadForm(data){
+    return request({
+        url:'/document/upload/',
+        data,
+        method:'post'
+    })
+}
 //查询新闻资讯
 export function searchNewsTable(data){
     return request({

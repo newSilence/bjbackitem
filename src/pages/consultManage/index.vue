@@ -48,7 +48,7 @@
             <el-form v-if="dialogFormVisible" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="资讯类别" prop="category">
                     <el-col :span="10">
-                        <el-select style="width:100%" v-model="ruleForm.category" placeholder="请选择资讯类别">
+                        <el-select @change="categoryChange" style="width:100%" v-model="ruleForm.category" placeholder="请选择资讯类别">
                             <el-option v-for="(item,index) in newsNoAllCategoryData" :key="index" :label="item.key" :value="item.value"></el-option>
                         </el-select>
                     </el-col>
@@ -58,7 +58,7 @@
                         <el-input v-model="ruleForm.title"></el-input>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="摘要" prop="summary">
+                <el-form-item v-if="ruleForm.category!='下载中心'" label="摘要" prop="summary">
                     <el-col :span="10">
                         <el-input v-model="ruleForm.summary"></el-input>
                     </el-col>
@@ -75,7 +75,7 @@
                         </el-col>
                     </el-form-item>
                 </el-form-item>
-                <el-form-item v-if="ruleForm.category=='热点新闻'" label="封面图" prop="delivery">
+                <el-form-item key="热点新闻" v-if="ruleForm.category=='热点新闻'" label="封面图" prop="delivery">
                     <el-upload
                         class="upload-demo"
                         :action="baseUrl+'/fileUpload'"
@@ -87,6 +87,22 @@
                         :limit="1"
                         :on-exceed="handleExceed"
                         list-type="picture">
+                        <el-button size="small" type="primary">点击上传</el-button>
+                        <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                    </el-upload>
+                </el-form-item>
+                 <el-form-item key="下载中心" v-if="ruleForm.category=='下载中心'" label="附件上传" prop="delivery">
+                    <el-upload
+                        class="upload-demo"
+                        :action="baseUrl+'/document/upDocument/'"
+                        :on-preview="handlePreview"
+                        :on-remove="handleRemove"
+                        :on-success="handleSuccess"
+                        :on-error="handleError"
+                        :file-list="fileList"
+                        :limit="1"
+                        :on-exceed="handleExceed"
+                        list-type="text">
                         <el-button size="small" type="primary">点击上传</el-button>
                         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
                     </el-upload>
@@ -121,7 +137,7 @@
 </template>
 
 <script>
-    import { addNewsForm , searchNewsTable } from "./app.js"
+    import { addNewsForm , searchNewsTable , addUploadForm } from "./app.js"
     import  uploadUrl  from '@/request/uploadUrl'
     export default {
         data() {
@@ -156,6 +172,7 @@
                     {key:'本地政策',value:'本地政策'},
                     {key:'政策解读',value:'政策解读'},
                     {key:'通知公告',value:'通知公告'},
+                    {key:'下载中心',value:'下载中心'},
                 ],
                 tableData:[],
                 dialogFormVisible:false,
@@ -297,6 +314,12 @@
                 this.ruleForm.cover='';
                 console.log(err, file, fileList);
             },
+            //类别切换事件
+            categoryChange(item){
+                console.log(item);
+                this.ruleForm.cover='';
+                this.fileList=[];
+            },
             //编辑或者新增
             confirm() {
                 console.log(this.ruleForm);
@@ -306,7 +329,8 @@
                     console.log(this.ruleForm);
                     this.ruleForm.uName="ceshi02";
                     // console.log('addNewsForm',addNewsForm);
-                    addNewsForm(this.ruleForm).then(res=>{
+                    let addUrlInter=this.ruleForm.category=="下载中心"?addUploadForm:addNewsForm;
+                    addUrlInter(this.ruleForm).then(res=>{
                         console.log(res);
                         if(res.data.code=='0'){
                             this.closeDialog();
