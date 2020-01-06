@@ -299,7 +299,12 @@
                 if(res.code==0){
                     console.log(this.fileList);
                     console.log("success")
-                    this.ruleForm.cover=this.baseUrl+res.data;
+                    if(this.ruleForm.category=='下载中心'){
+                        this.ruleForm.cover=res.data;
+                    }else{
+                        this.ruleForm.cover=this.baseUrl+res.data;
+                    }
+                    
                 }else{
                     this.fileList=[];
                     this.ruleForm.cover='';
