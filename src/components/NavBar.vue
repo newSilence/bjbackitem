@@ -2,10 +2,23 @@
     <div style="display:flex">
         <!-- <div style="height:88vh;background:red;width:15vw"> -->
             <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" @select="menuClick" :collapse="menuIsCollapse">
-                <el-menu-item v-for="item in navbarData" :key="item.path" :index="item.path">
-                    <i :class="item.icon"></i>
-                    <span slot="title">{{item.title}}</span>
-                </el-menu-item>
+                <template>
+                    <div v-for="item in navbarData" :key="item.path">
+                        <el-menu-item v-if="!item.children" :index="item.path">
+                            <!-- <i :class="item.icon"></i> -->
+                            <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt="">
+                            <span slot="title">{{item.title}}</span>
+                        </el-menu-item>
+                        <el-submenu v-else :index="item.path">
+                            <template slot="title">
+                                <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt="">
+                                <span slot="title">{{item.title}}</span>
+                            </template>
+                            <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="subitem.path">{{subitem.title}}</el-menu-item>
+                        </el-submenu>
+                    </div>
+                </template>
+                
             </el-menu>
         <!-- </div> -->
         <div style="width:2vw;text-align:center;margin-top:200px">

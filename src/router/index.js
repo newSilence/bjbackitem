@@ -11,13 +11,14 @@ const routerAll=new Router({
   routes: [
     {
       path:'/',
-      redirect:'/index',
+      redirect:'/home',
     },
+    {path:'/home',component:Home,},
     {
       path: '/index',
       component: Index,
       children:[
-        {path:'/',component:Home,},
+        // {path:'/',component:Home,},
         {
           path: 'author',
           name: 'Anthor',

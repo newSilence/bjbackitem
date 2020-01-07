@@ -4,6 +4,7 @@ Vue.use(Vuex)
 const state={
   menuTitle:"首页",
   menuIsCollapse:false,
+  headTabClickIndexStr:0,
   routerWidth:"88vw",
   navbarData:[
     {icon:'el-icon-phone',path:'/index',title:'首页'},
@@ -22,6 +23,12 @@ const mutations={
       }else{
         state.routerWidth="88vw"
       }
+  },
+  changeMenuData(state,data){
+    state.navbarData=data;
+  },
+  changeHeadTabClickIndexStr(state,data){
+    state.headTabClickIndexStr=data;
   }
 }
 export default new Vuex.Store({state,mutations})
