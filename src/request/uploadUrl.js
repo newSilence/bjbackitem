@@ -17,8 +17,8 @@ const toolbarOptions = [
     ['link', 'image', 'video'],
     ['clean']                                         // remove formatting button
 ]
-// const uploadUrl="http://192.168.20.24:8089/";
-const uploadUrl="http://192.168.30.36:8088/";
+const uploadUrl="http://192.168.20.24:8089/";
+// const uploadUrl="http://192.168.30.36:8088/";
 // const uploadUrl="";
 export default {
     uploadUrl,toolbarOptions

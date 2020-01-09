@@ -20,7 +20,7 @@
                 <div :class="['head_tab',$store.state.headTabClickIndexStr==index?'active_tab':'']">
                     <span style="vertical-align:middle">
                         <!-- <i :class="item.icon"></i> -->
-                        <img style="width:33px;height:33px" :src="item.icon" alt="">
+                        <img style="width:24px;height:25px" :src="item.icon" alt="">
                     </span>
                     <span>
                         {{item.key}}
@@ -71,7 +71,8 @@
                     this.clickHeadTabIndex=index-0;
                     this.$router.push({path:'/'});
                 }
-                this.$store.commit('changeHeadTabClickIndexStr',index)
+                this.$store.commit('changeHeadTabClickIndexStr',index);
+                
                 
                 
             },
@@ -86,8 +87,8 @@
 .head{
     .head_tab{
             color:white;
-            padding:13px 19px 13px 13px;
-            font-size:20px;
+            padding:10px 19px 9px 14px;
+            font-size:14px;
             color:#272727;
             margin-right:76px;
         }

@@ -21,8 +21,8 @@
                 
             </el-menu>
         <!-- </div> -->
-        <div style="width:2vw;text-align:center;margin-top:200px">
-            <i @click="changeMenuType" :class="menuIsCollapse?'el-icon-d-arrow-right':'el-icon-d-arrow-left'"></i>
+        <div style="width:40px;text-align:center;margin-top:200px;">
+            <!-- <i @click="changeMenuType"  :class="menuIsCollapse?'el-icon-d-arrow-right':'el-icon-d-arrow-left'"></i> -->
         </div>
     </div>
 </template>
@@ -48,13 +48,24 @@ export default {
                 return val.path==key
             })[0].title
             this.$store.commit('changeMenuTitle',title);
+            sessionStorage['menuTitle']=title;
         },
         changeMenuType(){
             this.$store.commit('changeMenuCollapse');
         }
     },
     mounted () {
-        console.log("navBar mounted");
+        // console.log("navBar mounted");
+        // console.log(this.navbarData);
+        // console.log(sessionStorage['navMenu']);
+        this.$store.commit('changeMenuTitle',sessionStorage['menuTitle']);
+        if(this.navbarData.length==0){
+            const navmenu=JSON.parse(sessionStorage['navMenu']);
+            this.$store.commit('changeMenuData',navmenu);
+            console.log(sessionStorage);
+            console.log("change",['menuTitle']);
+            
+        }
     },
 }
 </script>
@@ -62,12 +73,26 @@ export default {
 <style scoped>
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 9vw;
-    min-width: 155px;
+    min-width: 220px;
     min-height: 400px;
+    background: #DFFBE9;
+    border-right:none;
+    
+  }
+  .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item{
+      color:#393939;
+  }
+  .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item.is-active{
+      background:white;
+      color:#318011;
   }
   .el-menu-vertical-demo.el-menu--collapse {
     width: 4vw;
     min-width: 55px;
     min-height: 400px;
+    background: #DFFBE9;
+  }
+  .el-menu-vertical-demo .el-menu{
+      
   }
 </style>

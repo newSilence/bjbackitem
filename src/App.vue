@@ -34,6 +34,8 @@ export default {
       title=filterMenuData[0].title
     }
     this.$store.commit('changeMenuTitle',title);
+    
+    sessionStorage['menuTitle']=title;
     // console.log(this.$store);
     // console.log(this.navbarData);
   },

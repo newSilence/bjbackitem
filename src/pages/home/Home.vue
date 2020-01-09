@@ -15,7 +15,7 @@
             </div>
         </div> -->
         <div style="background:rgb(238,252,243);display:flex;padding:60px 31px 0px 51px;height:90vh">
-            <div style="width:65%;min-width:800px;display:flex;justify-content:space-between;align-content:flex-start;font-size:28px;flex-wrap:wrap;padding-right:6%">
+            <div style="width:65%;min-width:800px;display:flex;justify-content:space-between;align-content:flex-start;font-size:20px;flex-wrap:wrap;padding-right:6%">
                 <div class="home_tab_datail" @click="detailItemClick(item)" v-for="(item,index) in homeTabDetailData[$store.state.headTabClickIndexStr]" style="width:255px;height:60px;margin-bottom:85px" :key="index">
                     <span style="vertical-align:middle">
                         <img style="width:54px;height:54px" :src="item.icon" alt="">
@@ -31,8 +31,8 @@
                 <div style="width:255px"></div>
             </div>
             <div style="width:35%;">
-                <div style="padding:15px 0 15px 105px;border:1px solid #e1e1e1;background:white;font-size:32px;color:#0A483C">公告</div>
-                <div style="margin-top:19px;border:1px solid #e1e1e1;background:white;font-size:22px;color:#2E2E2E;padding:26px 50px 0px 26px">
+                <div style="padding:15px 0 15px 105px;border:1px solid #e1e1e1;background:white;font-size:20px;color:#0A483C">公告</div>
+                <div style="margin-top:19px;border:1px solid #e1e1e1;background:white;font-size:14px;color:#2E2E2E;padding:26px 50px 0px 26px">
                     <div style="width:100%;margin-bottom:30px;display:flex" :title="item.title" v-for="(item,index) in announcementData" :key="index">
                         <span class="annou_item" style="width: 65%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{item.title}}</span>
                         <span style="width: 35%;text-align:right;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;margin-left:0px">{{item.time}}</span>
@@ -113,8 +113,13 @@
                 this.$store.commit('changeHeadTabClickIndexStr',index);
             },
             detailItemClick(item){
-                console.log(this.clickHeadTabIndex);
+
+                console.log("this.clickHeadTabIndex",item);
                 this.$store.commit('changeMenuData',this.homeTabDetailData[this.$store.state.headTabClickIndexStr]);
+                sessionStorage['navMenu']=JSON.stringify(this.homeTabDetailData[this.$store.state.headTabClickIndexStr]);
+                sessionStorage['menuTitle']=item.title;
+                console.log(sessionStorage['menuTitle']);
+                console.log("sessionStorage['menuTitle']",sessionStorage['menuTitle']);
                 this.$router.push(item.path)
             },
             detailChange(data){
