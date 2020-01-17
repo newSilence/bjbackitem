@@ -17,9 +17,17 @@ const toolbarOptions = [
     ['link', 'image', 'video'],
     ['clean']                                         // remove formatting button
 ]
-const uploadUrl="http://192.168.20.24:8089/";
+const uploadUrl="http://192.168.20.22:8089/";
+function treeData(source, id, parentId, children , flag){   
+    let cloneData = JSON.parse(JSON.stringify(source))
+    return cloneData.filter(father=>{
+        let branchArr = cloneData.filter(child => father[id] == child[parentId]);
+        branchArr.length>0 ? father[children] = branchArr : ''
+        return father[parentId] == flag        // 如果第一层不是parentId=0，请自行修改
+    })
+};
 // const uploadUrl="http://192.168.30.36:8088/";
 // const uploadUrl="";
 export default {
-    uploadUrl,toolbarOptions
+    uploadUrl,toolbarOptions,treeData
 }

@@ -16,13 +16,13 @@
         </div> -->
         <div style="background:rgb(238,252,243);display:flex;padding:60px 31px 0px 51px;height:90vh">
             <div style="width:65%;min-width:800px;display:flex;justify-content:space-between;align-content:flex-start;font-size:20px;flex-wrap:wrap;padding-right:6%">
-                <div class="home_tab_datail" @click="detailItemClick(item)" v-for="(item,index) in homeTabDetailData[$store.state.headTabClickIndexStr]" style="width:255px;height:60px;margin-bottom:85px" :key="index">
+                <div class="home_tab_datail" @click="detailItemClick(item)" v-for="(item,index) in $store.state.homeTabList[$store.state.headTabClickIndexStr].list" style="width:255px;height:60px;margin-bottom:85px" :key="index">
                     <span style="vertical-align:middle">
                         <img style="width:54px;height:54px" :src="item.icon" alt="">
                         <!-- <i :classs="item.icon"></i> -->
                     </span>
                     <span>
-                        {{item.title}}
+                        {{item.name}}
                     </span>
                 </div>
                 <div style="width:255px"></div>
@@ -47,52 +47,65 @@
 
 <script>
     import Head from '@/components/Header'
+    import { getNavMenu } from "./api";
     // import NavBar from '@/components/NavBar'
     export default {
         data() {
             return {
                 clickHeadTabIndex:0,
-                homeTabData: [
-                    {key:'我的首页',icon:require('../../assets/indextab.png'),},
-                    {key:'工业企业',icon:require('../../assets/comtab.png'),},
-                    {key:'项目管理',icon:require('../../assets/gotab.png'),},
-                    {key:'意见信箱',icon:require('../../assets/lettertab.png'),},
-                    {key:'数据统计',icon:require('../../assets/digitaltab.png'),},
-                ],
+                // homeTabData: [
+                //     {name:'我的首页',icon:require('../../assets/indextab.png'),},
+                //     {name:'工业企业',icon:require('../../assets/comtab.png'),},
+                //     {name:'项目管理',icon:require('../../assets/gotab.png'),},
+                //     {name:'意见信箱',icon:require('../../assets/lettertab.png'),},
+                //     {name:'数据统计',icon:require('../../assets/digitaltab.png'),},
+                // ],
+                // homeTabData: [
+                //     {key:'我的首页',icon:require('../../assets/indextab.png'),},
+                //     {key:'工业企业',icon:require('../../assets/comtab.png'),},
+                //     {key:'项目管理',icon:require('../../assets/gotab.png'),},
+                //     {key:'意见信箱',icon:require('../../assets/lettertab.png'),},
+                //     {key:'数据统计',icon:require('../../assets/digitaltab.png'),},
+                // ],
                 homeTabDetailData:[
                     [
-                        {title:'用户意向',icon:require('../../assets/allowindex.png'),path:'1'},
-                        {title:'平台用户管理',icon:require('../../assets/userindex.png'),path:'2',children:[
-                            {title:'个人用户管理',icon:require('../../assets/authindex.png'),path:'8'},
-                            {title:'企业用户管理',icon:require('../../assets/infoindex.png'),path:'/index/consultManage'},
-                            {title:'用户充值记录',icon:require('../../assets/optionindex.png'),path:'9'},
+                        {name:'用户意向',icon:require('../../assets/allowindex.png'),url:'1'},
+                        {name:'平台用户管理',icon:require('../../assets/userindex.png'),url:'2',children:[
+                            {name:'个人用户管理',icon:require('../../assets/authindex.png'),url:'8'},
+                            {name:'企业用户管理',icon:require('../../assets/infoindex.png'),url:'/index/consultManage'},
+                            {name:'用户充值记录',icon:require('../../assets/optionindex.png'),url:'9'},
                         ]},
-                        {title:'企业需求管理',icon:require('../../assets/demandindex.png'),path:'3'},
-                        {title:'科技成果管理',icon:require('../../assets/techindex.png'),path:'4'},
-                        {title:'推荐专家管理',icon:require('../../assets/expertindex.png'),path:'5'},
-                        {title:'人才需求管理',icon:require('../../assets/talentindex.png'),path:'6'},
-                        {title:'创新活动管理',icon:require('../../assets/actiindex.png'),path:'7'},
-                        {title:'权限角色管理',icon:require('../../assets/authindex.png'),path:'8'},
-                        {title:'综合资讯管理',icon:require('../../assets/infoindex.png'),path:'/index/consultManage'},
-                        {title:'操作日志',icon:require('../../assets/optionindex.png'),path:'9'},
-                        {title:'系统配置',icon:require('../../assets/systemindex.png'),path:'10'},
+                        {name:'企业需求管理',icon:require('../../assets/demandindex.png'),url:'3'},
+                        {name:'科技成果管理',icon:require('../../assets/techindex.png'),url:'4'},
+                        {name:'推荐专家管理',icon:require('../../assets/expertindex.png'),url:'5'},
+                        {name:'人才需求管理',icon:require('../../assets/talentindex.png'),url:'6'},
+                        {name:'创新活动管理',icon:require('../../assets/actiindex.png'),url:'7'},
+                        {name:'权限角色管理',icon:require('../../assets/authindex.png'),url:'/index/authority',children:[
+                            {name:'管理员管理',icon:require('../../assets/authindex.png'),url:'/index/authority/admin'},
+                            {name:'部门管理',icon:require('../../assets/infoindex.png'),url:'/index/authority/depart'},
+                            {name:'角色管理',icon:require('../../assets/infoindex.png'),url:'/index/authority/role'},
+                            {name:'菜单管理',icon:require('../../assets/infoindex.png'),url:'/index/authority/menu'},
+                        ]},
+                        {name:'综合资讯管理',icon:require('../../assets/infoindex.png'),url:'/index/consultManage'},
+                        {name:'操作日志',icon:require('../../assets/optionindex.png'),url:'9'},
+                        {name:'系统配置',icon:require('../../assets/systemindex.png'),url:'10'},
                         
                     ],
                     [
-                        {title:'基本信息管理',icon:require('../../assets/baseinfoindex.png'),path:'/index/consultManage'},
-                        {title:'生产信息管理',icon:require('../../assets/gocontindex.png'),path:'12'},
+                        {name:'基本信息管理',icon:require('../../assets/baseinfoindex.png'),url:'/index/consultManage'},
+                        {name:'生产信息管理',icon:require('../../assets/gocontindex.png'),url:'12'},
                     ],
                     [
-                        {title:'项目申报管理',icon:require('../../assets/applyindex.png'),path:'13'},
-                        {title:'项目融资管理',icon:require('../../assets/financeindex.png'),path:'14'},
+                        {name:'项目申报管理',icon:require('../../assets/applyindex.png'),url:'13'},
+                        {name:'项目融资管理',icon:require('../../assets/financeindex.png'),url:'14'},
                     ],
                     [
-                        {title:'未处理信件',icon:require('../../assets/noletterindex.png'),path:'15'},
-                        {title:'已处理信件',icon:require('../../assets/letteredindex.png'),path:'16'},
+                        {name:'未处理信件',icon:require('../../assets/noletterindex.png'),url:'15'},
+                        {name:'已处理信件',icon:require('../../assets/letteredindex.png'),url:'16'},
                     ],
                     [
-                        {title:'数据管理',icon:'el-icon-eleme',path:'17'},
-                        {title:'统计管理',icon:'el-icon-eleme',path:'18'},
+                        {name:'数据管理',icon:'el-icon-eleme',url:'17'},
+                        {name:'统计管理',icon:'el-icon-eleme',url:'18'},
                     ],
                 ],
                 announcementData:[
@@ -109,18 +122,31 @@
         },
         methods: {
             tabClick(item,index) {
+                console.log("changeIndex");
                 this.clickHeadTabIndex=index;
                 this.$store.commit('changeHeadTabClickIndexStr',index);
+                sessionStorage['headTabClickIndexStr']=index;
             },
             detailItemClick(item){
 
                 console.log("this.clickHeadTabIndex",item);
-                this.$store.commit('changeMenuData',this.homeTabDetailData[this.$store.state.headTabClickIndexStr]);
-                sessionStorage['navMenu']=JSON.stringify(this.homeTabDetailData[this.$store.state.headTabClickIndexStr]);
-                sessionStorage['menuTitle']=item.title;
-                console.log(sessionStorage['menuTitle']);
-                console.log("sessionStorage['menuTitle']",sessionStorage['menuTitle']);
-                this.$router.push(item.path)
+                // this.$store.commit('changeMenuData',this.homeTabDetailData[this.$store.state.headTabClickIndexStr]);
+                this.$store.commit('changeMenuData',this.$store.state.homeTabList[this.$store.state.headTabClickIndexStr].list);
+                sessionStorage['navMenu']=JSON.stringify(this.$store.state.homeTabList[this.$store.state.headTabClickIndexStr].list);
+                // sessionStorage['navMenu']=JSON.stringify(this.homeTabDetailData[this.$store.state.headTabClickIndexStr]);
+                // sessionStorage['menuTitle']=item.title;
+                // console.log(sessionStorage['menuTitle']);
+                // console.log("sessionStorage['menuTitle']",sessionStorage['menuTitle']);
+                if(item.type==0&&item.list.length>0){
+                    sessionStorage['menuTitle']=item.list[0].name;
+                    this.$store.commit('changeMenuTitle',item.list[0].name);
+                    this.$router.push(item.list[0].url);
+                }else{
+                    this.$store.commit('changeMenuTitle',item.name);
+                    sessionStorage['menuTitle']=item.name;
+                    this.$router.push(item.url);
+                }
+                
             },
             detailChange(data){
                 this.clickHeadTabIndex=data;
@@ -130,6 +156,9 @@
             }
         },
         created () {
+            getNavMenu().then(res=>{
+                console.log('resres',res);
+            })
             if(this.$route&&this.$route.query&&this.$route.query.clickHeadTabIndex){
                 this.clickHeadTabIndex=this.$route.query.clickHeadTabIndex
             }

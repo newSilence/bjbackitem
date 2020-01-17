@@ -7,23 +7,23 @@
             </div>
             <div style="display:flex;align-items:center;font-size:17px">
                 <!-- <span style="width:25px;height:25px;border-radius:50%;border:1px solid black;display:inline-block"></span> -->
-                <span>你好，管理员</span>
+                <span>你好,{{$store.state.username}}</span>
                 <span style="margin:0 24px;width:0px;height:17px;border-left:1px white solid"></span>
                 <span style="">修改密码</span>
-                <span style="margin:0 24px">退出</span>
+                <span @click="logout" style="margin:0 24px;cursor:pointer">退出</span>
                 <!-- <i class="el-icon-setting"></i> -->
                 <!-- <el-button type="primary" icon="el-icon-setting"></el-button> -->
             </div>
         </div>
         <div style="display:flex;padding:11px 45px;background:linear-gradient(to bottom,#f1f1f1 0%,#f1f1f1 50%,#e1e1e1 50%,#e1e1e1 100%);">
-            <div @click="tabClick(item,index)" v-for="(item,index) in homeTabData" style="border-radius:8px;cursor:pointer" :key="index">
+            <div @click="tabClick(item,index)" v-for="(item,index) in $store.state.homeTabList" style="border-radius:8px;cursor:pointer" :key="index">
                 <div :class="['head_tab',$store.state.headTabClickIndexStr==index?'active_tab':'']">
                     <span style="vertical-align:middle">
                         <!-- <i :class="item.icon"></i> -->
                         <img style="width:24px;height:25px" :src="item.icon" alt="">
                     </span>
                     <span>
-                        {{item.key}}
+                        {{item.name}}
                     </span>
                 </div>
                 
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { Logout } from "./api";
     export default {
         props: {
             headClickIndex: {
@@ -44,12 +45,15 @@
             return {
                 // headClickIndex:0,
                 clickHeadTabIndex:this.headClickIndex,
+                departData:[
+                    
+                ],
                 homeTabData: [
-                    {key:'我的首页',icon:require('../assets/indextab.png'),},
-                    {key:'工业企业',icon:require('../assets/comtab.png'),},
-                    {key:'项目管理',icon:require('../assets/gotab.png'),},
-                    {key:'意见信箱',icon:require('../assets/lettertab.png'),},
-                    {key:'数据统计',icon:require('../assets/digitaltab.png'),},
+                    {name:'我的首页',icon:require('../assets/indextab.png'),},
+                    {name:'工业企业',icon:require('../assets/comtab.png'),},
+                    {name:'项目管理',icon:require('../assets/gotab.png'),},
+                    {name:'意见信箱',icon:require('../assets/lettertab.png'),},
+                    {name:'数据统计',icon:require('../assets/digitaltab.png'),},
                 ],
                 // key: value
             }
@@ -72,13 +76,26 @@
                     this.$router.push({path:'/'});
                 }
                 this.$store.commit('changeHeadTabClickIndexStr',index);
-                
+                sessionStorage['headTabClickIndexStr']=index;
                 
                 
             },
+            logout(){
+                // sessionStorage.removeItem('username');
+                // sessionStorage.removeItem('token');
+                sessionStorage.clear();
+                this.$store.commit('setToken','');
+                Logout().then(res=>{
+                    location.href='/login';
+                    // this.$router.push('/login')
+                })
+                
+            },
+            
         },
         created () {
             console.log(this.$store.state.headTabClickIndexStr);
+            
         },
     }
 </script>

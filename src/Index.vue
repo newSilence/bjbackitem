@@ -7,7 +7,7 @@
       <div style="flex:1;display:flex;flex-direction:column;">
         <div style="">
           <span  style="display:inline-block;font-size:16px;color:#616161;box-sizing:border-box;margin-top:21px;padding:16px;background:rgba(247,247,247,1);border:1px solid rgba(220,220,220,1);border-bottom:none">
-            {{menuTitle}}
+            {{$store.state.menuTitle}}
             <i class="el-icon-close"></i>
           </span>
         </div>
@@ -45,19 +45,26 @@ export default {
   },
   created () {
     console.log(location.href.split('#')[1]);
+    console.log("indexindexinxdexindex")
     //纠正页面刚加载显示title
     let key=location.href.split('#')[1];
     let filterUrl=this.navbarData.filter((val)=>{
         return val.path==key
     });
-    let title='';
-    if(filterUrl.length>0){
-        title=filterUrl[0].title
-    }
-    this.$store.commit('changeMenuTitle',title);
-    sessionStorage['menuTitle']=title;
+    // let title='';
+    // if(filterUrl.length>0){
+    //     title=filterUrl[0].title
+    // }
+    // this.$store.commit('changeMenuTitle',title);
+    // sessionStorage['menuTitle']=title;
     // console.log(this.$store);
     console.log(this.navbarData);
+  },
+  methods: {
+    getMenuTitle(arr,url) {
+      let deepArr=JSON.parse(JSON.stringify(arr));
+      
+    }
   },
 }
 </script>

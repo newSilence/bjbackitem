@@ -2,7 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/pages/home/Home'
 import Index from '@/Index'
-import Anthor from '@/pages/author/Anthor'
+import AuthorityAdmin from '@/pages/authority/AuthorityAdmin'
+import AuthorityDepart from '@/pages/authority/AuthorityDepart'
+import AuthorityRole from '@/pages/authority/AuthorityRole'
+import AuthorityMenu from '@/pages/authority/AuthorityMenu'
 import Login from '@/pages/login/Login'
 import ConsultManage from '@/pages/consultManage'
 import Error from '@/pages/notFound/Error'
@@ -13,16 +16,32 @@ const routerAll=new Router({
       path:'/',
       redirect:'/home',
     },
+    {
+      path:'/login',
+      component:Login,
+    },
     {path:'/home',component:Home,},
     {
       path: '/index',
       component: Index,
       children:[
-        // {path:'/',component:Home,},
+        {path:'authority/',redirect:'authority/admin',},
         {
-          path: 'author',
-          name: 'Anthor',
-          component: Anthor
+          path: 'authority/admin',
+          name: 'AuthorityAdmin',
+          component: AuthorityAdmin
+        },{
+          path: 'authority/depart',
+          name: 'AuthorityDepart',
+          component: AuthorityDepart
+        },{
+          path: 'authority/role',
+          name: 'AuthorityRole',
+          component: AuthorityRole
+        },{
+          path: 'authority/menu',
+          name: 'AuthorityMenu',
+          component: AuthorityMenu
         },
         {
           path:'consultManage',
@@ -43,4 +62,21 @@ const routerAll=new Router({
     }
   ]
 });
+routerAll.beforeEach((to, from, next) => {
+  console.log('all');
+  console.log(to);
+  console.log('sessionStorage',sessionStorage);
+  //判断会话如果存在用户名，就跳转
+  if(sessionStorage['username']){
+    next()
+    ////判断如果不存在用户名且又不是登录页，跳到登陆页
+  }else if(!sessionStorage['username']&&to.path!='/login'){
+    console.log('loginlogin');
+    next('/login')
+    //判断如果是登陆页，就直接登陆
+  }else if(to.path=='/login'){
+    next()
+  }
+  // to and from are both route objects. must call `next`.
+})
 export default routerAll;

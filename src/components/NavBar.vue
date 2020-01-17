@@ -3,18 +3,18 @@
         <!-- <div style="height:88vh;background:red;width:15vw"> -->
             <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" @select="menuClick" :collapse="menuIsCollapse">
                 <template>
-                    <div v-for="item in navbarData" :key="item.path">
-                        <el-menu-item v-if="!item.children" :index="item.path">
+                    <div v-for="item in navbarData" :key="item.url">
+                        <el-menu-item v-if="!item.list" :index="item.url">
                             <!-- <i :class="item.icon"></i> -->
                             <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt="">
-                            <span slot="title">{{item.title}}</span>
+                            <span slot="title">{{item.name}}</span>
                         </el-menu-item>
-                        <el-submenu v-else :index="item.path">
+                        <el-submenu v-else :index="item.url">
                             <template slot="title">
                                 <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt="">
-                                <span slot="title">{{item.title}}</span>
+                                <span slot="title">{{item.name}}</span>
                             </template>
-                            <el-menu-item v-for="subitem in item.children" :key="subitem.path" :index="subitem.path">{{subitem.title}}</el-menu-item>
+                            <el-menu-item v-for="subitem in item.list" :key="subitem.url" :index="subitem.url">{{subitem.name}}</el-menu-item>
                         </el-submenu>
                     </div>
                 </template>
@@ -44,11 +44,32 @@ export default {
     // store,
     methods: {
         menuClick(key,keyPath){
-            let title=this.navbarData.filter((val)=>{
-                return val.path==key
-            })[0].title
-            this.$store.commit('changeMenuTitle',title);
-            sessionStorage['menuTitle']=title;
+            console.log(key);
+            console.log(keyPath);
+            let menuTitle;
+            for(let i=0;i<this.navbarData.length;i++){
+                if(this.navbarData[i].list.length>0){
+                    let filterData=this.navbarData[i].list.filter(val=>{
+                        return val.url==key
+                    });
+                    if(filterData.length>0){
+                        menuTitle=filterData[0].name;
+                        break;
+                    }
+                }else{
+                    if(this.navbarData[i].url=='key'){
+                        menuTitle=this.navbarData[i].name;
+                        break;
+                    }
+                }
+            }
+            this.$store.commit('changeMenuTitle',menuTitle);
+            sessionStorage['menuTitle']=menuTitle;
+            // let title=this.navbarData.filter((val)=>{
+            //     return val.path==key
+            // })[0].title
+            // this.$store.commit('changeMenuTitle',title);
+            // sessionStorage['menuTitle']=title;
         },
         changeMenuType(){
             this.$store.commit('changeMenuCollapse');
