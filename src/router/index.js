@@ -6,6 +6,10 @@ import AuthorityAdmin from '@/pages/authority/AuthorityAdmin'
 import AuthorityDepart from '@/pages/authority/AuthorityDepart'
 import AuthorityRole from '@/pages/authority/AuthorityRole'
 import AuthorityMenu from '@/pages/authority/AuthorityMenu'
+import WebMenu from '@/pages/webauthority/WebMenu'
+import WebRole from '@/pages/webauthority/WebRole'
+import WebAdmin from '@/pages/webauthority/WebAdmin'
+
 import Login from '@/pages/login/Login'
 import ConsultManage from '@/pages/consultManage'
 import Error from '@/pages/notFound/Error'
@@ -42,8 +46,19 @@ const routerAll=new Router({
           path: 'authority/menu',
           name: 'AuthorityMenu',
           component: AuthorityMenu
-        },
-        {
+        },{
+          path: 'webauthority/webmenu',
+          name: 'WebMenu',
+          component: WebMenu
+        },{
+          path: 'webauthority/webadmin',
+          name: 'WebAdmin',
+          component: WebAdmin
+        },{
+          path: 'webauthority/webrole',
+          name: 'WebRole',
+          component: WebRole
+        },{
           path:'consultManage',
           name:'ConsultManage',
           component:ConsultManage,

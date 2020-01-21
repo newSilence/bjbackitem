@@ -33,11 +33,6 @@
                 width="120">
                 </el-table-column>
                 <el-table-column
-                prop="deptName"
-                label="所属部门"
-                show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column
                 prop="remark"
                 label="备注"
                 show-overflow-tooltip>
@@ -76,12 +71,12 @@
                         <el-input v-model="form.roleName"></el-input>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="所属部门" prop="deptId">
+                <!-- <el-form-item label="所属部门" prop="deptId">
                     <el-col :span="8">
                         <treeselect @select="deptSelected" v-model="form.deptId" :multiple="false" :flat="false" :default-expand-level="1" :options="deptSelectOptions" />
-                        <!-- <el-input v-model="form.username"></el-input> -->
+                        
                     </el-col>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="备注" prop="remark">
                     <el-col :span="8">
                         <el-input v-model="form.remark"></el-input>
@@ -100,8 +95,8 @@
                             :props="defaultProps">
                         </el-tree>
                     </div>
-                    <div style="margin-left:50px">
-                        <div>数据权限</div>
+                    <!-- <div style="margin-left:50px">
+                        <div>数据权限</div> -->
                         <!-- <treeselect
                          class="no_select"
                          value-consists-of="ALL_WITH_INDETERMINATE"
@@ -112,7 +107,7 @@
                          :flat="false" 
                          :default-expand-level="Infinity" 
                          :options="deptSelectOptions" /> -->
-                        <el-tree
+                        <!-- <el-tree
                             ref="dept_tree"
                             :data="deptSelectOptions"
                             show-checkbox
@@ -121,7 +116,7 @@
                             node-key="id"
                             :props="defaultProps">
                         </el-tree>
-                    </div>
+                    </div> -->
                     <div style="margin-left:200px">
                         
                     </div>
@@ -215,16 +210,16 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         { required: true, message: '请选择当前状态', trigger: 'change' }
                     ],
                 },
-                deptSelectOptions:[
-                    {deptId:1,parentId:0,name:'人人开源集团',parentName:null},
-                    {deptId:2,parentId:1,name:'长沙分公司',parentName:"人人开源集团"},
-                    {deptId:3,parentId:1,name:'上海分公司',parentName:"人人开源集团"},
-                    {deptId:4,parentId:3,name:'技术部',parentName:"上海分公司"},
-                    {deptId:5,parentId:3,name:'销售部',parentName:"上海分公司"},
-                    {deptId:6,parentId:1,name:'测试分公司',parentName:"人人开源集团"},
-                    {deptId:7,parentId:6,name:'测试部门',parentName:"测试分公司"},
-                    {deptId:11,parentId:0,name:'1231',parentName:null},
-                ],//部门下拉框
+                // deptSelectOptions:[
+                //     {deptId:1,parentId:0,name:'人人开源集团',parentName:null},
+                //     {deptId:2,parentId:1,name:'长沙分公司',parentName:"人人开源集团"},
+                //     {deptId:3,parentId:1,name:'上海分公司',parentName:"人人开源集团"},
+                //     {deptId:4,parentId:3,name:'技术部',parentName:"上海分公司"},
+                //     {deptId:5,parentId:3,name:'销售部',parentName:"上海分公司"},
+                //     {deptId:6,parentId:1,name:'测试分公司',parentName:"人人开源集团"},
+                //     {deptId:7,parentId:6,name:'测试部门',parentName:"测试分公司"},
+                //     {deptId:11,parentId:0,name:'1231',parentName:null},
+                // ],//部门下拉框
                 funcSelectOptions:[],
                 roleOptions:[
                     {roleId:1,roleName:'长沙分公司'},
@@ -269,7 +264,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //promise关于角色和部门请求接口封装
             getRoleOrDeptData(){
-                return Promise.all( [ getAllFuncPerm() , getAllDepartData() ] ).then(result=>{
+                return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
                     console.log('promise',result);
                     this.funcSelectOptions=result[0].data.data;
                     for(let i=0;i<this.funcSelectOptions.length;i++){
@@ -277,12 +272,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         this.funcSelectOptions[i].label=this.funcSelectOptions[i].name;
                     }
                     this.funcSelectOptions=this.treeData(this.funcSelectOptions,'menuId','parentId','children');
-                    this.deptSelectOptions=result[1].data.data;
-                    for(let i=0;i<this.deptSelectOptions.length;i++){
-                        this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
-                        this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
-                    }
-                    this.deptSelectOptions=this.treeData(this.deptSelectOptions,'deptId','parentId','children');
+                    // this.deptSelectOptions=result[1].data.data;
+                    // for(let i=0;i<this.deptSelectOptions.length;i++){
+                    //     this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
+                    //     this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
+                    // }
+                    // this.deptSelectOptions=this.treeData(this.deptSelectOptions,'deptId','parentId','children');
                     // console.log("promise",res);
                 }).catch(err=>{
                     this.$message({
@@ -318,10 +313,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         let halfMenuId=this.$refs.func_tree.getHalfCheckedKeys()?this.$refs.func_tree.getHalfCheckedKeys():[];
                         console.log("halfMenuId",halfMenuId)
                         param.menuIdList=param.selectMenuIdList.concat(halfMenuId);
-                        console.log('this.$refs.dept_tree.getCheckedKeys()',this.$refs.dept_tree.getCheckedKeys());
-                        console.log("this.$refs.dept_tree.getHalfCheckedKeys()",this.$refs.dept_tree.getHalfCheckedKeys());
-                        param.selectDeptIdList=this.$refs.dept_tree.getCheckedKeys()?this.$refs.dept_tree.getCheckedKeys():[];
-                        param.deptIdList=param.selectDeptIdList.concat(this.$refs.dept_tree.getHalfCheckedKeys()?this.$refs.dept_tree.getHalfCheckedKeys():[]);
+                        // console.log('this.$refs.dept_tree.getCheckedKeys()',this.$refs.dept_tree.getCheckedKeys());
+                        // console.log("this.$refs.dept_tree.getHalfCheckedKeys()",this.$refs.dept_tree.getHalfCheckedKeys());
+                        // param.selectDeptIdList=this.$refs.dept_tree.getCheckedKeys()?this.$refs.dept_tree.getCheckedKeys():[];
+                        // param.deptIdList=param.selectDeptIdList.concat(this.$refs.dept_tree.getHalfCheckedKeys()?this.$refs.dept_tree.getHalfCheckedKeys():[]);
                         if(param.roleId){
                             updateRoleData(param).then(res=>{
                                 console.log(res);
@@ -406,11 +401,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         created () {
             this.fetchData();
             //先处理成vue-treeselect的需求字段。
-            for(let i=0;i<this.deptSelectOptions.length;i++){
-                this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
-                this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
-            }
-            console.log('this.treeData',this.treeData(this.deptSelectOptions,'deptId','parentId','children'));
+            // for(let i=0;i<this.deptSelectOptions.length;i++){
+            //     this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
+            //     this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
+            // }
+            // console.log('this.treeData',this.treeData(this.deptSelectOptions,'deptId','parentId','children'));
         },
     }
 </script>
