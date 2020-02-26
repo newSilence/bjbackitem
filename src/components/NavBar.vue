@@ -47,8 +47,9 @@ export default {
             console.log(key);
             console.log(keyPath);
             let menuTitle;
+            console.log('this.navbarData',this.navbarData);
             for(let i=0;i<this.navbarData.length;i++){
-                if(this.navbarData[i].list.length>0){
+                if(this.navbarData[i].list&&this.navbarData[i].list.length>0){
                     let filterData=this.navbarData[i].list.filter(val=>{
                         return val.url==key
                     });
@@ -63,6 +64,7 @@ export default {
                     }
                 }
             }
+            console.log('menuTitle',menuTitle);
             this.$store.commit('changeMenuTitle',menuTitle);
             sessionStorage['menuTitle']=menuTitle;
             // let title=this.navbarData.filter((val)=>{
@@ -76,17 +78,14 @@ export default {
         }
     },
     mounted () {
-        // console.log("navBar mounted");
-        // console.log(this.navbarData);
-        // console.log(sessionStorage['navMenu']);
         this.$store.commit('changeMenuTitle',sessionStorage['menuTitle']);
-        if(this.navbarData.length==0){
-            const navmenu=JSON.parse(sessionStorage['navMenu']);
-            this.$store.commit('changeMenuData',navmenu);
-            console.log(sessionStorage);
-            console.log("change",['menuTitle']);
+        // if(this.navbarData.length==0){
+        //     const navmenu=JSON.parse(sessionStorage['navMenu']);
+        //     this.$store.commit('changeMenuData',navmenu);
+        //     console.log(sessionStorage);
+        //     console.log("change",['menuTitle']);
             
-        }
+        // }
     },
 }
 </script>

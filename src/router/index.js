@@ -43,7 +43,7 @@ const routerAll=new Router({
           name: 'AuthorityRole',
           component: AuthorityRole
         },{
-          path: 'authority/menu',
+          path: 'authority/menu',//会员账号
           name: 'AuthorityMenu',
           component: AuthorityMenu
         },{
@@ -78,10 +78,7 @@ const routerAll=new Router({
   ]
 });
 routerAll.beforeEach((to, from, next) => {
-  console.log('all');
-  console.log(to);
-  console.log('sessionStorage',sessionStorage);
-  //判断会话如果存在用户名，就跳转
+//   判断会话如果存在用户名，就跳转
   if(sessionStorage['username']){
     next()
     ////判断如果不存在用户名且又不是登录页，跳到登陆页

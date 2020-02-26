@@ -9,9 +9,14 @@ const state={
   headTabClickIndexStr:0,
   routerWidth:"88vw",
   navbarData:[
-    // {icon:'el-icon-phone',path:'/index',title:'首页'},
-    // {icon:'el-icon-user',path:'/index/author',title:'权限'},
-    // {icon:'el-icon-office-building',path:'/index/consultManage',title:'资讯管理'},
+    {icon:'el-icon-phone',url:'/index',name:'首页'},
+    {icon:'el-icon-user',url:'/index/authority',name:'账号管理',list:[
+      {icon:'el-icon-user',url: '/index/authority/menu',name: '会员账号管理'},
+    ]},
+    {icon:'el-icon-user',url:'/index/authority',name:'权限角色管理',list:[
+      {icon:'el-icon-user',url: '/index/authority/role',name: '角色管理'},
+    ]},
+    {icon:'el-icon-office-building',url:'/index/consultManage',name:'资讯管理'},
   ],
   homeTabList:[],
 }

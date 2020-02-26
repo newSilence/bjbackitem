@@ -51,13 +51,6 @@ export default {
     let filterUrl=this.navbarData.filter((val)=>{
         return val.path==key
     });
-    // let title='';
-    // if(filterUrl.length>0){
-    //     title=filterUrl[0].title
-    // }
-    // this.$store.commit('changeMenuTitle',title);
-    // sessionStorage['menuTitle']=title;
-    // console.log(this.$store);
     console.log(this.navbarData);
   },
   methods: {

@@ -26,16 +26,16 @@ export function request(config){
     },function(error){})
     instance.interceptors.response.use((response)=>{
         console.log("response",response)
-        if(response.data.code!=0){
-            Message.error(
-                {
-                    showClose: true,
-                    message: '权限失效，请退出重新登录',
-                    type: 'error'
-                }
-            )
-            return false;
-        }
+        // if(response.data.code!=0){
+        //     Message.error(
+        //         {
+        //             showClose: true,
+        //             message: '权限失效，请退出重新登录',
+        //             type: 'error'
+        //         }
+        //     )
+        //     return false;
+        // }
         return response
     },function(error){
         console.log("error",error)

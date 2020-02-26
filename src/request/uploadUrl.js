@@ -17,7 +17,7 @@ const toolbarOptions = [
     ['link', 'image', 'video'],
     ['clean']                                         // remove formatting button
 ]
-const uploadUrl="http://192.168.20.24:8089/";
+// const uploadUrl="http://192.168.20.24:8089/";
 function treeData(source, id, parentId, children , flag){   
     let cloneData = JSON.parse(JSON.stringify(source))
     return cloneData.filter(father=>{
@@ -26,8 +26,9 @@ function treeData(source, id, parentId, children , flag){
         return father[parentId] == flag        // 如果第一层不是parentId=0，请自行修改
     })
 };
-// const uploadUrl="http://192.168.30.36:8088/";
-// const uploadUrl="";
+//  const uploadUrl="http://192.168.30.36:8088/";
+//  const uploadUrl="";
+ const uploadUrl="http://139.196.236.125:8080/"
 export default {
     uploadUrl,toolbarOptions,treeData
 }

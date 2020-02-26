@@ -2,24 +2,19 @@
     <div class="head">
         <div style="height:10vh;min-height:52px;border:1px solid black;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(0deg,rgba(8,60,50,1),rgba(13,92,77,1));color:white">
             <div style="margin-left:50px;font-size:40px;">
-                <!-- <i class="el-icon-platform-eleme"></i> -->
-                <span>工业经济运营平台</span>
+                <span>科创汇</span>
             </div>
             <div style="display:flex;align-items:center;font-size:17px">
-                <!-- <span style="width:25px;height:25px;border-radius:50%;border:1px solid black;display:inline-block"></span> -->
                 <span>你好,{{$store.state.username}}</span>
                 <span style="margin:0 24px;width:0px;height:17px;border-left:1px white solid"></span>
                 <span style="">修改密码</span>
                 <span @click="logout" style="margin:0 24px;cursor:pointer">退出</span>
-                <!-- <i class="el-icon-setting"></i> -->
-                <!-- <el-button type="primary" icon="el-icon-setting"></el-button> -->
             </div>
         </div>
-        <div style="display:flex;padding:11px 45px;background:linear-gradient(to bottom,#f1f1f1 0%,#f1f1f1 50%,#e1e1e1 50%,#e1e1e1 100%);">
+        <!-- <div style="display:flex;padding:11px 45px;background:linear-gradient(to bottom,#f1f1f1 0%,#f1f1f1 50%,#e1e1e1 50%,#e1e1e1 100%);">
             <div @click="tabClick(item,index)" v-for="(item,index) in $store.state.homeTabList" style="border-radius:8px;cursor:pointer" :key="index">
                 <div :class="['head_tab',$store.state.headTabClickIndexStr==index?'active_tab':'']">
                     <span style="vertical-align:middle">
-                        <!-- <i :class="item.icon"></i> -->
                         <img style="width:24px;height:25px" :src="item.icon" alt="">
                     </span>
                     <span>
@@ -28,7 +23,7 @@
                 </div>
                 
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -37,13 +32,11 @@ import { Logout } from "./api";
     export default {
         props: {
             headClickIndex: {
-                // type: Number,
                 default: 0
             },
         },
         data() {
             return {
-                // headClickIndex:0,
                 clickHeadTabIndex:this.headClickIndex,
                 departData:[
                     
@@ -55,23 +48,17 @@ import { Logout } from "./api";
                     {name:'意见信箱',icon:require('../assets/lettertab.png'),},
                     {name:'数据统计',icon:require('../assets/digitaltab.png'),},
                 ],
-                // key: value
             }
         },
         methods: {
             tabClick(item,index) {
                 
-                console.log('location.href',location.href);
+                // console.log('location.href',location.href);
                 
                 if(location.href.indexOf('home')!=-1){
                     this.clickHeadTabIndex=index-0;
-                    // console.log(this.headClickIndex);
                     this.$emit('headClick',index)
                 }else{
-                    // setTimeout(() => {
-                    //     console.log('dingshi');
-                    //     this.$emit('headClick',index);
-                    // }, 10000);
                     this.clickHeadTabIndex=index-0;
                     this.$router.push({path:'/'});
                 }
@@ -81,13 +68,10 @@ import { Logout } from "./api";
                 
             },
             logout(){
-                // sessionStorage.removeItem('username');
-                // sessionStorage.removeItem('token');
                 sessionStorage.clear();
                 this.$store.commit('setToken','');
                 Logout().then(res=>{
                     location.href='/login';
-                    // this.$router.push('/login')
                 })
                 
             },

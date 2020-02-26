@@ -35,7 +35,8 @@ export function updateAdminUser(data){
 //获取所有角色
 export function getAllRoleData(data){
     return request({
-        url:'/sys/role/list',
+        url:'/web/webrole/list',
+        // data,
         params:data,
         method:'get'
     })
@@ -76,7 +77,7 @@ export function saveDeptData(data){
 //获取功能权限
 export function getAllFuncPerm(data){
     return request({
-        url:'/sys/menu/list',
+        url:'/web/webmenu/list',
         params:data,
         method:'get'
     })
@@ -84,7 +85,7 @@ export function getAllFuncPerm(data){
 //获取功能权限下拉框包含一级目录
 export function getAllSelectFuncPerm(data){
     return request({
-        url:'/sys/menu/select',
+        url:'/web/webmenu/select',
         params:data,
         method:'get'
     })
@@ -92,7 +93,7 @@ export function getAllSelectFuncPerm(data){
 //确认新增某角色
 export function saveRoleData(data){
     return request({
-        url:'/sys/role/save',
+        url:'/web/webrole/save',
         data,
         method:'post'
     })
@@ -100,7 +101,7 @@ export function saveRoleData(data){
 //某个角色的具体信息
 export function getRoleDetailInfo(data){
     return request({
-        url:'/sys/role/info',
+        url:'/web/webrole/info',
         params:data,
         method:'get'
     })
@@ -109,7 +110,7 @@ export function getRoleDetailInfo(data){
 //确认编辑某角色
 export function updateRoleData(data){
     return request({
-        url:'/sys/role/update',
+        url:'/web/webrole/update',
         data,
         method:'post'
     })
@@ -136,6 +137,14 @@ export function saveMenuData(data){
         url:'/sys/menu/save',
         data,
         method:'post'
+    })
+}
+//会员账号管理查询接口
+export function getMemAccountData(data){
+    return request({
+        url:'/userManager/selectAllUserInfo',
+        params:data,
+        method:'get'
     })
 }
 //

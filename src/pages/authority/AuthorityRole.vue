@@ -1,50 +1,63 @@
 <template>
     <div>
         <!-- 角色管理页面 -->
-        <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
-            <el-form-item label="">
-                <el-input v-model="formInline.username" placeholder="角色名称"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="onSearch">查询</el-button>
-                <el-button type="primary" @click="onAddnew">新增</el-button>
-            </el-form-item>
-        </el-form>
-        
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="margin:20px">
+                <span class="point_class" @click="changeTypeMem(0)" :style="{paddingRight:20+'px',color:typeMember==0?'#2BB1E8':'#333333'}">会员角色</span>
+                <el-divider direction="vertical"></el-divider>
+                <!-- @click="changeTypeMem(1)" -->
+                <span class="point_class"  :style="{paddingRight:20+'px',paddingLeft:20+'px',color:typeMember==1?'#2BB1E8':'#333333'}">中心角色</span>
+                <el-divider direction="vertical"></el-divider>
+                 <!-- @click="changeTypeMem(2)" -->
+                <span class="point_class" :style="{paddingLeft:20+'px',color:typeMember==2?'#2BB1E8':'#333333'}">机构角色</span>
+            </div>
+            <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item label="">
+                    <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
+                    <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入角色名称"  v-model="formInline.username">
+                        <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <!-- <el-button type="primary" @click="onSearch">查询</el-button> -->
+                    <el-button style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);color:white" @click="onAddnew">新建</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
         <div>
             <el-table
-                ref="multipleTable"
+                
                 :data="tableData"
                 tooltip-effect="dark"
                 style="width: 100%"
                 >
-                <el-table-column
+                <!-- <el-table-column
                 type="selection"
                 width="55">
-                </el-table-column>
-                <el-table-column
+                </el-table-column> -->
+                <!-- <el-table-column
                 label="角色ID"
                 width="120">
                 <template slot-scope="scope">{{ scope.row.roleId }}</template>
-                </el-table-column>
+                </el-table-column> -->
+                <!-- <el-table-column
+                prop="roleName"
+                label="角色名称"
+                width="">
+                </el-table-column> -->
                 <el-table-column
                 prop="roleName"
                 label="角色名称"
-                width="120">
-                </el-table-column>
-                <el-table-column
-                prop="deptName"
-                label="所属部门"
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
                 prop="remark"
-                label="备注"
+                label="最后操作人"
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
                 prop="createTime"
-                label="创建时间"
+                label="最后操作时间"
                 show-overflow-tooltip>
                 </el-table-column>
                  <el-table-column
@@ -52,7 +65,10 @@
                     width="100">
                     <template slot-scope="scope">
                         <!-- <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button> -->
-                        <el-button @click="editClick(scope.row)" type="text" icon="el-icon-edit" size="small"></el-button>
+                        <el-button @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
+                        <button :style="{border:'none',color:scope.row.status==1?'#FD2044':'#F3A157'}" @click="changeStatus(scope.row,scope.$index)" type="text"  size="small">
+                            {{scope.row.status==1?'禁用':'启用'}}
+                        </button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -70,66 +86,35 @@
         </div>
         <!-- 新增或者编辑弹框 -->
         <el-dialog :title="dialogFormVisibleTitle" @open="openDialog" :visible.sync="dialogFormVisible" @close="dialogClose">
-            <el-form :model="form" ref="ruleForm" label-width="100px">
-                <el-form-item label="角色名称" prop="roleName">
+            <el-form :model="form" :rules="rules" ref="ruleForm" label-width="100px">
+                <el-form-item label="角色名称：" prop="roleName">
                     <el-col :span="8">
                         <el-input v-model="form.roleName"></el-input>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="所属部门" prop="deptId">
+                <el-form-item label="备注：" prop="remark">
                     <el-col :span="8">
-                        <treeselect @select="deptSelected" v-model="form.deptId" :multiple="false" :flat="false" :default-expand-level="1" :options="deptSelectOptions" />
-                        <!-- <el-input v-model="form.username"></el-input> -->
+                        <el-input type="textarea" placeholder="请输入备注，限制在100字以内" :rows="4" v-model="form.remark"></el-input>
                     </el-col>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
+                <el-form-item label="权限配置：" prop="remark">
                     <el-col :span="8">
-                        <el-input v-model="form.remark"></el-input>
+                        <div style="height:300px;overflow:auto">
+                            <treeselect
+                            class="no_select"
+                            value-consists-of="ALL_WITH_INDETERMINATE"
+                            :always-open="true"
+                            @select="deptSelected"
+                            v-model="form.menuIdList"
+                            :multiple="true"
+                            :flat="false" 
+                            :default-expand-level="Infinity" 
+                            :options="deptSelectOptions" />
+                         </div>
                     </el-col>
                 </el-form-item>
-                <div style="display:flex;padding:10px 50px">
-                    <div>
-                        <div>功能权限</div>
-                        <el-tree
-                            ref="func_tree"
-                            :data="funcSelectOptions"
-                            show-checkbox
-                            :default-checked-keys="form.menuIdList"
-                            default-expand-all
-                            node-key="id"
-                            :props="defaultProps">
-                        </el-tree>
-                    </div>
-                    <div style="margin-left:50px">
-                        <div>数据权限</div>
-                        <!-- <treeselect
-                         class="no_select"
-                         value-consists-of="ALL_WITH_INDETERMINATE"
-                         :always-open="true"
-                         @select="deptSelected"
-                         v-model="value"
-                         :multiple="true"
-                         :flat="false" 
-                         :default-expand-level="Infinity" 
-                         :options="deptSelectOptions" /> -->
-                        <el-tree
-                            ref="dept_tree"
-                            :data="deptSelectOptions"
-                            show-checkbox
-                            :default-checked-keys="form.deptIdList"
-                            default-expand-all
-                            node-key="id"
-                            :props="defaultProps">
-                        </el-tree>
-                    </div>
-                    <div style="margin-left:200px">
-                        
-                    </div>
-                    
-                </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="getTreeData">获取树节点</el-button>
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="confirmAdd">确 定</el-button>
             </div>
@@ -138,7 +123,7 @@
 </template>
 
 <script>
-import { getAdminManageTable , getAllRoleData , getAllDepartData , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
+import { getAdminManageTable , getAllRoleData , getAllDepartData ,getAllSelectFuncPerm , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     export default {
@@ -169,8 +154,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 callback();
             };
             return {
-                value:[4,6,3,1],
-                 defaultProps: {
+                typeMember:0,
+                defaultProps: {
                     children: 'children',
                     label: 'label'
                 },
@@ -185,19 +170,16 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 },
                 form:{
                     roleName:'',
-                    deptName:'',
-                    deptId:null,
                     remark:'',
                     menuIdList:[],
-                    deptIdList:[],
                 },
                 rules:{
-                    username:[
-                        { required: true, message: '请输入用户名称', trigger: 'blur' },
+                    roleName:[
+                        { required: true, message: '请输入角色名称', trigger: 'blur' },
                         { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
                     ],
-                    deptId:[
-                        { required: true, message: '请选择所属部门', trigger: 'change' }
+                    remark:[
+                        { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
                     ],
                     passwords:[
                         { required: true, message: '请输入用户密码', trigger: 'blur' },
@@ -216,14 +198,14 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     ],
                 },
                 deptSelectOptions:[
-                    {deptId:1,parentId:0,name:'人人开源集团',parentName:null},
-                    {deptId:2,parentId:1,name:'长沙分公司',parentName:"人人开源集团"},
-                    {deptId:3,parentId:1,name:'上海分公司',parentName:"人人开源集团"},
-                    {deptId:4,parentId:3,name:'技术部',parentName:"上海分公司"},
-                    {deptId:5,parentId:3,name:'销售部',parentName:"上海分公司"},
-                    {deptId:6,parentId:1,name:'测试分公司',parentName:"人人开源集团"},
-                    {deptId:7,parentId:6,name:'测试部门',parentName:"测试分公司"},
-                    {deptId:11,parentId:0,name:'1231',parentName:null},
+                    // {deptId:1,parentId:0,name:'人人开源集团',parentName:null},
+                    // {deptId:2,parentId:1,name:'长沙分公司',parentName:"人人开源集团"},
+                    // {deptId:3,parentId:1,name:'上海分公司',parentName:"人人开源集团"},
+                    // {deptId:4,parentId:3,name:'技术部',parentName:"上海分公司"},
+                    // {deptId:5,parentId:3,name:'销售部',parentName:"上海分公司"},
+                    // {deptId:6,parentId:1,name:'测试分公司',parentName:"人人开源集团"},
+                    // {deptId:7,parentId:6,name:'测试部门',parentName:"测试分公司"},
+                    // {deptId:11,parentId:0,name:'1231',parentName:null},
                 ],//部门下拉框
                 funcSelectOptions:[],
                 roleOptions:[
@@ -233,17 +215,16 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     {roleId:4,roleName:'北京分公司'},
                 ],//角色复选框
                 dialogFormVisible:false,
-                dialogFormVisibleTitle:'新增',
+                dialogFormVisibleTitle:'新建角色',
             }
         },
         components: { Treeselect },
         methods: {
-            getTreeData(){
-                console.log("获取",this.$refs.func_tree);
-                console.log(this.$refs.func_tree.getCheckedNodes(false,true));
-                console.log(this.$refs.func_tree.getCheckedKeys());
-                console.log(this.$refs.func_tree.getHalfCheckedKeys());
-                console.log('value',this.value);
+            //切换会员类型
+            changeTypeMem(type){
+                if(this.typeMember!=type){
+                    this.typeMember=type;
+                }
             },
             onSearch() {
                 this.formInline.page=1;
@@ -262,27 +243,27 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //部门下拉框点击事件
             deptSelected(node){
                 console.log(node);
-                this.form.deptName=node.label;
+                // this.form.deptName=node.label;
             },
             opendialog(){
                 return new Promise((resolve,rej)=>{})
             },
             //promise关于角色和部门请求接口封装
             getRoleOrDeptData(){
-                return Promise.all( [ getAllFuncPerm() , getAllDepartData() ] ).then(result=>{
+                return Promise.all( [ getAllSelectFuncPerm() ] ).then(result=>{
                     console.log('promise',result);
-                    this.funcSelectOptions=result[0].data.data;
-                    for(let i=0;i<this.funcSelectOptions.length;i++){
-                        this.funcSelectOptions[i].id=this.funcSelectOptions[i].menuId;
-                        this.funcSelectOptions[i].label=this.funcSelectOptions[i].name;
-                    }
-                    this.funcSelectOptions=this.treeData(this.funcSelectOptions,'menuId','parentId','children');
-                    this.deptSelectOptions=result[1].data.data;
+                    this.deptSelectOptions=result[0].data.data;
+                    // for(let i=0;i<this.funcSelectOptions.length;i++){
+                    //     this.funcSelectOptions[i].id=this.funcSelectOptions[i].menuId;
+                    //     this.funcSelectOptions[i].label=this.funcSelectOptions[i].name;
+                    // }
+                    // this.funcSelectOptions=this.treeData(this.funcSelectOptions,'menuId','parentId','children');
+                    // this.deptSelectOptions=result[1].data.data;
                     for(let i=0;i<this.deptSelectOptions.length;i++){
-                        this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
+                        this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
                         this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
                     }
-                    this.deptSelectOptions=this.treeData(this.deptSelectOptions,'deptId','parentId','children');
+                    this.deptSelectOptions=this.treeData(this.deptSelectOptions,'menuId','parentId','children');
                     // console.log("promise",res);
                 }).catch(err=>{
                     this.$message({
@@ -304,6 +285,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
                         console.log(this.form);
+                        // console.log('console.log(this.form);',this.value)
                         let param={};
                         for(let key in this.form){
                             // if(key=="roleIdList"){
@@ -313,15 +295,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                             // }
                             param[key]=this.form[key];
                         }
+                        param.menuIdList=param.menuIdList.join(',');
                         delete param.createTime;
-                        param.selectMenuIdList=this.$refs.func_tree.getCheckedKeys()?this.$refs.func_tree.getCheckedKeys():[];
-                        let halfMenuId=this.$refs.func_tree.getHalfCheckedKeys()?this.$refs.func_tree.getHalfCheckedKeys():[];
-                        console.log("halfMenuId",halfMenuId)
-                        param.menuIdList=param.selectMenuIdList.concat(halfMenuId);
-                        console.log('this.$refs.dept_tree.getCheckedKeys()',this.$refs.dept_tree.getCheckedKeys());
-                        console.log("this.$refs.dept_tree.getHalfCheckedKeys()",this.$refs.dept_tree.getHalfCheckedKeys());
-                        param.selectDeptIdList=this.$refs.dept_tree.getCheckedKeys()?this.$refs.dept_tree.getCheckedKeys():[];
-                        param.deptIdList=param.selectDeptIdList.concat(this.$refs.dept_tree.getHalfCheckedKeys()?this.$refs.dept_tree.getHalfCheckedKeys():[]);
                         if(param.roleId){
                             updateRoleData(param).then(res=>{
                                 console.log(res);
@@ -365,6 +340,17 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     });
                 })
             },
+            changeStatus(row,index){
+                if(row.status!=1){
+                    // this.tableData[index].status=1;
+                    row.status=1;
+                    this.tableData.splice(index,1,row);
+                }else{
+                    row.status=0;
+                    this.tableData.splice(index,1,row);
+                }
+                console.log(this.tableData)
+            },
             //关闭弹框
             dialogClose(){
                 this.dialogFormVisible=false;
@@ -375,7 +361,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         this.form[key]='';
                     }
                 }
-                this.form.deptId=null;
+                // this.form.deptId=null;
             },
             //打开弹框前回调事件
             openDialog(){
@@ -428,5 +414,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     .no_select .vue-treeselect__control{
         display: none!important;
     }
-
+    .point_class{
+        cursor: pointer;
+        font-size:16px;
+        font-family:PingFangSC-Medium,PingFang SC;
+        font-weight:500;
+    }
 </style>

@@ -37,25 +37,7 @@ export default {
       }
       this.$store.commit('changeMenuTitle',sessionStorage['menuTitle']);
       this.$store.commit("setToken",sessionStorage['token']);
-      // this.$store.commit("changeUserName",sessionStorage['username']);
-      // this.$store.commit("changeUserName",sessionStorage['username']);
-      this.$store.state.username
     }
-    // console.log(location.href.split('#')[1]);
-    //纠正页面刚加载显示title
-    // let key=location.href.split('#')[1];
-    // let title='';
-    // let filterMenuData=this.navbarData.filter((val)=>{
-    //     return val.path==key
-    // });
-    // if(filterMenuData.length>0){
-    //   title=filterMenuData[0].title
-    // }
-    // this.$store.commit('changeMenuTitle',title);
-    
-    // sessionStorage['menuTitle']=title;
-    // console.log(this.$store);
-    // console.log(this.navbarData);
   },
 }
 </script>
