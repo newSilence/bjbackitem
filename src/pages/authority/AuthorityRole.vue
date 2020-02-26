@@ -51,12 +51,12 @@
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
-                prop="remark"
+                prop="modifyBy"
                 label="最后操作人"
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
-                prop="createTime"
+                prop="updateTime"
                 label="最后操作时间"
                 show-overflow-tooltip>
                 </el-table-column>
