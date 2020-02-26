@@ -14,7 +14,7 @@
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
                     <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
-                    <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入角色名称"  v-model="formInline.username">
+                    <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入角色名称"  v-model="formInline.roleName">
                         <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
                     </el-input>
                 </el-form-item>
