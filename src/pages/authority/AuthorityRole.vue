@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import { getAdminManageTable , getAllRoleData , getAllDepartData ,getAllSelectFuncPerm , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
+import { getAdminManageTable , getAllRoleData , updateRoleStatus ,getAllDepartData ,getAllSelectFuncPerm , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     export default {
@@ -341,13 +341,29 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 })
             },
             changeStatus(row,index){
+                console.log(row);
+                let param={};
+                param.roleId=row.roleId;
                 if(row.status!=1){
                     // this.tableData[index].status=1;
                     row.status=1;
-                    this.tableData.splice(index,1,row);
+                    param.status=1;
+                    updateRoleStatus(param).then(res=>{
+                        if(res.data.code==0){
+                            this.tableData.splice(index,1,row);
+                        }else{}
+                        // console.log(res);
+                    })
+                    
                 }else{
                     row.status=0;
-                    this.tableData.splice(index,1,row);
+                    param.status=0;
+                    updateRoleStatus(param).then(res=>{
+                        if(res.data.code==0){
+                            this.tableData.splice(index,1,row);
+                        }else{}
+                        // console.log(res);
+                    })
                 }
                 console.log(this.tableData)
             },

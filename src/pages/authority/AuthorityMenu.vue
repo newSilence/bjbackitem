@@ -13,7 +13,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center">
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="账号性质：">
-                    <el-select v-model="formInline.accountType" placeholder="请选择">
+                    <el-select v-model="formInline.identity" placeholder="请选择">
                         <el-option
                         v-for="item in accountTypeData"
                         :key="item.value"
@@ -33,8 +33,9 @@
         </div>
         <div>
             <el-table
-                
+                @selection-change="chooseTr"
                 :data="tableData"
+                ref="multipleTable"
                 tooltip-effect="dark"
                 style="width: 100%"
                 >
@@ -44,8 +45,11 @@
                 </el-table-column>
                 <el-table-column
                 label="会员名称"
+                
                 width="120">
-                <template slot-scope="scope">{{ scope.row.realName }}</template>
+                <template slot-scope="scope">
+                    <p style="cursor:pointer;height:23px"  @click="seenDeatil(scope.row)">{{ scope.row.realName }}</p>
+                </template>
                 </el-table-column>
                 <el-table-column
                 prop="phoneNumber"
@@ -56,7 +60,7 @@
                 label="账号性质"
                 show-overflow-tooltip>
                     <template slot-scope="scope">{{ 
-                        scope.row.facilitator&&scope.row.facilitator.expertId?'服务商'
+                        scope.row.facilitator&&scope.row.facilitator.facilitatorId?'服务商'
                         :scope.row.expertInfo&&scope.row.expertInfo.expertId?'专家'
                         :scope.row.type==1?'个人'
                         :scope.row.type==2?'机构':''}}</template>
@@ -76,13 +80,16 @@
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
-                        <!-- <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button> -->
-                        <el-button @click="editClick(scope.row)" type="text" size="small">权限设置</el-button>
+                        <el-button @click="setPermit(scope.row)" type="text" size="small">权限设置</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
-        <div>
+        <div style="display:flex;justify-content:space-between">
+            <div style="margin-top:10px">
+                <button @click="canUse(0)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">启用</button>
+                <button @click="canUse(1)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">禁用</button>
+            </div>
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -138,95 +145,209 @@
         <el-dialog  :title="dialogExpertFormTitle" :visible.sync="dialogExpertFormVisible">
             <!-- 基本信息 -->
             <div style="display:flex">
-                <div>
+                <div style="width:130px">
                     <span style="padding-left:10px;border-left:3px solid #2BB1E8;color:#333333;font-size:16px;font-weight:500;vertical-align:middle">基本信息：</span>
                 </div>
                 <el-form ref="baseform" :model="baseform" label-width="100px">
                     <el-form label-width="100px" :inline="true" class="demo-form-inline">
                         <el-form-item label="姓名：">
-                            <el-input readonly v-model="baseform.name"></el-input>
+                            <el-input readonly v-model="baseform.realName"></el-input>
                         </el-form-item>
                         <el-form-item style="padding-left:100px" label="性别：">
-                            <el-radio-group  v-model="baseform.gender">
-                                <el-radio readonly  v-show="baseform.gender=='男'" label="男"></el-radio>
-                                <el-radio readonly v-show="baseform.gender=='女'" label="女"></el-radio>
+                            <el-radio-group  v-model="baseform.sex">
+                                <el-radio readonly  label="男"></el-radio>
+                                <el-radio readonly  label="女"></el-radio>
                             </el-radio-group>
                         </el-form-item>
                     </el-form>
                     <el-form-item label="出生日期：">
-                        <el-input readonly v-model="baseform.name"></el-input>
+                        <el-input readonly v-model="baseform.birthdate"></el-input>
                     </el-form-item>
                     <el-form-item label="联系邮箱：">
-                        <el-input readonly v-model="baseform.name"></el-input>
+                        <el-input readonly v-model="baseform.email"></el-input>
                     </el-form-item>
                     <el-form label-width="100px" :inline="true" class="demo-form-inline">
                         <el-form-item label="所在单位：">
                             <span style="border:1px solid #EDEDED;padding:10px">
-                                {{baseform.dept}}
+                                {{baseform.companyName}}
                             </span>
                             
                             <!-- <el-input v-model=""></el-input> -->
                         </el-form-item>
                         <el-form-item label="所在城市：">
-                            <el-input readonly v-model="baseform.name"></el-input>
+                            <el-input readonly v-model="baseform.cityName"></el-input>
                         </el-form-item>
                     </el-form>
                 </el-form>
             </div>
             <!-- 专家描述 -->
-            <div style="display:flex">
-                <div>
+            <div v-show="isShowOther" style="display:flex">
+                <div style="width:100px">
                     <span style="padding-left:10px;border-left:3px solid #2BB1E8;color:#333333;font-size:16px;font-weight:500;vertical-align:middle">专家描述：</span>
                 </div>
                 <el-form ref="baseform" :model="baseform" label-width="100px">
                     <el-form-item label="研究领域：">
-                        <el-input readonly v-model="baseform.name"></el-input>
+                        <el-input readonly v-model="baseform.researchArea"></el-input>
                     </el-form-item>
                     <el-form-item label="研究方向：">
-                        <el-input readonly v-model="baseform.name"></el-input>
+                        <el-input readonly v-model="baseform.research"></el-input>
                     </el-form-item>
                     <el-form-item label="职称头衔：">
-                        <el-input readonly v-model="baseform.name"></el-input>
+                        <el-input readonly v-model="baseform.jobTitle"></el-input>
                     </el-form-item>
                     <el-form label-width="100px" :inline="true" class="demo-form-inline">
                         <el-form-item label="最高职称：">
-                            <el-input readonly v-model="baseform.name"></el-input>
+                            <el-input readonly v-model="baseform.topTitle"></el-input>
                         </el-form-item>
                         <el-form-item label="取得时间：">
-                            <el-input readonly v-model="baseform.name"></el-input>
+                            <el-input readonly v-model="baseform.getTime"></el-input>
                         </el-form-item>
                     </el-form>
                     
                     <el-form-item label="百科人物：">
-                        <el-input readonly v-model="baseform.name"></el-input>
+                        <el-input readonly v-model="baseform.expertLink"></el-input>
                     </el-form-item>
                     <el-form label-width="110px" :inline="true" class="demo-form-inline">
                         <el-form-item style="padding-left:100px" label="是否官网公开：">
-                            <el-radio-group v-model="baseform.gender">
-                                <el-radio label="是"></el-radio>
-                                <el-radio label="否"></el-radio>
+                            <el-radio-group v-model="baseform.showPublic">
+                                <el-radio :label="0">是</el-radio>
+                                <el-radio :label="1">否</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item style="padding-left:100px" label="是否展示全名：">
-                            <el-radio-group v-model="baseform.gender">
-                                <el-radio label="是"></el-radio>
-                                <el-radio label="否"></el-radio>
+                            <el-radio-group v-model="baseform.fullName">
+                                <el-radio :label="0">是</el-radio>
+                                <el-radio :label="1">否</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         
                     </el-form>
                     <el-form-item label="宣传照：">
-                        <img src="" alt="">
+                        <img :src="baseform.headPortrait" alt="">
                     </el-form-item>
                     <el-form label-width="100px" :inline="true" class="demo-form-inline">
-                        <el-form-item label="个人简介：">
+                        <div style="display:flex">
+                            <el-form-item label="个人简介：">
+                                
+                            </el-form-item>
+                            <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
+                                <div  v-html="baseform.individual"></div>
+                            </div>
+                        </div>
+                    </el-form>
+                </el-form>
+            </div>
+            <!-- 经纪人信息 -->
+            <div v-show="isShowOther" style="display:flex">
+                <div style="width:100px">
+                    <span style="padding-left:10px;border-left:3px solid #2BB1E8;color:#333333;font-size:16px;font-weight:500;vertical-align:middle">专家描述：</span>
+                </div>
+                <el-form ref="baseform" :model="baseform" label-width="100px">
+                    <el-form label-width="100px" :inline="true" class="demo-form-inline">
+                        <el-form-item label="描述：">
                             <div style="border:1px solid #EDEDED" class="detail-content content ql-editor" >
-                                <div  v-html="baseform.des">
-                                </div>
+                                <div  v-html="baseform.des"></div>
                             </div>
                         </el-form-item>
                     </el-form>
                 </el-form>
+            </div>
+        </el-dialog>
+        <!-- 机构详情、审核状态 -->
+        <el-dialog  :title="dialogFactoraFormTitle" :visible.sync="dialogFactoraFormVisible">
+            <!-- 基本信息 -->
+            <div style="display:flex">
+                <div style="width:130px">
+                    <span style="padding-left:10px;border-left:3px solid #2BB1E8;color:#333333;font-size:16px;font-weight:500;vertical-align:middle">基本信息：</span>
+                </div>
+                <el-form ref="factoBaseForm" :model="factoBaseForm" label-width="150px">
+                    <el-form label-width="150px" :inline="true" class="demo-form-inline">
+                        <el-form-item label="单位名称：">
+                            <el-input readonly v-model="factoBaseForm.companyName"></el-input>
+                        </el-form-item>
+                        
+                        
+                    </el-form>
+                    <el-form-item label="统一社会信用代码：">
+                        <el-input readonly v-model="factoBaseForm.companyCode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="单位性质：">
+                        <el-input readonly v-model="factoBaseForm.companyType"></el-input>
+                    </el-form-item>
+                    <el-form-item label="所在城市：">
+                        <el-input readonly v-model="factoBaseForm.cityName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="联系邮箱：">
+                        <el-input readonly v-model="factoBaseForm.email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="营业执照：">
+                        <img :src="factoBaseForm.businessLicense" alt="">
+                    </el-form-item>
+                    <el-form label-width="150px" :inline="true" class="demo-form-inline">
+                        <div style="display:flex">
+                            <el-form-item label="公司介绍：">
+                                
+                            </el-form-item>
+                            <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
+                                <div  v-html="factoBaseForm.serviceProviders"></div>
+                            </div>
+                        </div>
+                    </el-form>
+                </el-form>
+            </div>
+            <!-- 服务商信息 -->
+            <div v-show="isShowOther" style="display:flex">
+                <div style="width:130px">
+                    <span style="padding-left:10px;border-left:3px solid #2BB1E8;color:#333333;font-size:16px;font-weight:500;vertical-align:middle">服务商信息：</span>
+                </div>
+                <div>
+                <el-form ref="factoBaseForm" :model="factoBaseForm" label-width="100px">
+                    <el-form label-width="150px" :inline="true" class="demo-form-inline">
+                        <div style="display:flex">
+                            <el-form-item label="描述：">
+                                
+                            </el-form-item>
+                            <div style="border:1px solid #EDEDED;width:100%;min-width:200px" class="detail-content content ql-editor" >
+                                <div  v-html="factoBaseForm.applicationDescription"></div>
+                            </div>
+                        </div>
+                    </el-form>
+                </el-form>
+                <el-form ref="factoBaseForm" :model="factoBaseForm" label-width="100px">
+                    <el-form label-width="150px" :inline="true" class="demo-form-inline">
+                        <div style="display:flex">
+                            <el-form-item label="主营业务介绍：">
+                                
+                            </el-form-item>
+                            <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
+                                <div  v-html="factoBaseForm.description"></div>
+                            </div>
+                        </div>
+                    </el-form>
+                </el-form>
+                </div>
+            </div>
+        </el-dialog>
+        <!-- 权限设置页面 -->
+        <el-dialog title="权限设置" :visible.sync="dialogSetPermitFormVisible">
+            <el-form :model="permitForm">
+                <el-form-item label="设置角色：" label-width="100px">
+                    <el-select v-model="permitForm.roleId" multiple placeholder="请选择">
+                        <el-option
+                        v-for="item in roleOptionsData"
+                        :key="item.roleId"
+                        :label="item.roleName"
+                        :value="item.roleId">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="操作管理员：" label-width="100px">
+                    {{optionName}}
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogSetPermitFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="confirmSetAccountRolePer">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -234,7 +355,7 @@
 
 <script>
 import { getAdminManageTable  , getAllDepartData , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
-import { getMemAccountData } from './api'
+import { getMemAccountData , getMemAccountDetailData , getAccountMemPermWebrole , setAccountRolePerUrl , getAccountPermWebrole , getMemAccountSelectAuthenticationData } from './api'
 
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -242,25 +363,71 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
        
         data() {
             return {
-                
+                //复选框选择的数据
+                chooseUseData:[],
+                optionName:'',
                 accountTypeData:[//账号性质
-                    {value:'全部',label:'全部'},
-                    {value:'普通个人',label:'普通个人'},
-                    {value:'机构',label:'机构'},
-                    {value:'专家',label:'专家'},
-                    {value:'经纪人',label:'经纪人'},
-                    {value:'服务商',label:'服务商'},
-                    {value:'其他自定义',label:'其他自定义'},
+                    {value:'',label:'全部'},
+                    {value:'1',label:'普通个人'},
+                    {value:'2',label:'机构'},
+                    //{value:'3',label:'专家'},
+                    // {value:'经纪人',label:'经纪人'},
+                    //{value:'4',label:'服务商'},
+                    // {value:'其他自定义',label:'其他自定义'},
                 ],
                 //专家详情弹框
                 dialogExpertFormVisible:false,
-                dialogExpertFormTitle:'会员详情',
-                baseform:{
-                    name:'张三',
-                    gender:'男',
-                    dept:'回家后给单身狗单身狗单身狗的升级换代规划见多识广获得更好的',
-                    des:'哈哈哈哈哈事实是生生世世生生世世生生世世生生世世哈哈哈哈卡技术上看数的空间'
+                dialogFactoraFormVisible:false,
+                //角色下拉框数据
+                roleOptionsData:[
+                    {
+                        value: '选项1',
+                        label: '黄金糕'
+                    }, {
+                        value: '选项2',
+                        label: '双皮奶'
+                    },
+                ],
+                //
+                permitForm:{
+                    roleId:[],
                 },
+                dialogExpertFormTitle:'会员详情',
+                dialogFactoraFormTitle:'会员详情',
+                baseform:{
+                    realName:'张三',
+                    sex:'男',
+                    birthdate:'',
+                    email:'',
+                    companyName:'',
+                    cityName:'',
+                    researchArea:'',
+                    research:'',
+                    jobTitle:'',
+                    topTitle:'',
+                    getTime:'',
+                    expertLink:'',
+                    showPublic:'',
+                    fullName:'',
+                    headPortrait:'',
+                    individual:'',
+                },
+                factoBaseForm:{
+                  companyName:'',
+                  companyCode:'',  
+                  companyType:'',
+                  cityName:'',
+                  email:'',
+                  businessLicense:'',
+                  serviceProviders:'',
+                  applicationDescription:'',
+                  description:'',
+                },
+                isShowOther:false,
+                //权限设置弹框
+                dialogSetPermitFormVisible:false,
+                //当前的用户Id
+                userId:'',
                 value:[4,6,3,1],
                 typeMember:0,
                 defaultProps: {
@@ -325,11 +492,137 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         },
         components: { Treeselect },
         methods: {
+            chooseTr(val){
+                this.chooseUseData=val;
+            },
             //切换会员类型
             changeTypeMem(type){
                 if(this.formInline.auditStatus!==type){
                     this.formInline.auditStatus=type;
                     this.fetchData();
+                }
+            },
+            //点击表格行
+            seenDeatil(row){
+                console.log(row);
+                if(row.expertInfo||row.type==1){
+                    this.dialogExpertFormVisible=true;
+                }
+                if(row.facilitator||row.type==2){
+                    this.dialogFactoraFormVisible=true;
+                }
+                let param={};
+                param.linkUserId=row.userId;
+                getMemAccountDetailData(param).then(res=>{
+                    console.log('detail',res);
+                    if(res.data.data){
+                        for(let key in this.baseform){
+                            if(res.data.data.hasOwnProperty(key)){
+                                this.baseform[key]=res.data.data[key];
+                            }
+                            
+                        }
+                        for(let key in this.factoBaseForm){
+                            if(res.data.data.hasOwnProperty(key)){
+                                if(key=="companyType"){
+                                    console.log('res.data.data[key]',res.data.data[key]);
+                                    this.factoBaseForm[key]=res.data.data[key]==1?'私企'
+                                    :res.data.data[key]==2?'国企'
+                                    :res.data.data[key]==3?'混合'
+                                    :res.data.data[key]==4?'外资':''
+                                }else{
+                                    this.factoBaseForm[key]=res.data.data[key];
+                                }
+                            }
+                            
+                        }
+                        
+                    }
+                })
+                let oparam={};
+                this.isShowOther=false;
+                if(row.expertInfo){
+                    this.isShowOther=true;
+                    oparam.type=1;
+                    oparam.id=row.expertInfo.expertId;
+                }
+                if(row.facilitator){
+                    this.isShowOther=true;
+                    oparam.type=2;
+                    oparam.id=row.facilitator.facilitatorId
+                }
+                getMemAccountSelectAuthenticationData(oparam).then(res=>{
+                    if(res.data.data){
+                        for(let key in this.baseform){
+                            if(res.data.data.hasOwnProperty(key)){
+                                this.baseform[key]=res.data.data[key];
+                            }
+                            
+                        }
+                        for(let key in this.factoBaseForm){
+                            if(res.data.data.hasOwnProperty(key)){
+                                this.factoBaseForm[key]=res.data.data[key];
+                            }
+                            
+                        }
+                    }
+                    console.log("resdddddddddd",res);
+                })
+            },
+            //权限设置
+            setPermit(row){
+                console.log(row);
+                this.userId=row.userId;
+                let param={userId:this.userId};
+                getAccountPermWebrole(param).then(res=>{
+                    console.log("sssresponse",res);
+                    if(res.data.code==0){
+                        this.permitForm.roleId=res.data.data.roleIdList;
+                    }
+                    
+                })
+                this.dialogSetPermitFormVisible=true;
+
+                getAccountMemPermWebrole().then(res=>{
+                    console.log(res);
+                    if(res.data.code==0){
+                        this.roleOptionsData=res.data.data;
+                    }else{
+                        this.roleOptionsData=[];
+                    }
+                    
+                })
+            },
+            //确认权限设置
+            confirmSetAccountRolePer(){
+                let param={};
+                param.roleIdList=this.permitForm.roleId;
+                param.userId=this.userId;
+                // console.log(this.permitForm.roleId);
+                // return
+                setAccountRolePerUrl(param).then(res=>{
+                    console.log("resdddd",res);
+                    if(res.data.code==0){
+                        this.dialogSetPermitFormVisible=false;
+                    }else{
+                        this.$message({
+                            showClose: true,
+                            message: '设置失败',
+                            type: 'error'
+                        });
+                    }
+                })
+            },
+            //启用和禁用
+            canUse(data){
+                if(this.chooseUseData.length==0){
+                    this.$message({
+                        showClose: true,
+                        message: '请选择用户',
+                        type: 'warn'
+                    });
+                }else{
+                    // this.$refs.multipleTable.clearSelection();
                 }
             },
             getTreeData(){
@@ -482,8 +775,22 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 getMemAccountData(this.formInline).then(res=>{
                     console.log('resssssssssssssssssssssssvbsvgvg',res.status);
                     if(res.status==200){
+                        
                         this.tableData=res.data.data.list;
-
+                        for(let i=0;i<this.tableData.length;i++){
+                            if(this.tableData[i].expertInfo&&this.tableData[i].facilitator){
+                                let facilitator=JSON.parse(JSON.stringify(this.tableData[i].facilitator));
+                                let expertInfo=JSON.parse(JSON.stringify(this.tableData[i].expertInfo));
+                                
+                                this.tableData[i].facilitator=null;
+                                this.tableData[i].expertInfo=null;
+                                let obj=JSON.parse(JSON.stringify(this.tableData[i]));
+                                this.tableData[i].facilitator=facilitator;
+                                obj.expertInfo=expertInfo;
+                                this.tableData.splice(i,0,obj);
+                                i++;
+                            }
+                        }
                         console.log('this.tableData',this.tableData)
                         this.total=res.data.data.total;
                     }
@@ -500,6 +807,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             }
         },
         created () {
+            console.log('sessionStorage',sessionStorage['username']);
+            this.optionName=sessionStorage['username'];
             this.fetchData();
             //先处理成vue-treeselect的需求字段。
             for(let i=0;i<this.deptSelectOptions.length;i++){

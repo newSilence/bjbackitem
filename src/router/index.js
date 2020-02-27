@@ -77,18 +77,18 @@ const routerAll=new Router({
     }
   ]
 });
-routerAll.beforeEach((to, from, next) => {
-//   判断会话如果存在用户名，就跳转
-  if(sessionStorage['username']){
-    next()
-    ////判断如果不存在用户名且又不是登录页，跳到登陆页
-  }else if(!sessionStorage['username']&&to.path!='/login'){
-    console.log('loginlogin');
-    next('/login')
-    //判断如果是登陆页，就直接登陆
-  }else if(to.path=='/login'){
-    next()
-  }
-  // to and from are both route objects. must call `next`.
-})
+// routerAll.beforeEach((to, from, next) => {
+// //   判断会话如果存在用户名，就跳转
+//   if(sessionStorage['username']){
+//     next()
+//     ////判断如果不存在用户名且又不是登录页，跳到登陆页
+//   }else if(!sessionStorage['username']&&to.path!='/login'){
+//     console.log('loginlogin');
+//     next('/login')
+//     //判断如果是登陆页，就直接登陆
+//   }else if(to.path=='/login'){
+//     next()
+//   }
+//   // to and from are both route objects. must call `next`.
+// })
 export default routerAll;

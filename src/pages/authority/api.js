@@ -85,11 +85,37 @@ export function getAllFuncPerm(data){
 //获取功能权限下拉框包含一级目录
 export function getAllSelectFuncPerm(data){
     return request({
-        url:'/web/webmenu/select',
+        url:'/web/webmenu/list',
         params:data,
         method:'get'
     })
 }
+//查询当前账户分配的角色
+export function getAccountPermWebrole(data){
+    return request({
+        url:'/web/webuser/userInfo',
+        params:data,
+        method:'get'
+    })
+}
+//账户分配角色，角色的下拉列表
+export function getAccountMemPermWebrole(data){
+    return request({
+        url:'/web/webrole/select',
+        params:data,
+        method:'get'
+    })
+}
+//确认账户分配角色
+export function setAccountRolePerUrl(data){
+    return request({
+        url:'/web/webuser/updateUserRole',
+        data,
+        method:'post'
+    })
+}
+//
+
 //确认新增某角色
 export function saveRoleData(data){
     return request({
@@ -111,6 +137,14 @@ export function getRoleDetailInfo(data){
 export function updateRoleData(data){
     return request({
         url:'/web/webrole/update',
+        data,
+        method:'post'
+    })
+}
+//角色启用禁用
+export function updateRoleStatus(data){
+    return request({
+        url:'/web/webrole/updateStatus',
         data,
         method:'post'
     })
@@ -142,7 +176,23 @@ export function saveMenuData(data){
 //会员账号管理查询接口
 export function getMemAccountData(data){
     return request({
-        url:'/userManager/selectAllUserInfo',
+        url:'/manager/userManager/selectAllUserInfo',
+        params:data,
+        method:'get'
+    })
+}
+//根据type：1代表专家2代表服务商及专家或者服务商的id查询对应详情/manager/userManager/selectAuthentication
+export function getMemAccountSelectAuthenticationData(data){
+    return request({
+        url:'/manager/userManager/selectAuthentication',
+        params:data,
+        method:'get'
+    })
+}
+//查看详情信息
+export function getMemAccountDetailData(data){
+    return request({
+        url:'/user/selectUserInfoByFilter',
         params:data,
         method:'get'
     })
