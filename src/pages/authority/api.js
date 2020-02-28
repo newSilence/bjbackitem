@@ -85,7 +85,7 @@ export function getAllFuncPerm(data){
 //获取功能权限下拉框包含一级目录
 export function getAllSelectFuncPerm(data){
     return request({
-        url:'/web/webmenu/list',
+        url:'/web/webmenu/select',
         params:data,
         method:'get'
     })
@@ -149,26 +149,50 @@ export function updateRoleStatus(data){
         method:'post'
     })
 }
+// //确认编辑某个目录
+// export function updateMenuData(data){
+//     return request({
+//         url:'/sys/menu/update',
+//         data,
+//         method:'post'
+//     })
+// }
 //确认编辑某个目录
 export function updateMenuData(data){
     return request({
-        url:'/sys/menu/update',
+        url:'/web/webmenu/update',
         data,
         method:'post'
     })
 }
+// //删除某一条功能权限
+// export function deleteMenuData(data){
+//     return request({
+//         url:'/sys/menu/delete',
+//         data,
+//         method:'post'
+//     })
+// }
 //删除某一条功能权限
 export function deleteMenuData(data){
     return request({
-        url:'/sys/menu/delete',
+        url:'/web/webmenu/delete',
         data,
         method:'post'
     })
 }
+// //确认新增某个目录
+// export function saveMenuData(data){
+//     return request({
+//         url:'/sys/menu/save',
+//         data,
+//         method:'post'
+//     })
+// }
 //确认新增某个目录
 export function saveMenuData(data){
     return request({
-        url:'/sys/menu/save',
+        url:'/web/webmenu/save',
         data,
         method:'post'
     })
@@ -195,6 +219,14 @@ export function getMemAccountDetailData(data){
         url:'/user/selectUserInfoByFilter',
         params:data,
         method:'get'
+    })
+}
+//启用或者禁用会员账号
+export function updateCanOrUse(data){
+    return request({
+        url:'/manager/userManager/upDateUserState',
+        data,
+        method:'post'
     })
 }
 //

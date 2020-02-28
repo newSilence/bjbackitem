@@ -87,6 +87,7 @@ import loginBk from "../../assets/loginBk.png";
 <style>
     .bklogin{
         background: url('../../assets/loginBk.png');
+        background-size: 100%;
         height:100%;
         display:flex;
         justify-content: center;

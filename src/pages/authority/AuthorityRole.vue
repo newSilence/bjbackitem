@@ -250,7 +250,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //promise关于角色和部门请求接口封装
             getRoleOrDeptData(){
-                return Promise.all( [ getAllSelectFuncPerm() ] ).then(result=>{
+                return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
                     console.log('promise',result);
                     this.deptSelectOptions=result[0].data.data;
                     // for(let i=0;i<this.funcSelectOptions.length;i++){
@@ -282,6 +282,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //确认新增
             confirmAdd(){
+                console.log(this.form);
+                // return false;
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
                         console.log(this.form);
@@ -328,7 +330,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 }
                 Promise.all([this.getRoleOrDeptData(),getRoleDetailInfo(param)]).then(result=>{
                     console.log(result);
-                    this.form=result[1].data.data;
+                    for(let key in this.form){
+                        this.form[key]=result[1].data.data[key];
+                    }
+                    // this.form=result[1].data.data;
                     // this.form.menuIdList=result[1].data.data.selectMenuIdList?result[1].data.data.selectMenuIdList:[];
                     // this.form.deptIdList=result[1].data.data.selectDeptIdList?result[1].data.data.selectDeptIdList:[];
                     

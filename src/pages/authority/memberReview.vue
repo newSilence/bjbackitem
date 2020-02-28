@@ -1,6 +1,6 @@
 <template>
     <div>
-        <!-- <div style="margin:20px">
+        <div style="margin:20px">
             <span class="point_class" @click="changeTypeMem('')" :style="{paddingRight:20+'px',color:formInline.auditStatus===''?'#2BB1E8':'#333333'}">全部</span>
             <el-divider direction="vertical"></el-divider>
             <span class="point_class" @click="changeTypeMem(0)" :style="{paddingRight:20+'px',paddingLeft:20+'px',color:formInline.auditStatus===0?'#2BB1E8':'#333333'}">待审核</span>
@@ -8,7 +8,7 @@
             <span class="point_class" @click="changeTypeMem(2)" :style="{paddingRight:20+'px',paddingLeft:20+'px',color:formInline.auditStatus===2?'#2BB1E8':'#333333'}">未通过</span>
             <el-divider direction="vertical"></el-divider>
             <span class="point_class" @click="changeTypeMem(1)" :style="{paddingLeft:20+'px',color:formInline.auditStatus===1?'#2BB1E8':'#333333'}">已通过</span>
-        </div> -->
+        </div>
         <!-- 会员账号管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
@@ -48,7 +48,7 @@
                 
                 width="120">
                 <template slot-scope="scope">
-                    <p :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}"  @click="seenDeatil(scope.row)">{{ scope.row.realName }}</p>
+                    <p style="cursor:pointer;height:23px"  @click="seenDeatil(scope.row)">{{ scope.row.realName }}</p>
                 </template>
                 </el-table-column>
                 <el-table-column
@@ -66,6 +66,11 @@
                         :scope.row.type==2?'机构':''}}</template>
                 </el-table-column>
                 <el-table-column
+                prop="phoneNumber"
+                label="申请权限"
+                width="">
+                </el-table-column>
+                <el-table-column
                 prop="provinceName"
                 label="所在地区"
                 show-overflow-tooltip>
@@ -73,8 +78,13 @@
                 </el-table-column>
                 <el-table-column
                 prop="createTime"
-                label="更新时间"
+                label="创建时间"
                 show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                prop="phoneNumber"
+                label="认证状态"
+                width="">
                 </el-table-column>
                  <el-table-column
                     label="操作"
@@ -88,7 +98,7 @@
         <div style="display:flex;justify-content:space-between">
             <div style="margin-top:10px">
                 <button @click="canUse(0)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">启用</button>
-                <button @click="canUse(2)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">禁用</button>
+                <button @click="canUse(1)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">禁用</button>
             </div>
             <el-pagination
                 @size-change="handleSizeChange"
@@ -355,7 +365,7 @@
 
 <script>
 import { getAdminManageTable  , getAllDepartData , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
-import { getMemAccountData , getMemAccountDetailData , getAccountMemPermWebrole , setAccountRolePerUrl , getAccountPermWebrole , getMemAccountSelectAuthenticationData , updateCanOrUse } from './api'
+import { getMemAccountData , getMemAccountDetailData , getAccountMemPermWebrole , setAccountRolePerUrl , getAccountPermWebrole , getMemAccountSelectAuthenticationData } from './api'
 
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -615,8 +625,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //启用和禁用
             canUse(data){
-                // console.log(this.chooseUseData);
-                // return false;
                 if(this.chooseUseData.length==0){
                     this.$message({
                         showClose: true,
@@ -624,22 +632,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         type: 'warn'
                     });
                 }else{
-                    let ids=[];
-                    for(let i=0;i<this.chooseUseData.length;i++){
-                        ids.push(this.chooseUseData[i].userId-0)
-                    }
-                    // console.log(ids);
-                    let param={};
-                    // let param=new URLSearchParams();
-                    // param.append('ids',ids);
-                    // param.append('state',data);
-                    // param.ids=JSON.stringify(ids);
-                    param.ids=ids.join(',');
-                    param.state=data;
-                    updateCanOrUse(param).then(res=>{
-                        console.log("resresrse",res);
-                        this.fetchData();
-                    })
                     // this.$refs.multipleTable.clearSelection();
                 }
             },

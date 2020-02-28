@@ -58,7 +58,9 @@ export default {
                         break;
                     }
                 }else{
-                    if(this.navbarData[i].url=='key'){
+                    console.log('ifelse');
+                    if(this.navbarData[i].url==key){
+                        console.log('this.navbarData[i]',this.navbarData[i]);
                         menuTitle=this.navbarData[i].name;
                         break;
                     }
