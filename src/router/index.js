@@ -11,10 +11,15 @@ import carte from '@/pages/authority/carte'
 import WebMenu from '@/pages/webauthority/WebMenu'
 import WebRole from '@/pages/webauthority/WebRole'
 import WebAdmin from '@/pages/webauthority/WebAdmin'
-
 import Login from '@/pages/login/Login'
 import ConsultManage from '@/pages/consultManage'
 import Error from '@/pages/notFound/Error'
+
+// 积分类型
+import IntegralType from '@/pages/integral/integral-type'
+import IntegralRules from '@/pages/integral/integral-rules'
+
+
 Vue.use(Router)
 const routerAll=new Router({
   routes: [
@@ -72,6 +77,16 @@ const routerAll=new Router({
           path:'consultManage',
           name:'ConsultManage',
           component:ConsultManage,
+        },
+        {
+          path:'integral/IntegralType',
+          name:'IntegralType',
+          component:IntegralType,
+        },
+        {
+          path:'integral/IntegralRules',
+          name:'IntegralRules',
+          component:IntegralRules,
         },
       ]
     },
