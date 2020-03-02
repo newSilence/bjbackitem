@@ -19,6 +19,13 @@ const state={
       {icon:'el-icon-user',url: '/index/authority/carte',name: '菜单管理'},
     ]},
     {icon:'el-icon-office-building',url:'/index/consultManage',name:'资讯管理'},
+
+
+    {icon:'el-icon-user',url:'/index/integral',name:'积分管理',list:[
+        {icon:'el-icon-user',url: '/index/integral/IntegralType',name: '积分类型'},
+        {icon:'el-icon-user',url: '/index/integral/IntegralRules',name: '积分规则'},
+      ]},
+
   ],
   homeTabList:[],
 }
