@@ -1,6 +1,9 @@
 <template>
-    <div style="display:flex">
+    <div style="background:rgba(30,30,30,1);min-height: 100vh;">
         <!-- <div style="height:88vh;background:red;width:15vw"> -->
+            <div style="padding-top:22px;padding-bottom:22px;background:rgba(30,30,30,1);text-align:center">
+                <img style="width:90px" :src="imgSrc">
+            </div>
             <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" @select="menuClick" :collapse="menuIsCollapse">
                 <template>
                     <div v-for="item in navbarData" :key="item.url">
@@ -21,18 +24,20 @@
                 
             </el-menu>
         <!-- </div> -->
-        <div style="width:40px;text-align:center;margin-top:200px;">
+        <!-- <div style="width:0px;text-align:center;margin-top:200px;"> -->
             <!-- <i @click="changeMenuType"  :class="menuIsCollapse?'el-icon-d-arrow-right':'el-icon-d-arrow-left'"></i> -->
-        </div>
+        <!-- </div> -->
     </div>
 </template>
 
 <script>
 // import store from '@/vuex/store'
+// import scienceTechLogo from '@/assets/scienceTechLogo.png'
 import {mapState,mapMutations,mapGetters,mapActions} from 'vuex'
 export default {
     data() {
         return {
+            imgSrc:require('../assets/scienceTechLogo.png')
         }
     },
     computed: {
@@ -92,27 +97,50 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 9vw;
     min-width: 220px;
-    min-height: 400px;
-    background: #DFFBE9;
+    /* min-height: 400px; */
+    
+    /* background: #DFFBE9; */
+    background:rgba(30,30,30,1);
     border-right:none;
     
   }
+  .el-menu{
+      background-color: rgba(30,30,30,1)!important;
+  }
+  .el-submenu__title *{
+      color:white;
+  }
+  .el-submenu__title:hover{
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,0.32) 100%);
+      color:white;
+  }
   .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item{
-      color:#393939;
+      /* color:#393939; */
+      color:white;
   }
   .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item.is-active{
-      background:white;
-      color:#318011;
+      /* background:white; */
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,0.32) 100%);
+      /* color:#318011; */
+      color:white;
+  }
+  .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item:hover{
+      /* background:white; */
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,0.32) 100%);
+      /* color:#318011; */
+      color:white;
   }
   .el-menu-vertical-demo.el-menu--collapse {
     width: 4vw;
     min-width: 55px;
-    min-height: 400px;
-    background: #DFFBE9;
+    /* min-height: 400px; */
+    min-height: 100vh;
+    background:rgba(30,30,30,1);
+    /* background: #DFFBE9; */
   }
   .el-menu-vertical-demo .el-menu{
       
