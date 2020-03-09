@@ -332,6 +332,7 @@
                         class="upload-demo"
                         :action="baseUrl+'/upLoading'"
                         :on-remove="handleMaterialRemove"
+                        :on-success="handleMaterialSuccess"
                         :limit="5"
                         accept=".jpg , .doc , .pdf , .rar, .zip , .docx, .pdf, .png"
                         :data="{model:'publish'}"   
@@ -673,7 +674,7 @@
                     return isLt2M;
                     // return isJPG && isLt2M;
             },
-            handleAvatarSuccess(res, file) {
+            handleAvatarSuccess(res, file , fileList) {
                 console.log(res);
                 if(res.ret){
                     let obj={};
@@ -682,6 +683,12 @@
                     obj.url=this.baseUrl+res.data;
                     
                     this.form.photos.push(obj);
+                }else{
+                    // this.form.photos.pop();
+                    this.$message.error('上传图片失败!');
+                    console.log(fileList);
+                    fileList.pop();
+                    console.log("error",this.form.photos);
                 }
                 // this.imageUrl = URL.createObjectURL(file.raw);
             },
@@ -689,6 +696,25 @@
                 console.log(err)
                 this.$message.error('上传图片失败!');
             },
+
+
+            handleMaterialSuccess(res, file , fileList){
+                if(res.ret){
+                    let obj={};
+                    obj.name=res.data;
+                    // obj.url='http://139.196.236.125:8088/'+res.data;
+                    obj.url=this.baseUrl+res.data;
+                    
+                    this.form.proveUrl.push(obj);
+                }else{
+                    // this.form.photos.pop();
+                    this.$message.error('上传材料失败!');
+                    console.log(fileList);
+                    fileList.pop();
+                    console.log("error",this.form.photos);
+                }
+            },
+
 
 
 
@@ -722,6 +748,7 @@
                     this.form.startVideo.push(obj);
                     // this.form.startVideo = res.data;
                 }else{
+                    this.form.startVideo=[];
                     this.$message.error('视频上传失败，请重新上传！');
                 }
             },
@@ -736,6 +763,7 @@
                     obj.uid=res.data;
                     this.form.endVideo.push(obj);
                 }else{
+                    this.form.startVideo=[];
                     this.$message.error('视频上传失败，请重新上传！');
                 }
             },
