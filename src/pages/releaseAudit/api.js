@@ -143,3 +143,11 @@ export function updateProDetail(data){
         method:'post'
     })
 }
+//项目审核通过
+export function approvalProDetail(data){
+    return request({
+        url:'/manager/projectInfo/approvalPass.json',
+        data,
+        method:'post'
+    })
+}

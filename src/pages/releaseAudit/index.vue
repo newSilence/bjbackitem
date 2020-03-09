@@ -183,9 +183,9 @@
                     <span>
                         <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
                     </span>
-                    <button @click="batchPro(1)" class="bottom_table_button">删除</button>
+                    <button style="margin-left:10px" @click="batchPro(1)" class="bottom_table_button">删除</button>
                     <button @click="batchPro(2)" class="bottom_table_button">设为推荐</button>
-                    <button class="bottom_table_button">转经纪人</button>
+                    <!-- <button class="bottom_table_button">转经纪人</button> -->
                 </div>
                 <el-pagination
                     @size-change="handleSizeChange"

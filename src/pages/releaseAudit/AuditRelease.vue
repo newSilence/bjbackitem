@@ -15,10 +15,10 @@
                 <span>待审核</span>
             </div>
             <div>
-                <button style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
+                <button @click="saveDetail(1)" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
                 <button @click="turnDown" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">驳回</button>
                 <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>
-                <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
+                <button v-show="isEdit" @click="saveDetail(2)" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
             </div>
         </div>
         <!-- 未通过 -->
@@ -369,6 +369,7 @@
         <el-dialog
             title="提示"
             center
+            @open="openTurnDown"
             class="turn_down_dialog"
             :visible.sync="dialogTurnDownVisible"
             width="30%">
@@ -393,7 +394,7 @@
 <script>
     import  uploadUrl  from '@/request/uploadUrl'
     import { toolbarOptions , proTemplate } from "../../util/commonData";
-    import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType , getProDetailById , rejectProById , updateProDetail } from "./api";
+    import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType , getProDetailById , rejectProById , updateProDetail , approvalProDetail } from "./api";
     // import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
     export default {
         data() {
@@ -914,10 +915,12 @@
                 this.form.detail='';
             },
             //保存
-            saveDetail(){
+            saveDetail(flag){
                 this.$refs["form"].validate((valid) => {
                     if (valid) {
                         // console.log(this.form);
+                        let funcUrl=flag==1?approvalProDetail:updateProDetail;
+                        let str=flag==1?"审核":"保存";
                         let postData={};
                         for(let key in this.form){
                             // console.log(key);
@@ -946,12 +949,12 @@
                         postData.valuationType = postData.negotiable ? '1' : '2';
                         delete postData.approvalUser;
                         delete postData.approvalTime;
-                        updateProDetail(postData).then(res=>{
-                            console.log("数据保存了",res);
+                        funcUrl(postData).then(res=>{
+                            // console.log("数据保存了",res);
                             this.$message({
                                 type:res.data.ret?'success':'error',
                                 showClose: true,
-                                message:res.data.ret?'保存成功':'保存失败',
+                                message:res.data.ret?`${str}成功`:`${str}失败`,
                             })
                             if(res.data.ret){
                                 this.fetch(this.rowId);
@@ -959,7 +962,7 @@
                             }
                         })
                         // console.log(postData);
-                        alert('submit!');
+                        // alert('submit!');
                     } else {
                         console.log('error submit!!');
                         return false;
@@ -969,6 +972,9 @@
             //编辑
             editDetail(){
                 this.isEdit=true;
+            },
+            openTurnDown(){
+                this.turnDownForm.opinion='';
             },
             //确认驳回
             confirmTurnDown(){
