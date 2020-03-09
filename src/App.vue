@@ -20,14 +20,14 @@ export default {
     ...mapState(['menuTitle','navbarData','routerWidth']),
   },
   mounted () {
-    console.log("app mounetd");
+    // console.log("app mounetd");
   },
   created () {
-    console.log("页面刷新了");
-    console.log("页面刷新了",sessionStorage);
-    console.log("页面刷新了",this.$store.state);
+    // console.log("页面刷新了");
+    // console.log("页面刷新了",sessionStorage);
+    // console.log("页面刷新了",this.$store.state);
     if(sessionStorage.length==0){
-      console.log("暂时未登录")
+      // console.log("暂时未登录")
     }else{
       this.$store.commit("changeUserName",sessionStorage['username']);
       this.$store.commit("changeHomeTabList",JSON.parse(sessionStorage['homeTabList']));

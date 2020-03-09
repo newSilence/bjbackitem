@@ -46,14 +46,14 @@ export default {
     'NavBar':NavBar
   },
   created () {
-    console.log(location.href.split('#')[1]);
-    console.log("indexindexinxdexindex")
+    // console.log(location.href.split('#')[1]);
+    // console.log("indexindexinxdexindex")
     //纠正页面刚加载显示title
     let key=location.href.split('#')[1];
     let filterUrl=this.navbarData.filter((val)=>{
         return val.path==key
     });
-    console.log(this.navbarData);
+    // console.log(this.navbarData);
   },
   methods: {
     getMenuTitle(arr,url) {

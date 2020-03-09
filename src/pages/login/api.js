@@ -9,6 +9,16 @@ export function login(data){
     })
 }
 
+
+// export function login(data){
+//     return request({
+//         url:'/sys/login',
+//         params:data,
+//         method:'get'
+//     })
+// }
+
+
 //获取nav
 export function getNavMenuData(data){
     return request({

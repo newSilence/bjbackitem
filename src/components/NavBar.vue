@@ -1,20 +1,20 @@
 <template>
     <div style="background:rgba(30,30,30,1);min-height: 100vh;">
         <!-- <div style="height:88vh;background:red;width:15vw"> -->
-            <div style="padding-top:22px;padding-bottom:22px;background:rgba(30,30,30,1);text-align:center">
-                <img style="width:90px" :src="imgSrc">
+            <div style="padding-top:22px;padding-bottom:20px;background:rgba(30,30,30,1);text-align:center">
+                <img style="height:20px" :src="imgSrc">
             </div>
             <el-menu :default-active="$route.path" router class="el-menu-vertical-demo" @select="menuClick" :collapse="menuIsCollapse">
                 <template>
                     <div v-for="item in navbarData" :key="item.url">
-                        <el-menu-item v-if="!item.list" :index="item.url">
+                        <el-menu-item class="nosubmenu" v-if="!item.list" :index="item.url">
                             <!-- <i :class="item.icon"></i> -->
-                            <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt="">
+                            <!-- <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt=""> -->
                             <span slot="title">{{item.name}}</span>
                         </el-menu-item>
-                        <el-submenu v-else :index="item.url">
+                        <el-submenu class="submenu" v-else :index="item.url">
                             <template slot="title">
-                                <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt="">
+                                <!-- <img style="width:27px;height:27px;vertical-align:middle" :src="item.icon" alt=""> -->
                                 <span slot="title">{{item.name}}</span>
                             </template>
                             <el-menu-item v-for="subitem in item.list" :key="subitem.url" :index="subitem.url">{{subitem.name}}</el-menu-item>
@@ -86,13 +86,6 @@ export default {
     },
     mounted () {
         this.$store.commit('changeMenuTitle',sessionStorage['menuTitle']);
-        // if(this.navbarData.length==0){
-        //     const navmenu=JSON.parse(sessionStorage['navMenu']);
-        //     this.$store.commit('changeMenuData',navmenu);
-        //     console.log(sessionStorage);
-        //     console.log("change",['menuTitle']);
-            
-        // }
     },
 }
 </script>
@@ -101,9 +94,6 @@ export default {
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 9vw;
     min-width: 220px;
-    /* min-height: 400px; */
-    
-    /* background: #DFFBE9; */
     background:rgba(30,30,30,1);
     border-right:none;
     
@@ -113,34 +103,42 @@ export default {
   }
   .el-submenu__title *{
       color:white;
+      height: 50px;
+      font-size:16px
   }
   .el-submenu__title:hover{
-      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,0.32) 100%);
+      background:rgba(60,60,68,1);
       color:white;
   }
   .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item{
-      /* color:#393939; */
       color:white;
   }
   .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item.is-active{
-      /* background:white; */
       background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,0.32) 100%);
-      /* color:#318011; */
       color:white;
   }
-  .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item:hover{
-      /* background:white; */
+  .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item.is-active:hover{
       background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,0.32) 100%);
-      /* color:#318011; */
+      color:white;
+  }
+  .nosubmenu.el-menu-item{
+      height: 50px;
+      line-height: 50px;
+      font-size:16px;
+  }
+  .submenu .el-menu-item{
+      height: 40px;
+      line-height: 40px;
+  }
+  .el-menu-vertical-demo:not(.el-menu--collapse) .el-menu-item:hover{
+      background:rgba(60,60,68,1);
       color:white;
   }
   .el-menu-vertical-demo.el-menu--collapse {
     width: 4vw;
     min-width: 55px;
-    /* min-height: 400px; */
     min-height: 100vh;
     background:rgba(30,30,30,1);
-    /* background: #DFFBE9; */
   }
   .el-menu-vertical-demo .el-menu{
       

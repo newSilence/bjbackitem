@@ -1,4 +1,4 @@
-const toolbarOptions = [
+export const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
     ['blockquote', 'code-block'],
 
@@ -17,20 +17,12 @@ const toolbarOptions = [
     ['link', 'image', 'video'],
     ['clean']                                         // remove formatting button
 ]
-// const uploadUrl="http://192.168.20.24:8089/";
-function treeData(source, id, parentId, children , flag){
-    let cloneData = JSON.parse(JSON.stringify(source))
-    return cloneData.filter(father=>{
-        let branchArr = cloneData.filter(child => father[id] == child[parentId]);
-        branchArr.length>0 ? father[children] = branchArr : ''
-        return father[parentId] == flag        // 如果第一层不是parentId=0，请自行修改
-    })
-};
-//  const uploadUrl="http://192.168.30.36:8088/";
-//  const uploadUrl="";
-//  const uploadUrl="http://139.196.236.125:8080/"
- const uploadUrl='http://192.168.20.21:8080/';
-//  const uploadUrl="http://139.196.236.125:8088/"
-export default {
-    uploadUrl,toolbarOptions,treeData
-}
+export const proTemplate = `
+		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/5.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<p>请输入您的背景描述</p>
+		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/6.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<p>请输入您的团队介绍</p>
+		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/7.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<p>请输入您的技术成果</p>
+		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/8.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<p>请输入您的前景展望</p>`;

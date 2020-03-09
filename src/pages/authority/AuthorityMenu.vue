@@ -64,12 +64,17 @@
                 show-overflow-tooltip>
                     <template slot-scope="scope">{{ 
                         scope.row.type==1?'个人'
-                        :scope.row.type==2?'机构':''}}</template>
+                        :scope.row.type==2?'机构':''}}
+                    </template>
                 </el-table-column>
                 <el-table-column
                 prop="identity"
                 label="身份"
                 width="">
+                    <!-- <template slot-scope="scope">{{ 
+                        scope.row.type==1?'个人'
+                        :scope.row.type==2?'机构':''}}
+                    </template> -->
                 </el-table-column>
                 <el-table-column
                 prop="provinceName"

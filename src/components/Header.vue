@@ -4,7 +4,7 @@
         <div style="height:60px;min-height:52px;border:1px solid #F2F7FA;display:flex;align-items:center;justify-content:space-between;background:white;color:#333333">        
             <div style="margin-left:22px;font-size:14px;">
                 <span>科创汇后台管理系统</span>
-                <span @click="logout" style="margin:0 24px;cursor:pointer">【退出】</span>
+                <span @click="logout" style="margin:0 18px;cursor:pointer">【退出】</span>
             </div>
             <div style="margin-right:21px;font-size:14px">
                 回首页<i class="el-icon-arrow-right"></i>

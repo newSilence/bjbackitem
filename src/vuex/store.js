@@ -10,9 +10,13 @@ const state={
   routerWidth:"88vw",
   navbarData:[
     // {icon:'el-icon-phone',url:'/index',name:'首页'},
-    {icon:'el-icon-user',url:'/index/authority/memberreview',name:'会员账号审核认证'},
+    // {icon:'el-icon-user',url:'/index/authority/memberreview',name:'会员账号审核认证'},
     {icon:'el-icon-user',url:'/index/authoritys',name:'账号管理',list:[
       {icon:'el-icon-user',url: '/index/authority/menu',name: '会员账号管理'},
+    ]},
+    {icon:'el-icon-user',url:'/index/releaseAudit',name:'发布审核管理',list:[
+      {icon:'el-icon-user',url: '/index/releaseAudit/ReleaseAudit',name: '项目审核'},
+      
     ]},
     {icon:'el-icon-user',url:'/index/authority',name:'权限角色管理',list:[
       {icon:'el-icon-user',url: '/index/authority/role',name: '角色管理'},
@@ -31,8 +35,8 @@ const state={
 }
 const mutations={
   changeMenuTitle(state,data){
-    console.log('clickclickmenutitle');
-    console.log(sessionStorage);
+    // console.log('clickclickmenutitle');
+    // console.log(sessionStorage);
       state.menuTitle=data;
   },
   changeMenuCollapse(state){
