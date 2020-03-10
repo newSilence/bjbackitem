@@ -6,7 +6,7 @@
                     <span @click="statusClick(item,key)" :style="{fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=manageAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in manageAuditType" :key="key">{{item.label}}</span>
                 </div>
                 <div style="font-size: 0">
-                    <input v-model="formInline.keyWord" placeholder="请输入项目名称或发布方" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
+                    <input v-model="formInline.keyWord" placeholder="请输入项目名称或发布单位" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
                     <span @click="searchTableList" style="cursor:pointer;font-size:14px;font-weight:500;color:white;padding:9.5px 22px;background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);">
                         <i class="el-icon-search"></i>
                         搜索
@@ -15,12 +15,12 @@
             </div>
             <el-form :inline="true" :model="formInline" style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:20px" class="demo-form-inline">
                 <el-form-item label="">
-                    <el-select clearable style="width:100%" v-model="formInline.useArea" placeholder="应用领域">
+                    <el-select clearable style="width:100%" @change="handleSelect" v-model="formInline.useArea" placeholder="应用领域">
                         <el-option v-for="item in UserAreaData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item prop="skillArea" label="">
-                    <el-select clearable style="width:100%" v-model="formInline.skillArea" placeholder="技术领域">
+                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.skillArea" placeholder="技术领域">
                         <el-option-group
                             v-for="group in SkillAreaData"
                             :key="group.id"
@@ -35,22 +35,22 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select clearable style="width:100%" v-model="formInline.fruitType" placeholder="成果类型">
+                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.fruitType" placeholder="成果类型">
                         <el-option v-for="item in FruitTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select clearable style="width:100%" v-model="formInline.processType" placeholder="当前阶段">
+                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.processType" placeholder="当前阶段">
                         <el-option v-for="item in ProcessTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select clearable style="width:100%" v-model="formInline.financingType" placeholder="融资阶段">
+                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.financingType" placeholder="融资阶段">
                         <el-option v-for="item in FinancingTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select clearable v-model="formInline.yourWant" placeholder="诉求">
+                    <el-select @change="handleSelect" clearable v-model="formInline.yourWant" placeholder="诉求">
                         <el-option v-for="item in AppealData" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                 </el-form-item>
@@ -73,7 +73,7 @@
                     </el-cascader> -->
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select clearable v-model="formInline.cooperateType" placeholder="归属方性质">
+                    <el-select @change="handleSelect" clearable v-model="formInline.cooperateType" placeholder="归属方性质">
                         <el-option v-for="item in OwnershipData" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                 </el-form-item>
@@ -111,7 +111,7 @@
                 style="width: 100%">
                 <el-table-column
                     type="selection"
-                    width="55">
+                    width="45">
                 </el-table-column>
                 <el-table-column
                     prop="projectName"
@@ -120,24 +120,25 @@
                     <template slot-scope="scope">
                         <div style="display:flex;flex-wrap:wrap">
                             <span>{{scope.row.projectName}}</span>
-                            <span v-if="scope.row.isRecommend" style="border:1px solid rgba(43,177,232,1);color:#01A2E4;padding:0px 3px;font-size:12px">推荐</span>
+                            <span v-if="scope.row.approvalState==1&&scope.row.isRecommend" style="border:1px solid rgba(43,177,232,1);color:#01A2E4;padding:0px 3px;font-size:12px">推荐</span>
                             <!-- {{scope.row.projectName+'/'+scope.row.cityName}} -->
                         </div>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="createName"
-                    label="发布方"
-                    width="">
-                </el-table-column>
-                <el-table-column
-                    prop="address"
-                    label="所在地区">
+                    prop="yourWant"
+                    label="项目诉求">
                     <template slot-scope="scope">
                         <div>
-                            {{scope.row.provinceName+'/'+scope.row.cityName}}
+                            {{scope.row.yourWant && scope.row.yourWant.length>0?scope.row.yourWant.join():''}}
+                            <!-- {{scope.row.provinceName+'/'+scope.row.cityName}} -->
                         </div>
                     </template>
+                </el-table-column>
+                <el-table-column
+                    prop="companyName"
+                    label="发布单位"
+                    width="">
                 </el-table-column>
                 <el-table-column
                     prop="createTime"
@@ -148,7 +149,8 @@
                     label="当前进度">
                     <template slot-scope="scope">
                         <div>
-                            {{scope.row.processTypeStr && scope.row.processTypeStr.length>0?scope.row.processTypeStr.join():''}}
+                            {{scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}}
+                            <!-- {{scope.row.processTypeStr && scope.row.processTypeStr.length>0?scope.row.processTypeStr.join():''}} -->
                         </div>
                     </template>
                 </el-table-column>
@@ -169,7 +171,7 @@
                             <el-dropdown-menu slot="dropdown">
                                 <!-- <el-dropdown-item>{{scope.row.name}}</el-dropdown-item> -->
                                 <el-dropdown-item @click.native="deleteRow(scope.row)">删除</el-dropdown-item>
-                                <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.state==0?false:true">{{scope.row.state==0?'下线':'已下线'}}</el-dropdown-item>
+                                <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.state==0&&scope.row.approvalState==1?false:true">{{scope.row.state==0?'下线':'已下线'}}</el-dropdown-item>
                                 <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.isRecommend==1?'取消推荐':'设为推荐'}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -185,12 +187,13 @@
                     </span>
                     <button style="margin-left:10px" @click="batchPro(1)" class="bottom_table_button">删除</button>
                     <button @click="batchPro(2)" class="bottom_table_button">设为推荐</button>
-                    <!-- <button class="bottom_table_button">转经纪人</button> -->
+                    <button @click="batchPro(3)" class="bottom_table_button">转经纪人</button>
                 </div>
                 <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page="formInline.pageIndex"
+                    :pager-count="5"
                     :page-sizes="[10, 20, 40, 100]"
                     :page-size="formInline.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
@@ -284,6 +287,9 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             }
         },
         methods: {
+            handleSelect(){
+                this.fetch();
+            },
             statusClick(item,key){
                 if(this.statusClickIndex!=key){
                     this.statusClickIndex=key;
@@ -294,6 +300,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                         this.formInline.state='';
                         this.formInline.approvalState=item.value;
                     }
+                    this.formInline.pageIndex=1;
                     this.fetch();
                 }
                 // console.log(item,key);
@@ -324,6 +331,8 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 }
             },
             handleAreaChange(val){
+                // console.log(val);
+                this.fetch();
                 // console.log(val);
                 
                 // console.log(this.formInline.selectedOptions);

@@ -252,9 +252,9 @@
                 </el-form-item>
                 <!-- 上传视频 -->
                 <!-- action="http://139.196.236.125:8080/upLoading" -->
-                
                 <el-form-item label="宣传视频（开头）：">
                     <el-upload
+                        :class="{disabled:form.startVideo.length>0}"
                         :disabled="!isEdit"  
                         :action="baseUrl+'/upLoading'"
                         :headers="myHeaders"
@@ -283,34 +283,6 @@
                     <button @click="getTemplate" :disabled="!isEdit" style="background:rgba(43,177,232,1);border-radius:2px;border:none;padding:6px 15px;color:white;cursor:pointer">获取项目面板</button>
                     <button @click="clearTemplate" :disabled="!isEdit" style="margin-left:10px;border-radius:2px;border:1px solid #2BB1E8;padding:6px 15px;color:#2BB1E8;cursor:pointer">自定义项目面板</button>
                 </el-form-item>
-                <!-- 上传视频 -->
-                <el-form-item label="宣传视频（结束）：">
-                    <!-- <el-upload :data="{model:'video'}" accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb" :limit="1" list-type="picture-card" class="avatar-uploader el-upload--text" action="http://139.196.236.125:8088/upLoading" :show-file-list="false" :on-success="handleEndVideoSuccess" :before-upload="beforeUploadVideo">
-                        <video v-if="form.endVideo !='' && videoEndFlag == false" :src="form.endVideo" class="avatar" controls="controls">您的浏览器不支持视频播放</video>
-                        <i v-else-if="form.endVideo =='' && videoEndFlag == false" class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                    <P class="text">请保证视频格式正确，且不超过50M</P> -->
-                    <!-- action="http://139.196.236.125:8088/upLoading" -->
-                    <el-upload
-                        :disabled="!isEdit"
-                        :headers="myHeaders"
-                        :action="baseUrl+'/upLoading'"
-                        list-type="picture-card"
-                        accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb"
-                        :limit='1'
-                        :data="{model:'video'}"
-                        :file-list="form.endVideo"
-                        :on-preview="handleStartVideoPreview"
-                        :before-upload="beforeUploadVideo"
-                        :on-success="handleEndVideoSuccess"
-                        :on-remove="handleEndVideoRemove">
-                        <i class="el-icon-plus"></i>
-                        <div slot="tip" class="el-upload__tip">支持上传mp4、ogg、avi、flv、wmv、rmvb视频，且不超过50M</div>
-                    </el-upload>
-                    <el-dialog :visible.sync="dialogVisible">
-                        <video controls="controls" :src="dialogImageUrl">您的浏览器不支持视频播放</video>
-                    </el-dialog>
-                </el-form-item>
                 <el-form-item  class="edit_container news">
                     <!-- :action="baseUrl+'/fileUpload'" -->
                     <!-- action="http://139.196.236.125:8088/upLoading" -->
@@ -330,6 +302,36 @@
                         :options="editorOption">
                     </quill-editor>
                 </el-form-item>
+                <!-- 上传视频 -->
+                <el-form-item label="宣传视频（结束）：">
+                    <!-- <el-upload :data="{model:'video'}" accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb" :limit="1" list-type="picture-card" class="avatar-uploader el-upload--text" action="http://139.196.236.125:8088/upLoading" :show-file-list="false" :on-success="handleEndVideoSuccess" :before-upload="beforeUploadVideo">
+                        <video v-if="form.endVideo !='' && videoEndFlag == false" :src="form.endVideo" class="avatar" controls="controls">您的浏览器不支持视频播放</video>
+                        <i v-else-if="form.endVideo =='' && videoEndFlag == false" class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                    <P class="text">请保证视频格式正确，且不超过50M</P> -->
+                    <!-- action="http://139.196.236.125:8088/upLoading" -->
+                    <el-upload
+                        :disabled="!isEdit"
+                        :class="{disabled:form.endVideo.length>0}"
+                        :headers="myHeaders"
+                        :action="baseUrl+'/upLoading'"
+                        list-type="picture-card"
+                        accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb"
+                        :limit='1'
+                        :data="{model:'video'}"
+                        :file-list="form.endVideo"
+                        :on-preview="handleStartVideoPreview"
+                        :before-upload="beforeUploadVideo"
+                        :on-success="handleEndVideoSuccess"
+                        :on-remove="handleEndVideoRemove">
+                        <i class="el-icon-plus"></i>
+                        <div slot="tip" class="el-upload__tip">支持上传mp4、ogg、avi、flv、wmv、rmvb视频，且不超过50M</div>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogVisible">
+                        <video controls="controls" :src="dialogImageUrl">您的浏览器不支持视频播放</video>
+                    </el-dialog>
+                </el-form-item>
+                
                 <!-- :on-change="handleChange" -->
                 <!-- action="http://139.196.236.125:8088/upLoading" -->
                 <el-form-item label="上传材料：">
@@ -391,7 +393,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <button @click="confirmTurnDown" style="background:rgba(251,251,251,1);border-radius:3px;padding:5px 20px;color:#828282;margin-right:30px;cursor:pointer">确定</button>
-                <button style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;padding:5px 20px;color:white;cursor:pointer">取消</button>
+                <button @click="cancelTurnDown" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;padding:5px 20px;color:white;cursor:pointer">取消</button>
             </span>
         </el-dialog>
     </div>
@@ -1010,6 +1012,9 @@
                     }
                 })
             },
+            cancelTurnDown(){
+                this.dialogTurnDownVisible=false;
+            },
             //查询数据
             fetch(id){
                 let param={};
@@ -1054,12 +1059,17 @@
                             obj.url=this.form.photos[i];
                             this.form.photos.splice(i,1,obj);
                         }
-                        for(let i=0;i<this.form.proveUrl.length;i++){
-                            let obj={};
-                            obj.uid=this.form.proveUrl[i];
-                            obj.url=this.form.proveUrl[i];
-                            this.form.proveUrl.splice(i,1,obj);
+                        if(this.form.proveUrl){
+                            for(let i=0;i<this.form.proveUrl.length;i++){
+                                let obj={};
+                                obj.uid=this.form.proveUrl[i];
+                                obj.url=this.form.proveUrl[i];
+                                this.form.proveUrl.splice(i,1,obj);
+                            }
+                        }else{
+                            this.form.proveUrl=[];
                         }
+                        
                         this.getAllCityData(this.form.provinceId);
                         // this.form.fruitType='';
                     }
@@ -1119,5 +1129,10 @@
 .ql-snow .ql-picker.ql-size .ql-picker-label[data-value=huge]::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item[data-value=huge]::before {
     content: '32px';
+}
+.disabled .el-upload.el-upload--picture-card {
+
+display: none;
+
 }
 </style>
