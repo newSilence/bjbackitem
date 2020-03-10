@@ -6,7 +6,7 @@
                     <span @click="statusClick(item,key)" :style="{fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=manageAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in manageAuditType" :key="key">{{item.label}}</span>
                 </div>
                 <div style="font-size: 0">
-                    <input placeholder="请输入项目名称或发布方" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
+                    <input v-model="formInline.keyWord" placeholder="请输入项目名称或发布方" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
                     <span @click="searchTableList" style="cursor:pointer;font-size:14px;font-weight:500;color:white;padding:9.5px 22px;background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);">
                         <i class="el-icon-search"></i>
                         搜索
@@ -218,14 +218,14 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 cascaderProps:{
                     lazy: true,
                     lazyLoad: (node,resolve)=>{
-                        console.log("node",node);
+                        // console.log("node",node);
                         const { level } = node;
                         let data={
                             provinceId:node.value
                         }
                         !node.value?''
                         :getProvinceAllCity(data).then(res=>{
-                            console.log('resfshgfhsgh',res);
+                            // console.log('resfshgfhsgh',res);
                             if(res.data.data){
                                 let data=res.data.data;
                                 const nodes=data.map(item => ({
@@ -248,6 +248,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 ],
                 optionsArea:[],
                 formInline:{
+                    keyWord:'',
                     pageSize:10,
                     pageIndex:1,
                     userArea:'',
@@ -295,7 +296,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     }
                     this.fetch();
                 }
-                console.log(item,key);
+                // console.log(item,key);
             },
             handleSizeChange(val) {
                 this.formInline.pageSize=val;
@@ -323,12 +324,12 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 }
             },
             handleAreaChange(val){
-                console.log(val);
+                // console.log(val);
                 
-                console.log(this.formInline.selectedOptions);
+                // console.log(this.formInline.selectedOptions);
             },
             seen(row){
-                console.log(row);
+                // console.log(row);
                 // return;
                 this.$router.push({path:'/index/releaseAudit/AuditRelease',query:{id:row.projectId}})
             },
@@ -383,7 +384,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             },
             //下线
             offlineRow(row){
-                console.log(row);
+                // console.log(row);
                 let param={};
                 param.id=row.projectId;
                 offLineFun(param).then(res=>{
@@ -400,11 +401,11 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             },
             //删除
             deleteRow(row){
-                console.log(row);
+                // console.log(row);
                 let param={};
                 param.id=row.projectId;
                 deleteProFun(param).then(res=>{
-                    console.log(res);
+                    // console.log(res);
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
@@ -417,13 +418,13 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             },
             //推荐 
             recommendRow(row){
-                console.log(row);
+                // console.log(row);
                 let param={};
                 param.id=row.projectId;
                 param.state=row.isRecommend==1?0:1;
                 let str=row.isRecommend==1?'取消推荐':'设置推荐';
                 recommendProFun(param).then(res=>{
-                    console.log(res);
+                    // console.log(res);
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
@@ -464,7 +465,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 param.ids=ids.join();
                 
                 optionFunc(param).then(res=>{
-                    console.log(res);
+                    // console.log(res);
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
@@ -491,7 +492,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 }
                 delete searchForm.selectedOptions;
                 getProjectList(searchForm).then(res=>{
-                    console.log('gdhgdhres',res);
+                    // console.log('gdhgdhres',res);
                     if(res.data && res.data.data){
                         this.tableData = res.data.data.data;
                         this.totalAll=res.data.data.count-0;

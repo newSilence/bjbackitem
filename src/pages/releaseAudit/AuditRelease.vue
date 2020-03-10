@@ -124,7 +124,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12" style="display:flex;">
-                        <el-form-item prop="" label="估值：">
+                        <el-form-item prop="valuationType" label="估值：">
                             <el-col :span="4" style="min-width:100px">
                                 <el-input required @change="valuInputChange" :readonly="!isEdit || (isEdit&&form.negotiable)" v-model="form.valuation"></el-input>
                             </el-col>
@@ -231,6 +231,7 @@
                 <el-form-item prop="photos" label="宣传图片：">
                     <el-upload
                         :disabled="!isEdit"
+                        :headers="myHeaders"
                         :action="baseUrl+'/upLoading'"
                         list-type="picture-card"
                         accept="image/*"
@@ -250,11 +251,13 @@
                     </el-dialog>
                 </el-form-item>
                 <!-- 上传视频 -->
-                <!-- action="http://139.196.236.125:8088/upLoading" -->
+                <!-- action="http://139.196.236.125:8080/upLoading" -->
+                
                 <el-form-item label="宣传视频（开头）：">
                     <el-upload
                         :disabled="!isEdit"  
                         :action="baseUrl+'/upLoading'"
+                        :headers="myHeaders"
                         list-type="picture-card"
                         accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb"
                         :limit='1'
@@ -290,6 +293,7 @@
                     <!-- action="http://139.196.236.125:8088/upLoading" -->
                     <el-upload
                         :disabled="!isEdit"
+                        :headers="myHeaders"
                         :action="baseUrl+'/upLoading'"
                         list-type="picture-card"
                         accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb"
@@ -312,6 +316,7 @@
                     <!-- action="http://139.196.236.125:8088/upLoading" -->
                     <el-upload
                         class="avatar-uploader quill-img"
+                        :headers="myHeaders"
                         :action="baseUrl+'/upLoading'"
                         :data="{model:'publish'}"                      
                         :show-file-list="false"
@@ -330,6 +335,7 @@
                 <el-form-item label="上传材料：">
                     <el-upload
                         class="upload-demo"
+                        :headers="myHeaders"
                         :action="baseUrl+'/upLoading'"
                         :on-remove="handleMaterialRemove"
                         :on-success="handleMaterialSuccess"
@@ -399,13 +405,13 @@
     export default {
         data() {
             var validateValuation = (rule,value,callback)=>{
-                console.log("outinputtttttttttttt")
-                if(this.form.valuation=='' && this.form.negotiable.length==0){
+                // console.log("outinputtttttttttttt")
+                if(this.form.valuation=='' && !this.form.negotiable){
                     callback(new Error("请输入估值或选择面议"))
-                }else if(this.form.valuation==''&&this.form.negotiable.length!=0){
-                    console.log("inputtttttttttttt");
+                }else if(this.form.valuation==''&&this.form.negotiable){
+                    // console.log("inputtttttttttttt");
                     callback()
-                }else if(this.form.valuation!='' && this.form.negotiable.length==0){
+                }else if(this.form.valuation!='' && !this.form.negotiable){
                     
                     let reg= /^\d+(?=\.{0,1}\d+$|$)/;
                     if(reg.test(this.form.valuation)&&this.form.valuation<99999999999){
@@ -419,6 +425,7 @@
             };
             return {
                 key: "value",
+                myHeaders:{},
                 baseUrl:uploadUrl.uploadUrl,//图片上传地址，方便测试
                 rowId:'',
                 videoFlag:false,
@@ -431,14 +438,14 @@
                 cascaderProps:{
                     lazy: true,
                     lazyLoad: async (node,resolve)=>{
-                        console.log("node",node);
+                        // console.log("node",node);
                         const { level } = node;
                         let data={
                             provinceId:this.form.position[0]
                         }
-                        console.log("this",this);
+                        // console.log("this",this);
                         await getProvinceAllCity(data).then(res=>{
-                            console.log('resfshgfhsgh',res);
+                            // console.log('resfshgfhsgh',res);
                             if(res.data.data){
                                 let data=res.data.data;
                                 const nodes=data.map(item => ({
@@ -481,7 +488,7 @@
                     useArea:'',
                     skillArea:'',
                     valuation:'',
-                    negotiable:[],
+                    negotiable:false,
                     fruitType:'',
                     detail:'',
                     processType:'',
@@ -581,16 +588,14 @@
                     //     { type: 'array', required: true, message: '请至少选择一个归属方性质' }
                     // ],
                     // valuation : [
-                    //     { required: true, message: '请输入估值', trigger: 'blur' },
+                    //     { required:this.negotiable?false:true, message: '请输入估值', trigger: 'blur' },
                         
                     // ],
-                    // valuationType:[{ validator: validateValuation, trigger: 'blur' }],
+                    valuationType:[{ validator: validateValuation, trigger: 'blur' }],
                     // negotiable:[{ validator: validateValuation, type: 'array', trigger: 'change' }],
-                    // valuation : [
-                    //     { required: true, message: '项目名称必须输入！', trigger: 'blur' },
-                    // ],
                     // negotiable:[{ validator: validateNegotable, trigger: 'blur' }],
                 },
+                negotiable:true,
                 OwnershipData : ['企业', '高校', '科研院所','个人团队','其他'],
                 AppealData : ['项目融资', '项目落地', '技术交易','招人才','其他'],
                 dialogTurnDownVisible:false,
@@ -628,7 +633,7 @@
             },
             //复选框事件
             checkBoxChange(){
-                console.log("checkbox");
+                // console.log("checkbox");
                 this.form.valuation='';
             },
             //返回上一页
@@ -644,7 +649,7 @@
             handleRemove(file, fileList) {
                 // console.log(file, fileList);
                 this.form.photos = fileList;
-                console.log('form.photos',this.form.photos);
+                // console.log('form.photos',this.form.photos);
             },
             //handleStartVideoRemove
             handleStartVideoRemove(file,fileList){
@@ -654,13 +659,14 @@
                 this.form.endVideo=[];
             },
             handlePictureCardPreview(file) {
-                console.log(file);
+                // console.log(file);
                 this.dialogPicImageUrl = file.url;
                 this.dialogPicVisible = true;
             },
             handleStartVideoPreview(file) {
-                console.log(file);
+                // console.log(file);
                 this.dialogImageUrl = file.url;
+                // console.log(this.dialogImageUrl);
                 this.dialogVisible = true;
             },
             beforeAvatarUpload(file){
@@ -676,7 +682,7 @@
                     // return isJPG && isLt2M;
             },
             handleAvatarSuccess(res, file , fileList) {
-                console.log(res);
+                // console.log(res);
                 if(res.ret){
                     let obj={};
                     obj.name=res.data;
@@ -687,14 +693,14 @@
                 }else{
                     // this.form.photos.pop();
                     this.$message.error('上传图片失败!');
-                    console.log(fileList);
+                    // console.log(fileList);
                     fileList.pop();
-                    console.log("error",this.form.photos);
+                    // console.log("error",this.form.photos);
                 }
                 // this.imageUrl = URL.createObjectURL(file.raw);
             },
             imgUploadError(err, file, fileList){//图片上传失败调用
-                console.log(err)
+                // console.log(err)
                 this.$message.error('上传图片失败!');
             },
 
@@ -710,9 +716,9 @@
                 }else{
                     // this.form.photos.pop();
                     this.$message.error('上传材料失败!');
-                    console.log(fileList);
+                    // console.log(fileList);
                     fileList.pop();
-                    console.log("error",this.form.photos);
+                    // console.log("error",this.form.photos);
                 }
             },
 
@@ -739,7 +745,7 @@
             handleVideoSuccess(res, file) {                               //获取上传图片地址
                 this.videoFlag = false;
                 // this.videoUploadPercent = 0;
-                console.log("视频上传",res);
+                // console.log("视频上传",res);
                 if( res.ret ){
                     let obj={};
                     // obj.url=`http://139.196.236.125:8088/${res.data}`;
@@ -756,7 +762,7 @@
             handleEndVideoSuccess(res, file) {                               //获取上传图片地址
                 this.videoEndFlag = false;
                 // this.videoUploadPercent = 0;
-                console.log("视频上传",res);
+                // console.log("视频上传",res);
                 if( res.ret ){
                     let obj={};
                     // obj.url=`http://139.196.236.125:8088/${res.data}`;
@@ -772,7 +778,7 @@
 
             // 上传材料事件
             handleMaterialRemove(file,fileList){
-                console.log(file,fileList);
+                // console.log(file,fileList);
                 this.form.proveUrl=fileList;
             },
 
@@ -789,7 +795,7 @@
                 // res为图片服务器返回的数据
                 // 获取富文本组件实例
                 let quill = this.$refs.myQuillEditor.quill;
-                console.log(res);
+                // console.log(res);
                 // 如果上传成功
                 if (res.code == '0') {
                     // 获取光标所在位置
@@ -822,13 +828,13 @@
             //点击省切换
             handleProvinceChange(val){
                 // this.$set(this.optionsArea[index], 'child', res.data.data)
-                console.log("chan")
-                console.log(val);
-                console.log(this.optionsArea);
+                // console.log("chan")
+                // console.log(val);
+                // console.log(this.optionsArea);
             },
             //省下拉框
             provinceChange(item){
-                console.log("changechangehjshjhsjhdsjhjsdhj",item);
+                // console.log("changechangehjshjhsjhdsjhjsdhj",item);
                 if(item){
                     this.form.city='';
                     this.cityData=[];
@@ -905,8 +911,8 @@
             },
             //获取面板
             getTemplate(){
-                console.log("获取");
-                console.log(proTemplate);
+                // console.log("获取");
+                // console.log(proTemplate);
 
                 this.form.detail=proTemplate;
             },
@@ -914,8 +920,9 @@
             clearTemplate(){
                 this.form.detail='';
             },
-            //保存
+            //保存或者审核，根据flag判断，1代表审核，2代表保存
             saveDetail(flag){
+                // this.form.negotiable
                 this.$refs["form"].validate((valid) => {
                     if (valid) {
                         // console.log(this.form);
@@ -964,7 +971,7 @@
                         // console.log(postData);
                         // alert('submit!');
                     } else {
-                        console.log('error submit!!');
+                        // console.log('error submit!!');
                         return false;
                     }
                 });
@@ -993,12 +1000,12 @@
                                     type:'error',
                                 })
                             }
-                            console.log(res);
+                            // console.log(res);
                         })
-                        console.log(this.turnDownForm.opinion);
-                        alert('submit!');
+                        // console.log(this.turnDownForm.opinion);
+                        // alert('submit!');
                     } else {
-                        console.log('error submit!!');
+                        // console.log('error submit!!');
                         return false;
                     }
                 })
@@ -1029,14 +1036,14 @@
                             obj.url=this.form.startVideo[i];
                             this.form.startVideo.splice(i,1,obj)
                         }
-                        console.log('this.form.startVideo',this.form.startVideo);
+                        // console.log('this.form.startVideo',this.form.startVideo);
                         for(let i=0;i<this.form.endVideo.length;i++){
                             let obj={};
                             obj.uid=this.form.endVideo[i];
                             obj.url=this.form.endVideo[i];
                             this.form.endVideo.splice(i,1,obj)
                         }
-                        console.log('this.form.endVideo',this.form.endVideo);
+                        // console.log('this.form.endVideo',this.form.endVideo);
                         // this.form.endVideo=[];
                         if(this.form.negotiable){
                             this.form.valuation='';
@@ -1062,6 +1069,8 @@
         created () {
             this.getAllPrivinceData();
             this.getAllSelectData();
+            // console.log("myHeaders",sessionStorage.token);
+            this.myHeaders.token=sessionStorage.token;
             this.fetch(this.$route.query.id);
             this.rowId=this.$route.query.id;
 
