@@ -1,5 +1,4 @@
 import { request } from "../../request/http";
-// import { get } from "https";
 //获取管理员管理列表数据
 export function getAdminManageTable(data){
     return request({
@@ -149,99 +148,52 @@ export function updateRoleStatus(data){
         method:'post'
     })
 }
-// //确认编辑某个目录
-// export function updateMenuData(data){
-//     return request({
-//         url:'/sys/menu/update',
-//         data,
-//         method:'post'
-//     })
-// }
-//确认编辑某个目录
-export function updateMenuData(data){
-    return request({
-        url:'/web/webmenu/update',
-        data,
-        method:'post'
-    })
+//获取积分类型
+export function reqIntegralType(data){
+  return request({
+    url:'/manager/Integral/selectAllIntegralBycondition',
+    data,
+    method:'post'
+  })
 }
-// //删除某一条功能权限
-// export function deleteMenuData(data){
-//     return request({
-//         url:'/sys/menu/delete',
-//         data,
-//         method:'post'
-//     })
-// }
-//删除某一条功能权限
-export function deleteMenuData(data){
-    return request({
-        url:'/web/webmenu/delete',
-        data,
-        method:'post'
-    })
+//添加积分类型
+export function reqAddIntegralType(data){
+  return request({
+    url:'/manager/Integral/addIntegral',
+    data,
+    method:'post'
+  })
 }
-// //确认新增某个目录
-// export function saveMenuData(data){
-//     return request({
-//         url:'/sys/menu/save',
-//         data,
-//         method:'post'
-//     })
-// }
-//确认新增某个目录
-export function saveMenuData(data){
-    return request({
-        url:'/web/webmenu/save',
-        data,
-        method:'post'
-    })
+//根据id获取触发接口
+export function reqAddIntegralPort(id){
+  return request({
+    url:'/manager/Integral/selectIntegralById',
+    params:id,
+    method:'get'
+  })
 }
-//会员账号管理查询接口
-export function getMemAccountData(data){
-    return request({
-        url:'/manager/userManager/selectAllUserInfo',
-        params:data,
-        method:'get'
-    })
+//积分类型修改
+export function reqIntegralTypeModify(data){
+  return request({
+    url:'/manager/Integral/updateIntegral',
+    data,
+    method:'post'
+  })
 }
-//根据type：1代表专家2代表服务商及专家或者服务商的id查询对应详情/manager/userManager/selectAuthentication
-export function getMemAccountSelectAuthenticationData(data){
-    return request({
-        url:'/manager/userManager/selectAuthentication',
-        params:data,
-        method:'get'
-    })
+//获取积分规则配置
+export function reqIntegralRule(data){
+  return request({
+    url:'/manager/IntegralRecord/selectIntegralRecord',
+    params:data,
+    method:'get'
+  })
 }
-//查看详情信息
-export function getMemAccountDetailData(data){
-    return request({
-        url:'/user/selectUserInfoByFilter',
-        params:data,
-        method:'get'
-    })
+//积分规则全部获取
+export function reqAllIntegralType(){
+  return request({
+    url:'/manager/Integral//selectAllIntegralList',
+    method:'post'
+  })
 }
-//启用或者禁用会员账号
-export function updateCanOrUse(data){
-    return request({
-        url:'/manager/userManager/upDateUserState',
-        data,
-        method:'post'
-    })
-}
-//
-// export function getAdminManageTable(data){
-//     return request({
-//         url:'/news/addNewsInformation',
-//         data,
-//         method:'post'
-//     })
-// }
-//查询新闻资讯
-// export function searchNewsTable(data){
-//     return request({
-//         url:'/news/searchAllNewsInformation',
-//         params:data,
-//         method:'get'
-//     })
-// }
+
+
