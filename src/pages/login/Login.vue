@@ -76,6 +76,8 @@ import loginBk from "../../assets/loginBk.png";
                         //     // let homeDataArray=res.data.data;
                         // })
                         this.$router.push('/index/authority/menu');
+                        this.$store.commit('changeMenuTitle','会员账号管理');
+                        sessionStorage['menuTitle']="会员账号管理";
                     }
                     console.log('logres',res);
                 })

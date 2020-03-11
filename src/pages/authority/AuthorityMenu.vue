@@ -51,6 +51,9 @@
                     <p :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}"  @click="seenDeatil(scope.row)">{{ scope.row.realName }}</p>
                 </template>
                 </el-table-column>
+                <!-- scope.row.facilitator&&scope.row.facilitator.facilitatorId?'服务商'
+                        :scope.row.expertInfo&&scope.row.expertInfo.expertId?'专家'
+                        : -->
                 <el-table-column
                 prop="phoneNumber"
                 label="会员账号"
@@ -60,10 +63,18 @@
                 label="账号性质"
                 show-overflow-tooltip>
                     <template slot-scope="scope">{{ 
-                        scope.row.facilitator&&scope.row.facilitator.facilitatorId?'服务商'
-                        :scope.row.expertInfo&&scope.row.expertInfo.expertId?'专家'
-                        :scope.row.type==1?'个人'
-                        :scope.row.type==2?'机构':''}}</template>
+                        scope.row.type==1?'个人'
+                        :scope.row.type==2?'机构':''}}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                prop="identity"
+                label="身份"
+                width="">
+                    <!-- <template slot-scope="scope">{{ 
+                        scope.row.type==1?'个人'
+                        :scope.row.type==2?'机构':''}}
+                    </template> -->
                 </el-table-column>
                 <el-table-column
                 prop="provinceName"
@@ -331,10 +342,20 @@
         <!-- 权限设置页面 -->
         <el-dialog title="权限设置" :visible.sync="dialogSetPermitFormVisible">
             <el-form :model="permitForm">
-                <el-form-item label="设置角色：" label-width="100px">
-                    <el-select v-model="permitForm.roleId" multiple placeholder="请选择">
+                <el-form-item label="基本角色：" label-width="100px">
+                    <el-select v-model="permitForm.roleId" placeholder="请选择">
                         <el-option
                         v-for="item in roleOptionsData"
+                        :key="item.roleId"
+                        :label="item.roleName"
+                        :value="item.roleId">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="自定义角色：" label-width="100px">
+                    <el-select v-model="permitForm.customRoleId" multiple placeholder="请选择">
+                        <el-option
+                        v-for="item in customRoleOptionsData"
                         :key="item.roleId"
                         :label="item.roleName"
                         :value="item.roleId">
@@ -378,7 +399,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 //专家详情弹框
                 dialogExpertFormVisible:false,
                 dialogFactoraFormVisible:false,
-                //角色下拉框数据
+                //基本角色下拉框数据
                 roleOptionsData:[
                     {
                         value: '选项1',
@@ -388,9 +409,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         label: '双皮奶'
                     },
                 ],
+                //自定义角色下拉框数据
+                customRoleOptionsData:[],
                 //
                 permitForm:{
-                    roleId:[],
+                    roleId:'',
+                    customRoleId:[],
                 },
                 dialogExpertFormTitle:'会员详情',
                 dialogFactoraFormTitle:'会员详情',
@@ -577,7 +601,17 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 getAccountPermWebrole(param).then(res=>{
                     console.log("sssresponse",res);
                     if(res.data.code==0){
-                        this.permitForm.roleId=res.data.data.roleIdList;
+                        
+                        let roleIdList=res.data.data.roleIdList.filter(val=>{
+                            return val==1||val==3
+                        });
+                        this.permitForm.roleId=roleIdList.length>0?roleIdList[0]:'';
+                        let customRoleIdList=res.data.data.roleIdList.filter(val=>{
+                            return val!=1&&val!=3
+                        });
+                        this.permitForm.customRoleId=customRoleIdList?customRoleIdList:[];
+                        // .length>0?customRoleIdList.join():''
+                        console.log('this.permitForm.customRoleId',this.permitForm.customRoleId)
                     }
                     
                 })
@@ -586,7 +620,14 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 getAccountMemPermWebrole().then(res=>{
                     console.log(res);
                     if(res.data.code==0){
-                        this.roleOptionsData=res.data.data;
+                        let list=res.data.data;
+                        this.roleOptionsData = list.filter(val=>{
+                            return val.roleId=='1'||val.roleId=='3'
+                        });
+                        this.customRoleOptionsData =  list.filter(val=>{
+                            return val.roleId!='1'&& val.roleId!='3'
+                        });
+                        console.log('customRoleOptionsData',this.customRoleOptionsData);
                     }else{
                         this.roleOptionsData=[];
                     }
@@ -596,7 +637,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //确认权限设置
             confirmSetAccountRolePer(){
                 let param={};
-                param.roleIdList=this.permitForm.roleId;
+                let roleIdList=this.permitForm.roleId?this.permitForm.customRoleId.concat(this.permitForm.roleId):this.permitForm.customRoleId;
+                param.roleIdList=roleIdList;
                 param.userId=this.userId;
                 // console.log(this.permitForm.roleId);
                 // return

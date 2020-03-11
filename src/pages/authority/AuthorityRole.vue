@@ -98,7 +98,7 @@
                     </el-col>
                 </el-form-item>
                 <el-form-item label="权限配置：" prop="remark">
-                    <el-col :span="8">
+                    <!-- <el-col :span="8"> -->
                         <div style="height:300px;overflow:auto">
                             <treeselect
                             class="no_select"
@@ -111,7 +111,7 @@
                             :default-expand-level="Infinity" 
                             :options="deptSelectOptions" />
                          </div>
-                    </el-col>
+                    <!-- </el-col> -->
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -169,6 +169,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     limit:10,
                 },
                 form:{
+                    roleId:'',
                     roleName:'',
                     remark:'',
                     menuIdList:[],
@@ -287,6 +288,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
                         console.log(this.form);
+                        // return;
                         // console.log('console.log(this.form);',this.value)
                         let param={};
                         for(let key in this.form){
@@ -331,7 +333,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 Promise.all([this.getRoleOrDeptData(),getRoleDetailInfo(param)]).then(result=>{
                     console.log(result);
                     for(let key in this.form){
+                        
                         this.form[key]=result[1].data.data[key];
+                        console.log("ghsghghdsghs",this.form)
                     }
                     // this.form=result[1].data.data;
                     // this.form.menuIdList=result[1].data.data.selectMenuIdList?result[1].data.data.selectMenuIdList:[];

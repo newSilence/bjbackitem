@@ -7,6 +7,10 @@ import AuthorityDepart from '@/pages/authority/AuthorityDepart'
 import AuthorityRole from '@/pages/authority/AuthorityRole'
 import AuthorityMenu from '@/pages/authority/AuthorityMenu'
 import memberReview from '@/pages/authority/memberReview'
+import ReleaseAudit from '@/pages/releaseAudit'
+import AuditRelease from '@/pages/releaseAudit/AuditRelease'
+
+
 import carte from '@/pages/authority/carte'
 import WebMenu from '@/pages/webauthority/WebMenu'
 import WebRole from '@/pages/webauthority/WebRole'
@@ -87,7 +91,15 @@ const routerAll=new Router({
           path:'integral/IntegralRules',
           name:'IntegralRules',
           component:IntegralRules,
-        },
+        },{
+          path: 'releaseAudit/ReleaseAudit',//发布审核管理主界面
+          name: 'ReleaseAudit',
+          component: ReleaseAudit
+        },{
+          path: 'releaseAudit/AuditRelease',//项目审核详情页面
+          name: 'AuditRelease',
+          component: AuditRelease
+        }
       ]
     },
     {

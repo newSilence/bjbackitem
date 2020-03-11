@@ -1,15 +1,19 @@
 <template>
     <div class="head">
-        <div style="height:10vh;min-height:52px;border:1px solid black;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(0deg,rgba(8,60,50,1),rgba(13,92,77,1));color:white">
-            <div style="margin-left:50px;font-size:40px;">
-                <span>科创汇</span>
+        <!-- <div style="height:10vh;min-height:52px;border:1px solid black;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(0deg,rgba(8,60,50,1),rgba(13,92,77,1));color:white"> -->
+        <div style="height:60px;min-height:52px;border:1px solid #F2F7FA;display:flex;align-items:center;justify-content:space-between;background:white;color:#333333">        
+            <div style="margin-left:22px;font-size:14px;">
+                <span>科创汇后台管理系统</span>
+                <span @click="logout" style="margin:0 18px;cursor:pointer">【退出】</span>
             </div>
-            <div style="display:flex;align-items:center;font-size:17px">
+            <div style="margin-right:21px;font-size:14px">
+                回首页<i class="el-icon-arrow-right"></i>
+            </div>
+            <!-- <div style="display:flex;align-items:center;font-size:17px">
                 <span>你好,{{$store.state.username}}</span>
                 <span style="margin:0 24px;width:0px;height:17px;border-left:1px white solid"></span>
                 <span style="">修改密码</span>
-                <span @click="logout" style="margin:0 24px;cursor:pointer">退出</span>
-            </div>
+            </div> -->
         </div>
         <!-- <div style="display:flex;padding:11px 45px;background:linear-gradient(to bottom,#f1f1f1 0%,#f1f1f1 50%,#e1e1e1 50%,#e1e1e1 100%);">
             <div @click="tabClick(item,index)" v-for="(item,index) in $store.state.homeTabList" style="border-radius:8px;cursor:pointer" :key="index">
