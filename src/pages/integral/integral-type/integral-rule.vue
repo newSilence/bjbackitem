@@ -1,0 +1,496 @@
+<template>
+  <div>
+    <el-form style="margin:20px;float: left" :inline="true" :model="formInline" class="demo-form-inline">
+      <el-select v-model="integralState" placeholder="积分状态">
+        <el-option
+          v-for="item in integralStateOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);color:white" @click="onAddnew">新建</el-button>
+    </el-form>
+    <el-form style="margin:20px;float: right" :inline="true" :model="formInline" class="demo-form-inline">
+      <el-form-item label="">
+        <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
+        <el-input style="border-radius:12px" placeholder="请输入ID、积分接口、积分名称、说明"  v-model="formInline.roleName">
+          <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
+        </el-input>
+      </el-form-item>
+    </el-form>
+    <div>
+      <el-table
+        :data="IntegralData"
+        tooltip-effect="dark"
+        style="width: 100%"
+      >
+        <el-table-column
+          prop="integralRecordId"
+          label="ID"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="integralName"
+          label="积分类型"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="state"
+          label="积分状态"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="remark"
+          label="备注"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="linkUserId"
+          label="操作人"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="newTime"
+          label="最后更新时间"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="100">
+          <template slot-scope="scope">
+            <el-button @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div style="text-align: right;margin: 20px">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="formInline.page"
+        :page-sizes="[10, 40, 100, 200]"
+        :page-size="formInline.limit"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalPage">
+      </el-pagination>
+    </div>
+    <!-- 新增或者编辑弹框 -->
+    <el-dialog :title="dialogFormVisibleTitle" @open="openDialog" :visible.sync="dialogFormVisible" @close="dialogClose">
+      <el-form :model="form" :rules="rules" ref="ruleForm" label-width="140px">
+        <el-form-item label="积分类型：" prop="integralName">
+          <el-col :span="8">
+            <el-select v-model="integralState" placeholder="请选择">
+              <el-option
+                v-for="item in integralStateoptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="有效时间：" prop="">
+            <el-date-picker
+              size="small"
+              style="width: 220px"
+              v-model="effectiveTime"
+              @change="handleTimeValue"
+              type="daterange"
+              range-separator=""
+              start-placeholder="开始日期"
+              end-placeholder="结束日期">
+            </el-date-picker>
+          <el-checkbox v-model="timeChecked" @change="handleTimeLable" style="margin-left: 25px">永久有效</el-checkbox>
+
+        </el-form-item>
+        <el-form-item label="积分值设置：" prop="port">
+          <el-col :span="8">
+            <el-input v-model="form.port"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="备注：" prop="remark">
+          <el-col :span="8">
+            <el-input type="textarea" maxlength="50" placeholder="请输入备注(50字以内)" :rows="4" v-model="form.explain"></el-input>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="积分状态：" prop="explain">
+          <el-col :span="8">
+            <el-select v-model="integralFormState" placeholder="请选择">
+              <el-option
+                v-for="item in integralStateOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="AddIntegralType" v-show="dialogFormVisibleTitle==='新增'">确定</el-button>
+        <el-button type="primary" @click="modifyIntegralType" v-show="dialogFormVisibleTitle==='编辑'">修改</el-button>
+      </div>
+    </el-dialog>
+  </div>
+
+</template>
+
+<script>
+  import { reqAllIntegralType,reqIntegralRule,reqIntegralTypeModify,reqAddIntegralPort,reqAddIntegralType, getAllRoleData , updateRoleStatus , getAllFuncPerm , updateRoleData , saveRoleData  } from '../api'
+  export default {
+    name: "Integral-type",
+    data(){
+      return {
+        IntegralTypeOption:{
+
+        },
+        timeChecked:true,
+        effectiveTime:'',
+        integralFormState:'生效中',
+        integralStateOptions: [{
+          value: '生效中',
+          label: '生效中'
+        },{
+          value: '未生效',
+          label: '未生效'
+        }], //积分状态配置项
+        integralState: '',//积分状态选择值
+        integralItem:{},//item积分对象
+        pageNumber:1,//当前页码
+        pageLimit:10,//每页数量
+        typeMember:0,
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
+        tableData:[
+          {userId:1,username:'admin',email:'1@qq.com',mobile:17521016266,status:1,roleIdList:[1,2],deptId:6,deptName:'测试分公司',createTime: "2016-11-11 11:11:11"}
+        ],
+        formInline: {
+          roleName:'',
+          page:1,
+          limit:10,
+        },
+        form:{
+          integralName:'',
+          explain:'',
+          port:'',
+        },
+        rules:{
+          integralName:[
+            { required: true, message: '请输入积分类型', trigger: 'blur' },
+            { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+          ],
+          port:[
+            { required: true, message: '请输入触发接口', trigger: 'blur' }
+          ],
+          remark:[
+            { required: true, message: '请输入备注(50字以内)', trigger: 'blur', }
+          ],
+
+        },
+        deptSelectOptions:[
+          { max: 50, message: '说明在50字符以内', trigger: 'blur' }
+        ],
+        funcSelectOptions:[],
+        roleOptions:[
+          {roleId:1,roleName:'长沙分公司'},
+          {roleId:2,roleName:'测试分公司'},
+          {roleId:3,roleName:'上海分公司'},
+          {roleId:4,roleName:'北京分公司'},
+        ],//角色复选框
+        dialogFormVisible:false,
+        dialogFormVisibleTitle:'新增',
+        IntegralData:[],  //积分类型
+        totalPage:''
+      }
+    },
+    created() {
+      this.getIntegralType();
+      this.getIntegralTypeData();
+    },
+    methods: {
+      onSearch() {
+        this.formInline.page=1;
+        this.fetchData();
+        console.log("search");
+      },
+      //处理部门数据，返回符合渲染的数据格式
+      treeData(source, id, parentId, children){
+        let cloneData = JSON.parse(JSON.stringify(source))
+        return cloneData.filter(father=>{
+          let branchArr = cloneData.filter(child => father[id] == child[parentId]);
+          branchArr.length>0 ? father[children] = branchArr : ''
+          return father[parentId] == 0        // 如果第一层不是parentId=0，请自行修改
+        })
+      },
+      //部门下拉框点击事件
+      deptSelected(node){
+        console.log(node);
+        // this.form.deptName=node.label;
+      },
+      opendialog(){
+        return new Promise((resolve,rej)=>{})
+      },
+      //promise关于角色和部门请求接口封装
+      getRoleOrDeptData(){
+        return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
+          console.log('promise',result);
+          this.deptSelectOptions=result[0].data.data;
+          for(let i=0;i<this.deptSelectOptions.length;i++){
+            this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
+            this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
+          }
+          this.deptSelectOptions=this.treeData(this.deptSelectOptions,'menuId','parentId','children');
+        }).catch(err=>{
+          this.$message({
+            showClose: true,
+            message: err,
+            type: 'error'
+          });
+        })
+      },
+      //新增
+      onAddnew(){
+        this.dialogFormVisible=true;
+        this.dialogFormVisibleTitle="新增"
+      },
+      //确认新增
+      confirmAdd(){
+        console.log(this.form);
+        this.$refs['ruleForm'].validate((valid) => {
+          if (valid) {
+            console.log(this.form);
+            let param={};
+            for(let key in this.form){
+              param[key]=this.form[key];
+            }
+            param.menuIdList=param.menuIdList.join(',');
+            delete param.createTime;
+            if(param.roleId){
+              updateRoleData(param).then(res=>{
+                console.log(res);
+                this.fetchData();
+                this.dialogClose();
+              })
+            }else{
+              saveRoleData(param).then(res=>{
+                console.log(res);
+                this.fetchData();
+                this.dialogClose();
+              })
+            }
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+      },
+      //编辑行
+      editClick(row){
+        this.integralItem = row;
+        this.dialogFormVisible=true;
+        console.log(row)
+        this.dialogFormVisibleTitle = '编辑';
+        this.form.integralName = row.integralName;
+        this.form.explain = row.explain;
+        let params = {
+          integralId:row.integralId
+        }
+        reqAddIntegralPort(params)
+          .then(res=>{
+            console.log(res)
+            if (res.data.errcode===0){
+              this.form.port = res.data.data.port;
+            }
+          })
+      },
+      changeStatus(row,index){
+        console.log(row);
+        let param={};
+        param.roleId=row.roleId;
+        if(row.status!=1){
+          // this.tableData[index].status=1;
+          row.status=1;
+          param.status=1;
+          updateRoleStatus(param).then(res=>{
+            if(res.data.code==0){
+              this.tableData.splice(index,1,row);
+            }else{}
+            // console.log(res);
+          })
+
+        }else{
+          row.status=0;
+          param.status=0;
+          updateRoleStatus(param).then(res=>{
+            if(res.data.code==0){
+              this.tableData.splice(index,1,row);
+            }else{}
+            // console.log(res);
+          })
+        }
+        console.log(this.tableData)
+      },
+      //关闭弹框
+      dialogClose(){
+        this.dialogFormVisible=false;
+        for(let key in this.form){
+          if(Array.isArray(this.form[key])){
+            this.form[key]=[];
+          }else{
+            this.form[key]='';
+          }
+        }
+        // this.form.deptId=null;
+      },
+      //打开弹框前回调事件
+      openDialog(){
+        this.dialogFormVisible = true
+      },
+      //获取表格数据
+      fetchData(){
+        getAllRoleData(this.formInline).then(res=>{
+          console.log(res);
+          if(res.data.code==0){
+            this.tableData=res.data.data.list;
+            this.total=res.data.data.totalCount;
+          }
+        })
+      },
+      //分页功能
+      handleSizeChange(val){
+        this.pageLimit = val;
+        this.getIntegralType()
+      },
+      handleCurrentChange(val){
+        this.pageNumber = val;
+        this.getIntegralType()
+      },
+      //获取积分规则数据
+      getIntegralType  (){
+        let params = {
+          pageNumber:this.pageNumber,
+          pageSize:this.pageLimit,
+        };
+        reqIntegralRule(params).then(res=>{
+          if (res.data.errcode===0){
+            let IntegralTypeOption = [];
+            //时间格式化获取前10位
+            console.log(res.data.data.list)
+            res.data.data.list.length>0?res.data.data.list.forEach((item,key)=>{
+              IntegralTypeOption.push({
+                value:item.integralId,
+                label:item.integralName
+              })
+            }):'';
+            this.IntegralData = res.data.data.list;
+            this.totalPage = res.data.data.total;
+          }
+        })
+      },
+      //获取积分类型全部数据
+      getIntegralTypeData () {
+        reqAllIntegralType().then(res=>{
+          if (res.data.errcode===0){
+               let integralTypeData = [];
+               res.data.data.forEach(item=>{
+                 console.log(item)
+                 integralTypeData.push({
+                   value:item.integralId,
+                   label:item.integralName
+                 })
+               })
+               this.integralStateoptions = integralTypeData;
+               console.log('全部积分类型',integralTypeData)
+
+          }
+        })
+      },
+
+      //添加积分类型数据
+      AddIntegralType(){
+        this.$refs['ruleForm'].validate((valid) => {
+          if (valid) {
+            let params = {
+              ...this.form,createId:1
+            }
+            reqAddIntegralType(params).then(res=>{
+              if(res.data.errcode ===0){
+                this.$message({
+                  message: res.data.errmsg,
+                  type: 'success'
+                });
+                this.$message({
+                  message: '添加成功',
+                  type: 'success'
+                });
+                this.dialogFormVisible = false
+                this.getIntegralType()
+              }else {
+
+              }
+            })
+          } else {
+            return false;
+          }
+        })
+      },
+      //修改积分类型数据
+      modifyIntegralType(){
+        console.log(this.integralItem)
+        const {integralId} = this.integralItem;
+        const {port,integralName,explain} = this.form;
+        let params = {integralId,integralName,explain,port};
+        reqIntegralTypeModify(params)
+          .then(res=>{
+            console.log(res)
+            if (res.data.errcode===0){
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+              this.dialogFormVisible = false
+              this.getIntegralType()
+            }
+          })
+      },
+      handleTimeValue(value){
+            console.log(value)
+            this.timeChecked = false;
+      },
+      handleTimeLable(value){
+            console.log(value)
+            this.effectiveTime = '';
+      },
+    },
+  }
+</script>
+
+<style scoped lang="less">
+  .no_select .vue-treeselect__value-container{
+    display:none;
+  }
+  .no_select .vue-treeselect__x-container{
+    display:none;
+  }
+  .no_select .vue-treeselect__menu-container{
+    position: relative;
+  }
+  .no_select .vue-treeselect__control{
+    display: none!important;
+  }
+  .point_class{
+    cursor: pointer;
+    font-size:16px;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+  }
+
+
+</style>

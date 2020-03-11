@@ -26,8 +26,8 @@ const state={
 
 
     {icon:'el-icon-user',url:'/index/integral',name:'积分管理',list:[
-        {icon:'el-icon-user',url: '/index/integral/IntegralType',name: '积分类型'},
-        {icon:'el-icon-user',url: '/index/integral/IntegralRules',name: '积分规则'},
+        {icon:'el-icon-user',url: '/index/integral/IntegralType',name: '积分设置'},
+        {icon:'el-icon-user',url: '/index/integral/IntegralRules',name: '积分账户'},
       ]},
 
   ],
