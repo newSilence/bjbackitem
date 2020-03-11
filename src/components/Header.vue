@@ -75,7 +75,8 @@ import { Logout } from "./api";
                 sessionStorage.clear();
                 this.$store.commit('setToken','');
                 Logout().then(res=>{
-                    location.href='/login';
+                    this.$router.replace('/login')
+                    // location.href='/login';
                 })
                 
             },

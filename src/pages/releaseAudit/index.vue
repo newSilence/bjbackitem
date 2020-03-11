@@ -142,14 +142,16 @@
                 </el-table-column>
                 <el-table-column
                     prop="createTime"
+                    width="120"
                     label="提交时间">
                 </el-table-column>
                 <el-table-column
                     prop="processType"
+                    width="100"
                     label="当前进度">
                     <template slot-scope="scope">
                         <div>
-                            {{scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}}
+                            {{scope.row.approvalState==4?'已下线':scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}}
                             <!-- {{scope.row.processTypeStr && scope.row.processTypeStr.length>0?scope.row.processTypeStr.join():''}} -->
                         </div>
                     </template>
@@ -185,9 +187,9 @@
                     <span>
                         <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
                     </span>
-                    <button style="margin-left:10px" @click="batchPro(1)" class="bottom_table_button">删除</button>
-                    <button @click="batchPro(2)" class="bottom_table_button">设为推荐</button>
-                    <button @click="batchPro(3)" class="bottom_table_button">转经纪人</button>
+                    <button style="margin-left:10px" :disabled="isAllowedButtonClick.batchDeleteButton" @click="batchPro(1)" class="bottom_table_button">删除</button>
+                    <button @click="batchPro(2)" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为推荐</button>
+                    <button @click="batchPro(3)" :disabled="isAllowedButtonClick.batchTrunOther" class="bottom_table_button">转经纪人</button>
                 </div>
                 <el-pagination
                     @size-change="handleSizeChange"
@@ -210,6 +212,11 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
         data() {
             return {
                 key: "value",
+                isAllowedButtonClick:{
+                    batchRecommendButton:false,
+                    batchDeleteButton:false,
+                    batchTrunOther:false,
+                },
                 OwnershipData : ['企业', '高校', '科研院所','个人团队','其他'],
                 AppealData : ['项目融资', '项目落地', '技术交易','招人才','其他'],
                 SkillAreaData:[],
@@ -247,7 +254,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     {label:'待审核',value:'0'},
                     {label:'未通过',value:'2'},
                     {label:'发布中',value:'1'},
-                    {label:'已下线',value:'3'},
+                    {label:'已下线',value:'4'},
                 ],
                 optionsArea:[],
                 formInline:{
@@ -293,13 +300,14 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             statusClick(item,key){
                 if(this.statusClickIndex!=key){
                     this.statusClickIndex=key;
-                    if(item.value==3){
-                        this.formInline.state=1;
-                        this.formInline.approvalState='';
-                    }else{
-                        this.formInline.state='';
-                        this.formInline.approvalState=item.value;
-                    }
+                    // if(item.value==3){
+                    //     this.formInline.state=1;
+                    //     this.formInline.approvalState='';
+                    // }else{
+                    //     this.formInline.state='';
+                    //     this.formInline.approvalState=item.value;
+                    // }
+                    this.formInline.approvalState=item.value;
                     this.formInline.pageIndex=1;
                     this.fetch();
                 }
@@ -449,11 +457,34 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 //根据标志判断是哪个批量操作功能
                 let optionFunc=flag==1?batchDeleteProFun:flag==2?batchRecommendProFun:'';
                 let str = flag==1?'批量删除':flag==2?'批量设为推荐':'';
+                if(flag==1){
+                    this.isAllowedButtonClick.batchDeleteButton=true;
+                }
+                if(flag==2){
+                    this.isAllowedButtonClick.batchRecommendButton=true;
+                }
+                if(flag==3){
+                    this.isAllowedButtonClick.batchTrunOther=true;
+                }
                 if(optionFunc==''){
                     this.$message({
                         type:'warning',
                         showClose: true,
                         message:'功能待开发',
+                        onClose:()=>{
+                            // console.log("flag",flag);
+                            if(flag==1){
+                                // console.log("设置")
+                                this.isAllowedButtonClick.batchDeleteButton=false;
+                            }
+                            if(flag==2){
+                                this.isAllowedButtonClick.batchRecommendButton=false;
+                            }
+                            if(flag==3){
+                                this.isAllowedButtonClick.batchTrunOther=false;
+                            }
+                            // console.log('关闭')
+                        }
                     })
                     return false;
                 }
@@ -463,6 +494,20 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                         type:'warning',
                         showClose: true,
                         message:'请选择要操作的数据',
+                        onClose:()=>{
+                            // console.log("flag",flag);
+                            if(flag==1){
+                                // console.log("设置")
+                                this.isAllowedButtonClick.batchDeleteButton=false;
+                            }
+                            if(flag==2){
+                                this.isAllowedButtonClick.batchRecommendButton=false;
+                            }
+                            if(flag==3){
+                                this.isAllowedButtonClick.batchTrunOther=false;
+                            }
+                            // console.log('关闭')
+                        }
                     })
                     return false;
                 }
@@ -479,6 +524,20 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                         type:res.data.ret?'success':'error',
                         showClose: true,
                         message:res.data.ret?`${str}成功`:`${str}失败`,
+                        onClose:()=>{
+                            // console.log("flag",flag);
+                            if(flag==1){
+                                console.log("设置")
+                                this.isAllowedButtonClick.batchDeleteButton=false;
+                            }
+                            if(flag==2){
+                                this.isAllowedButtonClick.batchRecommendButton=false;
+                            }
+                            if(flag==3){
+                                this.isAllowedButtonClick.batchTrunOther=false;
+                            }
+                            // console.log('关闭')
+                        }
                     })
                     if(res.data.ret){
                         this.fetch();
