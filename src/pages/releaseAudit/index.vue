@@ -173,7 +173,7 @@
                             <el-dropdown-menu slot="dropdown">
                                 <!-- <el-dropdown-item>{{scope.row.name}}</el-dropdown-item> -->
                                 <el-dropdown-item @click.native="deleteRow(scope.row)">删除</el-dropdown-item>
-                                <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.state==0&&scope.row.approvalState==1?false:true">{{scope.row.state==0?'下线':'已下线'}}</el-dropdown-item>
+                                <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.approvalState==4?'已下线':'下线'}}</el-dropdown-item>
                                 <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.isRecommend==1?'取消推荐':'设为推荐'}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>

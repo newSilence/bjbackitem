@@ -30,7 +30,7 @@ export default {
       // console.log("暂时未登录")
     }else{
       this.$store.commit("changeUserName",sessionStorage['username']);
-      this.$store.commit("changeHomeTabList",JSON.parse(sessionStorage['homeTabList']));
+      // this.$store.commit("changeHomeTabList",JSON.parse(sessionStorage['homeTabList']));
       this.$store.commit("changeHeadTabClickIndexStr",sessionStorage['headTabClickIndexStr']);
       if(sessionStorage['navMenu']){
         this.$store.commit("changeMenuData",JSON.parse(sessionStorage['navMenu']));
