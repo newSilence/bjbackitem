@@ -3,7 +3,10 @@
         <div>
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
                 <div>
-                    <span @click="statusClick(item,key)" :style="{fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=manageAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in manageAuditType" :key="key">{{item.label}}</span>
+                    <span @click="statusClick(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=manageAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in manageAuditType" :key="key">
+                        {{item.label}}
+                        <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
+                    </span>
                 </div>
                 <div style="font-size: 0">
                     <input v-model="formInline.keyWord" placeholder="请输入项目名称或发布单位" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
@@ -251,7 +254,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 statusClickIndex:0,
                 manageAuditType:[
                     {label:'全部',value:''},
-                    {label:'待审核',value:'0'},
+                    {label:'待审核',value:'0',num:0},
                     {label:'未通过',value:'2'},
                     {label:'发布中',value:'1'},
                     {label:'已下线',value:'4'},
@@ -560,10 +563,11 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 }
                 delete searchForm.selectedOptions;
                 getProjectList(searchForm).then(res=>{
-                    // console.log('gdhgdhres',res);
+                    console.log('gdhgdhres',res);
                     if(res.data && res.data.data){
-                        this.tableData = res.data.data.data;
-                        this.totalAll=res.data.data.count-0;
+                        this.tableData = res.data.data.data.list;
+                        this.totalAll=res.data.data.data.total-0;
+                        this.manageAuditType[1].num = res.data.data.count;
                     }
                 })
             },
