@@ -191,7 +191,7 @@
                         <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
                     </span>
                     <button style="margin-left:10px" :disabled="isAllowedButtonClick.batchDeleteButton" @click="batchPro(1)" class="bottom_table_button">删除</button>
-                    <button @click="batchPro(2)" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为推荐</button>
+                    <button v-show="!(formInline.approvalState==='0'||formInline.approvalState==='2'||formInline.approvalState==='4')" @click="batchPro(2)" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为推荐</button>
                     <button @click="batchPro(3)" :disabled="isAllowedButtonClick.batchTrunOther" class="bottom_table_button">转经纪人</button>
                 </div>
                 <el-pagination
