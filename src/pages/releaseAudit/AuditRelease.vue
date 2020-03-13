@@ -591,7 +591,6 @@
                     // ],
                     // valuation : [
                     //     { required:this.negotiable?false:true, message: '请输入估值', trigger: 'blur' },
-                        
                     // ],
                     valuationType:[{ validator: validateValuation, trigger: 'blur' }],
                     // negotiable:[{ validator: validateValuation, type: 'array', trigger: 'change' }],

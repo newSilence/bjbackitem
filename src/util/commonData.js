@@ -18,11 +18,11 @@ export const toolbarOptions = [
     ['clean']                                         // remove formatting button
 ]
 export const proTemplate = `
-		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/5.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/5.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
 		<p>请输入您的背景描述</p>
-		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/6.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/6.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
 		<p>请输入您的团队介绍</p>
-		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/7.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/7.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
 		<p>请输入您的技术成果</p>
-		<div style="text-align:left;"><img src="http://139.196.236.6:8080/img/publish/8.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/8.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
 		<p>请输入您的前景展望</p>`;
