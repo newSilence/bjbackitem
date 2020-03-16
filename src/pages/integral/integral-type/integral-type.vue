@@ -48,7 +48,6 @@
           width="100">
           <template slot-scope="scope">
             <el-button @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="editClick(scope.row)" type="text" size="small">下线</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -111,20 +110,18 @@
           }
           //如果没有用户Id
           if (!this.form.userId) {
-            // console.log('jjjj');
             if(!this.form.password){
               callback(new Error('请输入密码'));
             }else if(this.form.password.length>20||this.form.password.length<6){
               callback(new Error('请输入6-20位密码'));
             }else{
-              console.log("yanzheng")
               callback()
             };
-            console.log(this.$refs.ruleForm.validateField('passwords'));
           }
           callback();
         };
           return {
+            isSearch:false,
             integralItem:{},//item积分对象
             pageNumber:1,//当前页码
             pageLimit:10,//每页数量
@@ -176,9 +173,11 @@
       },
       methods: {
         onSearch() {
-          this.formInline.page=1;
-          this.fetchData();
-          console.log("search");
+           console.log(this.formInline.roleName)
+           this.pageNumber = 1;
+           this.isSearch = true;
+           this.getIntegralType();
+
         },
         //处理部门数据，返回符合渲染的数据格式
         treeData(source, id, parentId, children){
@@ -191,8 +190,6 @@
         },
         //部门下拉框点击事件
         deptSelected(node){
-          console.log(node);
-          // this.form.deptName=node.label;
         },
         opendialog(){
           return new Promise((resolve,rej)=>{})
@@ -200,7 +197,6 @@
         //promise关于角色和部门请求接口封装
         getRoleOrDeptData(){
           return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
-            console.log('promise',result);
             this.deptSelectOptions=result[0].data.data;
             for(let i=0;i<this.deptSelectOptions.length;i++){
               this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
@@ -222,10 +218,8 @@
         },
         //确认新增
         confirmAdd(){
-          console.log(this.form);
           this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
-              console.log(this.form);
               let param={};
               for(let key in this.form){
                 param[key]=this.form[key];
@@ -234,20 +228,17 @@
               delete param.createTime;
               if(param.roleId){
                 updateRoleData(param).then(res=>{
-                  console.log(res);
                   this.fetchData();
                   this.dialogClose();
                 })
               }else{
                 saveRoleData(param).then(res=>{
-                  console.log(res);
                   this.fetchData();
                   this.dialogClose();
                 })
               }
 
             } else {
-              console.log('error submit!!');
               return false;
             }
           });
@@ -257,7 +248,6 @@
         editClick(row){
           this.integralItem = row;
           this.dialogFormVisible=true;
-          console.log(row)
           this.dialogFormVisibleTitle = '编辑';
           this.form.integralName = row.integralName;
           this.form.explain = row.explain;
@@ -266,14 +256,12 @@
           }
           reqAddIntegralPort(params)
             .then(res=>{
-              console.log(res)
               if (res.data.errcode===0){
                 this.form.port = res.data.data.port;
               }
             })
         },
         changeStatus(row,index){
-          console.log(row);
           let param={};
           param.roleId=row.roleId;
           if(row.status!=1){
@@ -284,7 +272,6 @@
               if(res.data.code==0){
                 this.tableData.splice(index,1,row);
               }else{}
-              // console.log(res);
             })
 
           }else{
@@ -294,10 +281,8 @@
               if(res.data.code==0){
                 this.tableData.splice(index,1,row);
               }else{}
-              // console.log(res);
             })
           }
-          console.log(this.tableData)
         },
         //关闭弹框
         dialogClose(){
@@ -309,7 +294,6 @@
               this.form[key]='';
             }
           }
-          // this.form.deptId=null;
         },
         //打开弹框前回调事件
         openDialog(){
@@ -318,7 +302,6 @@
         //获取表格数据
         fetchData(){
           getAllRoleData(this.formInline).then(res=>{
-            console.log(res);
             if(res.data.code==0){
               this.tableData=res.data.data.list;
               this.total=res.data.data.totalCount;
@@ -340,11 +323,11 @@
             pageNumber:this.pageNumber,
             pageSize:this.pageLimit,
           };
+          this.isSearch?params.keyWord=this.formInline.roleName:'';
           reqIntegralType(params).then(res=>{
             if (res.data.errcode===0){
               //时间格式化获取前10位
               res.data.data.list.length>0?res.data.data.list.forEach((item,key)=>{
-                console.log(item)
                 res.data.data.list[key].newTime = item.updateTime.substring(0,10)
               }):'';
               this.IntegralData = res.data.data.list;
@@ -366,14 +349,10 @@
                     message: res.data.errmsg,
                     type: 'success'
                   });
-                  this.$message({
-                    message: '添加成功',
-                    type: 'success'
-                  });
                   this.dialogFormVisible = false
                   this.getIntegralType()
                 }else {
-
+                  this.$message.error(res.data.errmsg);
                 }
               })
             } else {
@@ -383,16 +362,14 @@
         },
         //修改积分类型数据
         modifyIntegralType(){
-          console.log(this.integralItem)
           const {integralId} = this.integralItem;
           const {port,integralName,explain} = this.form;
           let params = {integralId,integralName,explain,port};
           reqIntegralTypeModify(params)
             .then(res=>{
-              console.log(res)
               if (res.data.errcode===0){
                 this.$message({
-                  message: '修改成功',
+                  message: res.data.errmsg,
                   type: 'success'
                 });
                 this.dialogFormVisible = false

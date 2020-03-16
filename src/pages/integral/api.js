@@ -213,9 +213,17 @@ export function reqSaveIntegralRule(data){
 //查询积分规则
 export function reqIntegralRuleConfig(id){
   return request({
-    url:'/manager/IntegralRecord/selectIntegralRecordByid',
+    url:'/manager/IntegralRecord/selectIntegralRecordByIntegralNameId',
     params:id,
     method:'get'
+  })
+}
+//积分规则下线
+export function reqOffLineIntegralRule(data){
+  return request({
+    url:'/manager/Integral/updateIntegralStatue',
+    data,
+    method:'post'
   })
 }
 

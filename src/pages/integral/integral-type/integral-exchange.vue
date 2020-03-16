@@ -1,6 +1,6 @@
 <template>
     <div>
-      积分兑换
+
     </div>
 </template>
 

@@ -44,6 +44,8 @@
           width="100">
           <template slot-scope="scope">
             <el-button @click="editClick(scope.row)" type="text" size="small">配置</el-button>
+            <el-button @click="editOnLine(scope.row)" type="text" size="small" v-if="scope.row.state===1">上线</el-button>
+            <el-button @click="editOffLine(scope.row)" style="border: none; color: rgb(253, 32, 68);" type="text" size="small" v-else>下线</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -69,6 +71,7 @@
           <el-cascader
             v-model="form.ruleClass"
             :options="classOptions"
+            @change="handleClassChange"
             ></el-cascader>
         </el-form-item>
         <el-form-item label="有效时间：" prop="integralName">
@@ -111,7 +114,7 @@
               </el-select>
             </div></el-col>
             <el-col :span="7"><div class="grid-content bg-purple">
-              <el-input v-model="integralValue" placeholder="请输入内容" style="width: 80%"></el-input>
+              <el-input v-model="integralValue" @keyup.enter.native="handleClick" placeholder="请输入内容" style="width: 80%"></el-input>
             </div></el-col>
           </el-row>
           <el-row :gutter="20" v-for="(item,index) in integralSetting" :key="index">
@@ -156,53 +159,50 @@
 </template>
 
 <script>
-  import { reqIntegralRuleConfig,reqSaveIntegralRule,reqAllIntegralClass,reqIntegralTypeModify,reqAddIntegralPort,reqAddIntegralType,reqIntegralType,getAdminManageTable , getAllRoleData , updateRoleStatus ,getAllDepartData ,getAllSelectFuncPerm , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from '../api'
-  import Treeselect from '@riophae/vue-treeselect'
-  import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+  import { reqOffLineIntegralRule,reqIntegralRuleConfig,reqSaveIntegralRule,reqAllIntegralClass,reqIntegralTypeModify,reqAddIntegralType,reqIntegralType,getAllRoleData , updateRoleStatus , getAllFuncPerm , updateRoleData , saveRoleData  } from '../api'
   export default {
     name: "Integral-type",
     data(){
       return {
-
+        isSave:false,//是否保存
         membership:'',
         userType:'',
         integralValue:'',
         integralSetting:[],
-        integralSettingCode:[],
         classOptions:[],
         leaveOptions:[
           {
-            value:'0',
+            value:'VIP0',
             label:'VIP0'
           },
           {
-            value:'1',
+            value:'VIP1',
             label:'VIP1'
           },
           {
-            value:'2',
+            value:'VIP2',
             label:'VIP2'
           },
           {
-            value:'3',
+            value:'VIP3',
             label:'VIP3'
           }
         ],//会员等级数据
         personTypeOptions:[
           {
-            value:'0',
+            value:'普通个人用户',
             label:'普通个人用户'
           },
           {
-            value:'1',
+            value:'机构用户',
             label:'机构用户'
           },
           {
-            value:'2',
+            value:'服务商用户',
             label:'服务商用户'
           },
           {
-            value:'3',
+            value:'专家用户',
             label:'专家用户'
           }
         ],
@@ -229,6 +229,7 @@
           port:'',
           ruleClass:'',
           effectiveTime:'',
+          remark:''
         },
 
         rules:{
@@ -265,9 +266,9 @@
     },
     methods: {
       onSearch() {
-        this.formInline.page=1;
-        this.fetchData();
-        console.log("search");
+        this.pageNumber = 1;
+        this.isSearch = true;
+        this.getIntegralType();
       },
       //处理部门数据，返回符合渲染的数据格式
       treeData(source, id, parentId, children){
@@ -280,7 +281,6 @@
       },
       //部门下拉框点击事件
       deptSelected(node){
-        console.log(node);
       },
       opendialog(){
         return new Promise((resolve,rej)=>{})
@@ -288,7 +288,6 @@
       //promise关于角色和部门请求接口封装
       getRoleOrDeptData(){
         return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
-          console.log('promise',result);
           this.deptSelectOptions=result[0].data.data;
           for(let i=0;i<this.deptSelectOptions.length;i++){
             this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
@@ -310,10 +309,8 @@
       },
       //确认新增
       confirmAdd(){
-        console.log(this.form);
         this.$refs['ruleForm'].validate((valid) => {
           if (valid) {
-            console.log(this.form);
             let param={};
             for(let key in this.form){
               param[key]=this.form[key];
@@ -322,13 +319,11 @@
             delete param.createTime;
             if(param.roleId){
               updateRoleData(param).then(res=>{
-                console.log(res);
                 this.fetchData();
                 this.dialogClose();
               })
             }else{
               saveRoleData(param).then(res=>{
-                console.log(res);
                 this.fetchData();
                 this.dialogClose();
               })
@@ -346,11 +341,10 @@
         this.dialogFormVisible=true;
         this.dialogFormVisibleTitle = '编辑';
         this.form.integralName = row.integralName;
-        console.log(this.integralItem.integralId)
+        this.clearForm();
         this.getIntegralRuleConfig(this.integralItem.integralId)
       },
       changeStatus(row,index){
-        console.log(row);
         let param={};
         param.roleId=row.roleId;
         if(row.status!=1){
@@ -361,7 +355,6 @@
             if(res.data.code==0){
               this.tableData.splice(index,1,row);
             }else{}
-            // console.log(res);
           })
 
         }else{
@@ -371,10 +364,8 @@
             if(res.data.code==0){
               this.tableData.splice(index,1,row);
             }else{}
-            // console.log(res);
           })
         }
-        console.log(this.tableData)
       },
       //关闭弹框
       dialogClose(){
@@ -395,7 +386,6 @@
       //获取表格数据
       fetchData(){
         getAllRoleData(this.formInline).then(res=>{
-          console.log(res);
           if(res.data.code==0){
             this.tableData=res.data.data.list;
             this.total=res.data.data.totalCount;
@@ -417,11 +407,11 @@
           pageNumber:this.pageNumber,
           pageSize:this.pageLimit,
         };
+        this.isSearch?params.keyWord=this.formInline.roleName:'';
         reqIntegralType(params).then(res=>{
           if (res.data.errcode===0){
             //时间格式化获取前10位
             res.data.data.list.length>0?res.data.data.list.forEach((item,key)=>{
-              console.log(item)
               res.data.data.list[key].newTime = item.updateTime.substring(0,10)
             }):'';
             this.IntegralData = res.data.data.list;
@@ -460,13 +450,11 @@
       },
       //修改积分类型数据
       modifyIntegralType(){
-        console.log(this.integralItem)
         const {integralId} = this.integralItem;
         const {port,integralName,explain} = this.form;
         let params = {integralId,integralName,explain,port};
         reqIntegralTypeModify(params)
           .then(res=>{
-            console.log(res)
             if (res.data.errcode===0){
               this.$message({
                 message: '修改成功',
@@ -481,14 +469,13 @@
       addTntegral(){
         //添加默认 + - 号
             let addSub = '';
-            console.log(this.form.ruleClass)
-
+            console.log('this.form.ruleClass',this.form.ruleClass)
             if (this.form.ruleClass[0]=='2000'){
               addSub = '-'
             }else if (this.form.ruleClass[0]=='1000'){
-              addSub = '+'
+              addSub = ''
           }
-         else if (this.form.ruleClass===''){
+         else if (this.form.ruleClass.length != 2){
          this.$message({
            message: '请先选择分类',
            type: 'warning'
@@ -520,8 +507,7 @@
 
        //重复性判断
         var isRepeat = false
-        console.log('integralSetting',this.integralSetting);
-        this.integralSettingCode.length>0?this.integralSettingCode.forEach((item,key)=>{
+        this.integralSetting.length>0?this.integralSetting.forEach((item,key)=>{
           if (item.membership==this.membership&&item.userType==this.userType){
             this.$message({
               message: '请勿重复添加',
@@ -531,7 +517,7 @@
           }
         }):'';
         if (isRepeat){
-          return false;
+          return ;
         }
         let  membershipValue;
         this.leaveOptions.forEach((item,key)=>{
@@ -550,18 +536,11 @@
           userType:userType,
           integralValue: addSub + this.integralValue
         })
-        this.integralSettingCode.push({
-          membership:this.membership,
-          userType:this.userType,
-          integralValue: addSub + this.integralValue
-        })
-
 
       },
       //删除积分类型
       deleateIntegralType(index){
         this.integralSetting.splice(index,1)
-        this.integralSettingCode.splice(index,1)
       },
       //时间改变
       timeChange(val){
@@ -576,10 +555,12 @@
         this.$refs['ruleForm'].validate((valid)=>{
           if (valid){
             let params = {};
-            console.log(this.integralItem);
             const  {integralId,integralName} = this.integralItem;
             params.linkUserId = 1;
             params.interalNameId = integralId;
+            if (this.isSave){
+              params.integralRecordId = this.integralRecordId;
+            }
             params.integralName = integralName;
             params.remark  = this.form.remark;
             if (this.form.effectiveTime.length===0&&this.checked==false){
@@ -589,14 +570,14 @@
               });
               return
             }
-            if (this.integralSettingCode.length===0){
+            if (this.integralSetting.length===0){
               this.$message({
                 message: '请添加积分值设置',
                 type: 'warning'
               });
               return
             }
-            this.integralSettingCode.length>0?this.integralSettingCode.forEach((item,index)=>{
+            this.integralSetting.length>0?this.integralSetting.forEach((item,index)=>{
               params['membershipValues['+index+'].membership']=item.membership
               params['membershipValues['+index+'].userType']=item.userType
               params['membershipValues['+index+'].integralValue']=item.integralValue
@@ -607,12 +588,10 @@
             this.checked?params.perpetual=1:params.perpetual=0; //是否永久
             if (!this.checked){
               let effectiveTime = this.form.effectiveTime.toLocaleString().split(',')
-              console.log(this.form.effectiveTime.toLocaleString().split(','))
               params.startTime = effectiveTime[0].substring(0,10).split('/').join('-')
               params.finishTime = effectiveTime[1].substring(0,10).split('/').join('-')
             }
             reqSaveIntegralRule(params).then(res=>{
-               console.log(res)
               if (res.data.errcode===0){
                 this.$message({
                   message: res.data.errmsg,
@@ -629,7 +608,6 @@
       reqAllIntegralClass(){
         reqAllIntegralClass()
         .then(res=>{
-          console.log('二级分类',res)
           if (res.data.errcode===0){
             let classOptions = [];
             res.data.data.forEach((item,index)=>{
@@ -649,7 +627,6 @@
 
               })
             })
-            console.log('11111111111111',classOptions)
             this.classOptions = classOptions;
           }
 
@@ -657,25 +634,98 @@
       },
       //处理等级改变
       handleLeaveChange(value){
-          console.log(value)
       },
       //处理类型改变
       handleTypeChange(value){
-        console.log(value)
+      },
+      //清空表单
+      clearForm(){
+        this.form.remark = '';
+        this.integralSetting = [];
+        this.form.effectiveTime = '';
+        this.form.ruleClass = '';
+        this.checked = false;
       },
       //获取配置数据
       getIntegralRuleConfig(id){
         let params = {
-          integralRecordId:id,
+          IntegralNameId:id,
 
         }
         reqIntegralRuleConfig(params).then(res=>{
+          if (res.data.errcode===0&&res.data.data){
+            this.isSave = true;
+            this.integralRecordId = res.data.data.integralRecordId;
+            this.form.remark = res.data.data.remark;
+            let newArr = [];
+            let arr = res.data.data.membershipValues;
+            arr.length>0?arr.forEach((item,key)=>{
+               newArr.push({
+                 membership:item.membership,
+                 userType:item.userType,
+                 integralValue: item.integralValue
+               })
+            }):''
+            this.integralSetting = newArr;
+            if (res.data.data.rankOne&&res.data.data.rankTwo){
+              this.form.ruleClass = [res.data.data.rankOne.toString(),res.data.data.rankTwo.toString()];
+            }
+            if (res.data.data.perpetual===1){
+              this.checked = true;
+            }else {
+              this.form.effectiveTime = [res.data.data.startTime,res.data.data.finishTime];
+            }
+          }
+          else {
+            this.isSave = false
+          }
+
+        })
+      },
+      //积分类型修改
+      handleClassChange(val){
+        console.log(val)
+      },
+      //下线
+      editOffLine(row){
+        console.log(row)
+        let data = {
+          state:1,
+          integralId:row.integralId
+        }
+        reqOffLineIntegralRule(data).then(res=>{
           console.log(res)
           if (res.data.errcode===0){
-            console.log(res.data.data.remark)
-            this.form.remark = res.data.data.remark
+            this.$message({
+              message: res.data.errmsg,
+              type: 'success'
+            });
+            this.getIntegralType();
           }
+
         })
+      },
+      //上线
+      editOnLine(row){
+        console.log(row)
+        let data = {
+          state:0,
+          integralId:row.integralId
+        }
+        reqOffLineIntegralRule(data).then(res=>{
+          console.log(res)
+          if (res.data.errcode===0){
+            this.$message({
+              message: res.data.errmsg,
+              type: 'success'
+            });
+            this.getIntegralType();
+          }
+
+        })
+      },
+      handleClick(){
+        this.integralValue = this.integralValue.replace(/[^\w]/g, '');
       }
     }
   }
