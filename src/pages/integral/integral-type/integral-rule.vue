@@ -1,9 +1,9 @@
 <template>
   <div class="integral-rule-self">
     <el-form style="margin:20px;float: right" :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="">
+      <el-form-item label="" >
         <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
-        <el-input style="border-radius:12px" placeholder="请输入ID、积分接口、积分名称、说明"  v-model="formInline.roleName">
+        <el-input style="border-radius:12px;width: 368px" placeholder="请输入ID、积分接口、积分类型、说明"  v-model="formInline.roleName">
           <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
         </el-input>
       </el-form-item>
@@ -172,26 +172,26 @@
         classOptions:[],
         leaveOptions:[
           {
-            value:'VIP0',
-            label:'VIP0'
+            value:'Vip0',
+            label:'Vip0'
           },
           {
-            value:'VIP1',
-            label:'VIP1'
+            value:'Vip1',
+            label:'Vip1'
           },
           {
-            value:'VIP2',
-            label:'VIP2'
+            value:'Vip2',
+            label:'Vip2'
           },
           {
-            value:'VIP3',
-            label:'VIP3'
+            value:'Vip3',
+            label:'Vip3'
           }
         ],//会员等级数据
         personTypeOptions:[
           {
-            value:'普通个人用户',
-            label:'普通个人用户'
+            value:'普通用户',
+            label:'普通用户'
           },
           {
             value:'机构用户',

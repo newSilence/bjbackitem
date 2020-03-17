@@ -3,7 +3,7 @@
     <el-form style="margin:20px;float: right" :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="">
         <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
-        <el-input style="border-radius:12px" placeholder="请输入ID、积分接口、积分名称、说明"  v-model="formInline.roleName">
+        <el-input style="border-radius:12px;width: 368px" placeholder="请输入ID、积分接口、积分类型、说明"  v-model="formInline.roleName">
           <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
         </el-input>
       </el-form-item>
@@ -78,7 +78,7 @@
         </el-form-item>
         <el-form-item label="说明：" prop="explain">
           <el-col :span="8">
-            <el-input type="textarea" placeholder="请输入备注，限制在50字以内" :rows="4" v-model="form.explain"></el-input>
+            <el-input type="textarea" :maxlength="50" placeholder="请输入备注，限制在50字以内" :rows="4" v-model="form.explain"></el-input>
           </el-col>
         </el-form-item>
       </el-form>
