@@ -200,7 +200,7 @@ export function saveMenuData(data){
 //会员账号管理查询接口
 export function getMemAccountData(data){
     return request({
-        url:'/manager/userManager/selectAllUserInfo',
+        url:'/manager/userManager/selectAuditUser',
         params:data,
         method:'get'
     })
@@ -216,9 +216,25 @@ export function getMemAccountSelectAuthenticationData(data){
 //查看详情信息
 export function getMemAccountDetailData(data){
     return request({
-        url:'/user/selectUserInfoByFilter',
+        url:'/manager/userManager/getUserInfoById',
         params:data,
         method:'get'
+    })
+}
+//会员账号管理审核通过
+export function accountReviewInter(data){
+    return request({
+        url:'/manager/userManager/approvalPass',
+        data,
+        method:'post'
+    })
+}
+//会员账号管理审核驳回
+export function rejectProById(data){
+    return request({
+        url:'/manager/userManager/approvalReject',
+        data,
+        method:'post'
     })
 }
 //启用或者禁用会员账号

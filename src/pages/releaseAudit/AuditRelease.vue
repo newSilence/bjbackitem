@@ -271,7 +271,7 @@
                         <div slot="tip" class="el-upload__tip">支持上传mp4、ogg、avi、flv、wmv、rmvb视频，且不超过50M</div>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
-                        <video controls="controls" :src="dialogImageUrl">您的浏览器不支持视频播放</video>
+                        <video  oncontextmenu="return false;" controls="controls" controlsList="nodownload" :src="dialogImageUrl">您的浏览器不支持视频播放测试</video>
                     </el-dialog>
                     <!-- <el-upload :on-remove="handleRemove" :on-preview="handlePictureCardPreview" :data="{model:'video'}" accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb" :limit="1" list-type="picture-card" class="avatar-uploader el-upload--text" action="http://139.196.236.125:8088/upLoading" :show-file-list="false" :on-success="handleVideoSuccess" :before-upload="beforeUploadVideo">
                         <video v-if="form.startVideo !='' && videoFlag == false" :src="form.startVideo" class="avatar" controls="controls">您的浏览器不支持视频播放</video>
@@ -328,7 +328,8 @@
                         <div slot="tip" class="el-upload__tip">支持上传mp4、ogg、avi、flv、wmv、rmvb视频，且不超过50M</div>
                     </el-upload>
                     <el-dialog :visible.sync="dialogVisible">
-                        <video controls="controls" :src="dialogImageUrl">您的浏览器不支持视频播放</video>
+                        <!-- controls="controls" -->
+                        <video  oncontextmenu="return false;" controls="controls" controlsList="nodownload"  :src="dialogImageUrl">您的浏览器不支持视频播放</video>
                     </el-dialog>
                 </el-form-item>
                 

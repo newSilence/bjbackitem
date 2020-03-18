@@ -1,19 +1,18 @@
 <template>
     <div>
         <div style="margin:20px">
-            <span class="point_class" @click="changeTypeMem('')" :style="{paddingRight:20+'px',color:formInline.auditStatus===''?'#2BB1E8':'#333333'}">全部</span>
-            <el-divider direction="vertical"></el-divider>
-            <span class="point_class" @click="changeTypeMem(0)" :style="{paddingRight:20+'px',paddingLeft:20+'px',color:formInline.auditStatus===0?'#2BB1E8':'#333333'}">待审核</span>
-            <el-divider direction="vertical"></el-divider>
-            <span class="point_class" @click="changeTypeMem(2)" :style="{paddingRight:20+'px',paddingLeft:20+'px',color:formInline.auditStatus===2?'#2BB1E8':'#333333'}">未通过</span>
-            <el-divider direction="vertical"></el-divider>
-            <span class="point_class" @click="changeTypeMem(1)" :style="{paddingLeft:20+'px',color:formInline.auditStatus===1?'#2BB1E8':'#333333'}">已通过</span>
+            <div>
+                <span @click="changeTypeMem(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountAuditType" :key="key">
+                    {{item.label}}
+                    <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
+                </span>
+            </div>
         </div>
         <!-- 会员账号管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="账号性质：">
-                    <el-select v-model="formInline.identity" placeholder="请选择">
+                    <el-select @change="selectChange" v-model="formInline.type" placeholder="请选择">
                         <el-option
                         v-for="item in accountTypeData"
                         :key="item.value"
@@ -25,7 +24,7 @@
             </el-form>
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
-                    <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入关键词"  v-model="formInline.keyWord">
+                    <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入会员名称或账号"  v-model="formInline.keyWord">
                         <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
                     </el-input>
                 </el-form-item>
@@ -46,11 +45,13 @@
                 <el-table-column
                 label="会员名称"
                 
-                width="120">
+                width="">
                 <template slot-scope="scope">
                     <p style="cursor:pointer;height:23px"  @click="seenDeatil(scope.row)">{{ scope.row.realName }}</p>
                 </template>
                 </el-table-column>
+                <!-- scope.row.facilitator&&scope.row.facilitator.facilitatorId?'服务商'
+                        :scope.row.expertInfo&&scope.row.expertInfo.expertId?'专家' -->
                 <el-table-column
                 prop="phoneNumber"
                 label="会员账号"
@@ -60,13 +61,11 @@
                 label="账号性质"
                 show-overflow-tooltip>
                     <template slot-scope="scope">{{ 
-                        scope.row.facilitator&&scope.row.facilitator.facilitatorId?'服务商'
-                        :scope.row.expertInfo&&scope.row.expertInfo.expertId?'专家'
-                        :scope.row.type==1?'个人'
+                        scope.row.type==1?'个人'
                         :scope.row.type==2?'机构':''}}</template>
                 </el-table-column>
                 <el-table-column
-                prop="phoneNumber"
+                prop="nickname"
                 label="申请权限"
                 width="">
                 </el-table-column>
@@ -82,25 +81,26 @@
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
-                prop="phoneNumber"
+                prop="auditStatus"
                 label="认证状态"
                 width="">
+                    <template slot-scope="scope">{{ scope.row.auditStatus===0?'待审核':scope.row.auditStatus===1?'通过':scope.row.auditStatus===2?'驳回':''}}</template>
+                <!-- 0:待审核
+                2:驳回
+                1:通过 -->
                 </el-table-column>
                  <el-table-column
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
-                        <el-button @click="setPermit(scope.row)" type="text" size="small">权限设置</el-button>
+                        <el-button @click="seenDeatil(scope.row)" type="text" size="small">审核</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
-        <div style="display:flex;justify-content:space-between">
-            <div style="margin-top:10px">
-                <button @click="canUse(0)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">启用</button>
-                <button @click="canUse(1)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">禁用</button>
-            </div>
+        <div style="margin-top:30px">
             <el-pagination
+                style="text-align:right"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="formInline.pageNumber"
@@ -373,6 +373,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
        
         data() {
             return {
+                statusClickIndex:0,
                 //复选框选择的数据
                 chooseUseData:[],
                 optionName:'',
@@ -384,6 +385,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     // {value:'经纪人',label:'经纪人'},
                     //{value:'4',label:'服务商'},
                     // {value:'其他自定义',label:'其他自定义'},
+                ],
+                accountAuditType:[
+                    {label:'全部',value:''},
+                    {label:'待审核',value:'0',num:0},
+                    {label:'未通过',value:'2'},
+                    {label:'已通过',value:'1'},
                 ],
                 //专家详情弹框
                 dialogExpertFormVisible:false,
@@ -445,12 +452,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     label: 'label'
                 },
                 tableData:[
-                    {userId:1,username:'admin',email:'1@qq.com',mobile:17521016266,status:1,roleIdList:[1,2],deptId:6,deptName:'测试分公司',createTime: "2016-11-11 11:11:11"}
+                    // {userId:1,username:'admin',email:'1@qq.com',mobile:17521016266,status:1,roleIdList:[1,2],deptId:6,deptName:'测试分公司',createTime: "2016-11-11 11:11:11"}
                 ],
                 total:0,
                 formInline: {
                     keyWord:'',
-                    identity:'',
+                    type:'',
                     auditStatus:'',
                     pageNumber:1,
                     pageSize:10,
@@ -506,78 +513,35 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.chooseUseData=val;
             },
             //切换会员类型
-            changeTypeMem(type){
-                if(this.formInline.auditStatus!==type){
-                    this.formInline.auditStatus=type;
+            changeTypeMem(item,key){
+                if(this.statusClickIndex!=key){
+                    this.statusClickIndex=key;
+                    this.formInline.auditStatus=item.value;
+                    this.formInline.pageIndex=1;
                     this.fetchData();
                 }
+            },
+            //切换账号性质
+            selectChange(){
+                this.formInline.pageNumber=1;
+                this.fetchData();
             },
             //点击表格行
             seenDeatil(row){
                 console.log(row);
-                if(row.expertInfo||row.type==1){
-                    this.dialogExpertFormVisible=true;
+                // return
+                // this.$router.push({path:'/index/authority/expertReview'});
+                // return false;
+                if(row.nickname=='专家'){
+                    this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:1}})
+                    // this.dialogExpertFormVisible=true;
                 }
-                if(row.facilitator||row.type==2){
-                    this.dialogFactoraFormVisible=true;
+                if(row.nickname=='机构'){
+                    this.$router.push({path:'/index/authority/angencyReview',query:{id:row.userId,approvalType:2}})
                 }
-                let param={};
-                param.linkUserId=row.userId;
-                getMemAccountDetailData(param).then(res=>{
-                    console.log('detail',res);
-                    if(res.data.data){
-                        for(let key in this.baseform){
-                            if(res.data.data.hasOwnProperty(key)){
-                                this.baseform[key]=res.data.data[key];
-                            }
-                            
-                        }
-                        for(let key in this.factoBaseForm){
-                            if(res.data.data.hasOwnProperty(key)){
-                                if(key=="companyType"){
-                                    console.log('res.data.data[key]',res.data.data[key]);
-                                    this.factoBaseForm[key]=res.data.data[key]==1?'私企'
-                                    :res.data.data[key]==2?'国企'
-                                    :res.data.data[key]==3?'混合'
-                                    :res.data.data[key]==4?'外资':''
-                                }else{
-                                    this.factoBaseForm[key]=res.data.data[key];
-                                }
-                            }
-                            
-                        }
-                        
-                    }
-                })
-                let oparam={};
-                this.isShowOther=false;
-                if(row.expertInfo){
-                    this.isShowOther=true;
-                    oparam.type=1;
-                    oparam.id=row.expertInfo.expertId;
-                }
-                if(row.facilitator){
-                    this.isShowOther=true;
-                    oparam.type=2;
-                    oparam.id=row.facilitator.facilitatorId
-                }
-                getMemAccountSelectAuthenticationData(oparam).then(res=>{
-                    if(res.data.data){
-                        for(let key in this.baseform){
-                            if(res.data.data.hasOwnProperty(key)){
-                                this.baseform[key]=res.data.data[key];
-                            }
-                            
-                        }
-                        for(let key in this.factoBaseForm){
-                            if(res.data.data.hasOwnProperty(key)){
-                                this.factoBaseForm[key]=res.data.data[key];
-                            }
-                            
-                        }
-                    }
-                    console.log("resdddddddddd",res);
-                })
+                // if(row.type==2&&!row.facilitator){
+                //     this.$router.push({path:'/index/authority/angencyReview',query:{linkUserId:row.userId,type:row.type}})
+                // }
             },
             //权限设置
             setPermit(row){
@@ -783,27 +747,31 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //获取表格数据
             fetchData(){
                 getMemAccountData(this.formInline).then(res=>{
-                    console.log('resssssssssssssssssssssssvbsvgvg',res.status);
-                    if(res.status==200){
-                        
+                    console.log('resssssssssssssssssssssssvbsvgvg',res);
+                    if(res.data.ret){
                         this.tableData=res.data.data.list;
-                        for(let i=0;i<this.tableData.length;i++){
-                            if(this.tableData[i].expertInfo&&this.tableData[i].facilitator){
-                                let facilitator=JSON.parse(JSON.stringify(this.tableData[i].facilitator));
-                                let expertInfo=JSON.parse(JSON.stringify(this.tableData[i].expertInfo));
-                                
-                                this.tableData[i].facilitator=null;
-                                this.tableData[i].expertInfo=null;
-                                let obj=JSON.parse(JSON.stringify(this.tableData[i]));
-                                this.tableData[i].facilitator=facilitator;
-                                obj.expertInfo=expertInfo;
-                                this.tableData.splice(i,0,obj);
-                                i++;
-                            }
-                        }
-                        console.log('this.tableData',this.tableData)
                         this.total=res.data.data.total;
                     }
+                    // if(res.status==200){
+                        
+                    //     this.tableData=res.data.data.list;
+                    //     for(let i=0;i<this.tableData.length;i++){
+                    //         if(this.tableData[i].expertInfo&&this.tableData[i].facilitator){
+                    //             let facilitator=JSON.parse(JSON.stringify(this.tableData[i].facilitator));
+                    //             let expertInfo=JSON.parse(JSON.stringify(this.tableData[i].expertInfo));
+                                
+                    //             this.tableData[i].facilitator=null;
+                    //             this.tableData[i].expertInfo=null;
+                    //             let obj=JSON.parse(JSON.stringify(this.tableData[i]));
+                    //             this.tableData[i].facilitator=facilitator;
+                    //             obj.expertInfo=expertInfo;
+                    //             this.tableData.splice(i,0,obj);
+                    //             i++;
+                    //         }
+                    //     }
+                    //     console.log('this.tableData',this.tableData)
+                    //     this.total=res.data.data.total;
+                    // }
                 })
             },
             //分页功能

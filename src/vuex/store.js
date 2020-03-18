@@ -10,7 +10,7 @@ const state={
   routerWidth:"88vw",
   navbarData:[
     // {icon:'el-icon-phone',url:'/index',name:'首页'},
-    // {icon:'el-icon-user',url:'/index/authority/memberreview',name:'会员账号审核认证'},
+    {icon:'el-icon-user',url:'/index/authority/memberreview',name:'会员账号审核认证'},
     {icon:'el-icon-user',url:'/index/authoritys',name:'账号管理',list:[
       {icon:'el-icon-user',url: '/index/authority/menu',name: '会员账号管理'},
     ]},
