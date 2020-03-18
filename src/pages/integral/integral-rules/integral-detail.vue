@@ -10,7 +10,7 @@
           end-placeholder="结束日期">
         </el-date-picker>
         <el-form-item>
-          <el-select style="border-radius:12px;width: 126px;height: 32px" v-model="value" placeholder="积分类型" >
+          <el-select style="border-radius:12px;width: 126px;height: 32px" v-model="integralType" placeholder="积分类型" >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -80,6 +80,8 @@
     name: "integral-detail",
     data(){
       return {
+        integralType:'',
+        startEndTime:'',//开始结束日期
         tableData:[
           {time:'2020/02/03 19:00',id:'8889999877',account:'15311937006',integralChange:'+300',describe:'用户注册奖励积分'},
           {time:'2020/02/03 19:00',id:'8889999877',account:'15311937006',integralChange:'+300',describe:'用户首次下单奖励积分（订单88889）'},

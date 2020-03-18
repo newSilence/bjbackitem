@@ -1,20 +1,9 @@
 <template>
-  <div>
-    <el-form style="margin:20px;float: left" :inline="true" :model="formInline" class="demo-form-inline">
-      <el-select v-model="integralState" placeholder="积分状态">
-        <el-option
-          v-for="item in integralStateOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);color:white" @click="onAddnew">新建</el-button>
-    </el-form>
+  <div class="integral-rule-self">
     <el-form style="margin:20px;float: right" :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="">
+      <el-form-item label="" >
         <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
-        <el-input style="border-radius:12px" placeholder="请输入ID、积分接口、积分名称、说明"  v-model="formInline.roleName">
+        <el-input style="border-radius:12px;width: 368px" placeholder="请输入ID、积分接口、积分类型、说明"  v-model="formInline.roleName">
           <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
         </el-input>
       </el-form-item>
@@ -26,7 +15,7 @@
         style="width: 100%"
       >
         <el-table-column
-          prop="integralRecordId"
+          prop="integralId"
           label="ID"
           show-overflow-tooltip>
         </el-table-column>
@@ -36,17 +25,12 @@
           show-overflow-tooltip>
         </el-table-column>
         <el-table-column
-          prop="state"
-          label="积分状态"
+          prop="explain"
+          label="说明"
           show-overflow-tooltip>
         </el-table-column>
         <el-table-column
-          prop="remark"
-          label="备注"
-          show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column
-          prop="linkUserId"
+          prop="createName"
           label="操作人"
           show-overflow-tooltip>
         </el-table-column>
@@ -59,7 +43,9 @@
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <el-button @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button @click="editClick(scope.row)" type="text" size="small">配置</el-button>
+            <el-button @click="editOnLine(scope.row)" type="text" size="small" v-if="scope.row.state===1">上线</el-button>
+            <el-button @click="editOffLine(scope.row)" style="border: none; color: rgb(253, 32, 68);" type="text" size="small" v-else>下线</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -76,62 +62,96 @@
       </el-pagination>
     </div>
     <!-- 新增或者编辑弹框 -->
-    <el-dialog :title="dialogFormVisibleTitle" @open="openDialog" :visible.sync="dialogFormVisible" @close="dialogClose">
+    <el-dialog  :title="dialogFormVisibleTitle" @open="openDialog" :visible.sync="dialogFormVisible" @close="dialogClose">
       <el-form :model="form" :rules="rules" ref="ruleForm" label-width="140px">
         <el-form-item label="积分类型：" prop="integralName">
-          <el-col :span="8">
-            <el-select v-model="integralState" placeholder="请选择">
-              <el-option
-                v-for="item in integralStateoptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
+            <el-input v-model="form.integralName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="有效时间：" prop="">
+        <el-form-item label="分类：" prop="ruleClass">
+          <el-cascader
+            v-model="form.ruleClass"
+            :options="classOptions"
+            @change="handleClassChange"
+            ></el-cascader>
+        </el-form-item>
+        <el-form-item label="有效时间：" prop="integralName">
             <el-date-picker
-              size="small"
-              style="width: 220px"
-              v-model="effectiveTime"
-              @change="handleTimeValue"
+              v-model="form.effectiveTime"
               type="daterange"
+              @change="timeChange"
               range-separator=""
               start-placeholder="开始日期"
               end-placeholder="结束日期">
             </el-date-picker>
-          <el-checkbox v-model="timeChecked" @change="handleTimeLable" style="margin-left: 25px">永久有效</el-checkbox>
+          <el-checkbox v-model="checked" @change="radioChange" style="margin-left: 20px">永久有效</el-checkbox>
+        </el-form-item>
+        <el-form-item label="积分值设置：" prop="set" class="redSign">
+          <el-row :gutter="20">
+            <el-col :span="7"><div class="grid-content bg-purple integralTitle">会员等级</div></el-col>
+            <el-col :span="7"><div class="grid-content bg-purple">用户类型</div></el-col>
+            <el-col :span="7"><div class="grid-content bg-purple">积分值</div></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="7"><div class="grid-content bg-purple">
+              <i class="el-icon-circle-plus integarl-add" @click="addTntegral"></i>
+              <el-select v-model="membership" @change="handleLeaveChange" placeholder="请选择" style="display: inline-block;width: 80%">
+                <el-option
+                  v-for="item in leaveOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </div></el-col>
+            <el-col :span="7"><div class="grid-content bg-purple">
+              <el-select v-model="userType" @change="handleTypeChange" placeholder="请选择">
+                <el-option
+                  v-for="item in personTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </div></el-col>
+            <el-col :span="7"><div class="grid-content bg-purple">
+              <el-input v-model="integralValue" @keyup.enter.native="handleClick" placeholder="请输入内容" style="width: 80%"></el-input>
+            </div></el-col>
+          </el-row>
+          <el-row :gutter="20" v-for="(item,index) in integralSetting" :key="index">
+            <el-col :span="7"><div class="grid-content bg-purple integralCenter">
+              <el-tag
+                :key="1"
+                effect="plain">
+                {{item.membership}}
+              </el-tag>
+            </div></el-col>
+            <el-col :span="7"><div class="grid-content bg-purple integralCenter">
+              <el-tag
+                :key="1"
+                :type="'success'"
+                effect="plain">
+                {{item.userType}}
+              </el-tag>
+            </div></el-col>
+            <el-col :span="7"><div class="grid-content bg-purple integralCenter">
+              <el-tag
+                :key="1"
+                :type="'info'"
+                effect="plain">
+                {{item.integralValue}}
+              </el-tag>
+              <i @click="deleateIntegralType(index)" class="el-icon-delete-solid" style="font-size: 20px;margin-left: 10px;vertical-align: middle"></i>
+            </div></el-col>
+          </el-row>
 
         </el-form-item>
-        <el-form-item label="积分值设置：" prop="port">
-          <el-col :span="8">
-            <el-input v-model="form.port"></el-input>
-          </el-col>
-        </el-form-item>
         <el-form-item label="备注：" prop="remark">
-          <el-col :span="8">
-            <el-input type="textarea" maxlength="50" placeholder="请输入备注(50字以内)" :rows="4" v-model="form.explain"></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="积分状态：" prop="explain">
-          <el-col :span="8">
-            <el-select v-model="integralFormState" placeholder="请选择">
-              <el-option
-                v-for="item in integralStateOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
+          <el-input type="textarea" :rows="4" v-model="form.remark"></el-input>
         </el-form-item>
 
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="AddIntegralType" v-show="dialogFormVisibleTitle==='新增'">确定</el-button>
-        <el-button type="primary" @click="modifyIntegralType" v-show="dialogFormVisibleTitle==='编辑'">修改</el-button>
+        <el-button type="primary" @click="this.handleSaveRules">保存</el-button>
       </div>
     </el-dialog>
   </div>
@@ -139,25 +159,54 @@
 </template>
 
 <script>
-  import { reqAllIntegralType,reqIntegralRule,reqIntegralTypeModify,reqAddIntegralPort,reqAddIntegralType, getAllRoleData , updateRoleStatus , getAllFuncPerm , updateRoleData , saveRoleData  } from '../api'
+  import { reqOffLineIntegralRule,reqIntegralRuleConfig,reqSaveIntegralRule,reqAllIntegralClass,reqIntegralTypeModify,reqAddIntegralType,reqIntegralType,getAllRoleData , updateRoleStatus , getAllFuncPerm , updateRoleData , saveRoleData  } from '../api'
   export default {
     name: "Integral-type",
     data(){
       return {
-        IntegralTypeOption:{
-
-        },
-        timeChecked:true,
-        effectiveTime:'',
-        integralFormState:'生效中',
-        integralStateOptions: [{
-          value: '生效中',
-          label: '生效中'
-        },{
-          value: '未生效',
-          label: '未生效'
-        }], //积分状态配置项
-        integralState: '',//积分状态选择值
+        isSave:false,//是否保存
+        membership:'',
+        userType:'',
+        integralValue:'',
+        integralSetting:[],
+        classOptions:[],
+        leaveOptions:[
+          {
+            value:'Vip0',
+            label:'Vip0'
+          },
+          {
+            value:'Vip1',
+            label:'Vip1'
+          },
+          {
+            value:'Vip2',
+            label:'Vip2'
+          },
+          {
+            value:'Vip3',
+            label:'Vip3'
+          }
+        ],//会员等级数据
+        personTypeOptions:[
+          {
+            value:'普通用户',
+            label:'普通用户'
+          },
+          {
+            value:'机构用户',
+            label:'机构用户'
+          },
+          {
+            value:'服务商用户',
+            label:'服务商用户'
+          },
+          {
+            value:'专家用户',
+            label:'专家用户'
+          }
+        ],
+        checked:false,
         integralItem:{},//item积分对象
         pageNumber:1,//当前页码
         pageLimit:10,//每页数量
@@ -178,19 +227,22 @@
           integralName:'',
           explain:'',
           port:'',
+          ruleClass:'',
+          effectiveTime:'',
+          remark:''
         },
+
         rules:{
           integralName:[
             { required: true, message: '请输入积分类型', trigger: 'blur' },
             { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
           ],
-          port:[
-            { required: true, message: '请输入触发接口', trigger: 'blur' }
-          ],
           remark:[
-            { required: true, message: '请输入备注(50字以内)', trigger: 'blur', }
+            { required: true, message: '请输入备注', trigger: 'blur' }
           ],
-
+          ruleClass:[
+            { required: true, message: '请选择分类', trigger: 'blur' }
+          ]
         },
         deptSelectOptions:[
           { max: 50, message: '说明在50字符以内', trigger: 'blur' }
@@ -210,13 +262,13 @@
     },
     created() {
       this.getIntegralType();
-      this.getIntegralTypeData();
+      this.reqAllIntegralClass();
     },
     methods: {
       onSearch() {
-        this.formInline.page=1;
-        this.fetchData();
-        console.log("search");
+        this.pageNumber = 1;
+        this.isSearch = true;
+        this.getIntegralType();
       },
       //处理部门数据，返回符合渲染的数据格式
       treeData(source, id, parentId, children){
@@ -229,8 +281,6 @@
       },
       //部门下拉框点击事件
       deptSelected(node){
-        console.log(node);
-        // this.form.deptName=node.label;
       },
       opendialog(){
         return new Promise((resolve,rej)=>{})
@@ -238,7 +288,6 @@
       //promise关于角色和部门请求接口封装
       getRoleOrDeptData(){
         return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
-          console.log('promise',result);
           this.deptSelectOptions=result[0].data.data;
           for(let i=0;i<this.deptSelectOptions.length;i++){
             this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
@@ -260,10 +309,8 @@
       },
       //确认新增
       confirmAdd(){
-        console.log(this.form);
         this.$refs['ruleForm'].validate((valid) => {
           if (valid) {
-            console.log(this.form);
             let param={};
             for(let key in this.form){
               param[key]=this.form[key];
@@ -272,20 +319,17 @@
             delete param.createTime;
             if(param.roleId){
               updateRoleData(param).then(res=>{
-                console.log(res);
                 this.fetchData();
                 this.dialogClose();
               })
             }else{
               saveRoleData(param).then(res=>{
-                console.log(res);
                 this.fetchData();
                 this.dialogClose();
               })
             }
 
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
@@ -295,23 +339,12 @@
       editClick(row){
         this.integralItem = row;
         this.dialogFormVisible=true;
-        console.log(row)
         this.dialogFormVisibleTitle = '编辑';
         this.form.integralName = row.integralName;
-        this.form.explain = row.explain;
-        let params = {
-          integralId:row.integralId
-        }
-        reqAddIntegralPort(params)
-          .then(res=>{
-            console.log(res)
-            if (res.data.errcode===0){
-              this.form.port = res.data.data.port;
-            }
-          })
+        this.clearForm();
+        this.getIntegralRuleConfig(this.integralItem.integralId)
       },
       changeStatus(row,index){
-        console.log(row);
         let param={};
         param.roleId=row.roleId;
         if(row.status!=1){
@@ -322,7 +355,6 @@
             if(res.data.code==0){
               this.tableData.splice(index,1,row);
             }else{}
-            // console.log(res);
           })
 
         }else{
@@ -332,10 +364,8 @@
             if(res.data.code==0){
               this.tableData.splice(index,1,row);
             }else{}
-            // console.log(res);
           })
         }
-        console.log(this.tableData)
       },
       //关闭弹框
       dialogClose(){
@@ -356,7 +386,6 @@
       //获取表格数据
       fetchData(){
         getAllRoleData(this.formInline).then(res=>{
-          console.log(res);
           if(res.data.code==0){
             this.tableData=res.data.data.list;
             this.total=res.data.data.totalCount;
@@ -372,43 +401,21 @@
         this.pageNumber = val;
         this.getIntegralType()
       },
-      //获取积分规则数据
+      //获取积分类型数据
       getIntegralType  (){
         let params = {
           pageNumber:this.pageNumber,
           pageSize:this.pageLimit,
         };
-        reqIntegralRule(params).then(res=>{
+        this.isSearch?params.keyWord=this.formInline.roleName:'';
+        reqIntegralType(params).then(res=>{
           if (res.data.errcode===0){
-            let IntegralTypeOption = [];
             //时间格式化获取前10位
-            console.log(res.data.data.list)
             res.data.data.list.length>0?res.data.data.list.forEach((item,key)=>{
-              IntegralTypeOption.push({
-                value:item.integralId,
-                label:item.integralName
-              })
+              res.data.data.list[key].newTime = item.updateTime.substring(0,10)
             }):'';
             this.IntegralData = res.data.data.list;
             this.totalPage = res.data.data.total;
-          }
-        })
-      },
-      //获取积分类型全部数据
-      getIntegralTypeData () {
-        reqAllIntegralType().then(res=>{
-          if (res.data.errcode===0){
-               let integralTypeData = [];
-               res.data.data.forEach(item=>{
-                 console.log(item)
-                 integralTypeData.push({
-                   value:item.integralId,
-                   label:item.integralName
-                 })
-               })
-               this.integralStateoptions = integralTypeData;
-               console.log('全部积分类型',integralTypeData)
-
           }
         })
       },
@@ -443,13 +450,11 @@
       },
       //修改积分类型数据
       modifyIntegralType(){
-        console.log(this.integralItem)
         const {integralId} = this.integralItem;
         const {port,integralName,explain} = this.form;
         let params = {integralId,integralName,explain,port};
         reqIntegralTypeModify(params)
           .then(res=>{
-            console.log(res)
             if (res.data.errcode===0){
               this.$message({
                 message: '修改成功',
@@ -460,37 +465,349 @@
             }
           })
       },
-      handleTimeValue(value){
-            console.log(value)
-            this.timeChecked = false;
+      //添加积分规则
+      addTntegral(){
+        //添加默认 + - 号
+            let addSub = '';
+            console.log('this.form.ruleClass',this.form.ruleClass)
+            if (this.form.ruleClass[0]=='2000'){
+              addSub = '-'
+            }else if (this.form.ruleClass[0]=='1000'){
+              addSub = ''
+          }
+         else if (this.form.ruleClass.length != 2){
+         this.$message({
+           message: '请先选择分类',
+           type: 'warning'
+         });
+         return
+
+       }
+         if(this.membership===''){
+           this.$message({
+             message: '请先选择会员等级',
+             type: 'warning'
+           });
+           return
+         }
+        if(this.userType===''){
+          this.$message({
+            message: '请先选择用户类型',
+            type: 'warning'
+          });
+          return
+        }
+        if(this.integralValue===''){
+          this.$message({
+            message: '请输入积分值',
+            type: 'warning'
+          });
+          return
+        }
+
+       //重复性判断
+        var isRepeat = false
+        this.integralSetting.length>0?this.integralSetting.forEach((item,key)=>{
+          if (item.membership==this.membership&&item.userType==this.userType){
+            this.$message({
+              message: '请勿重复添加',
+              type: 'warning'
+            });
+            isRepeat = true;
+          }
+        }):'';
+        if (isRepeat){
+          return ;
+        }
+        let  membershipValue;
+        this.leaveOptions.forEach((item,key)=>{
+          if (item.value==this.membership){
+            membershipValue = item.label
+          }
+        });
+        let  userType;
+        this.personTypeOptions.forEach((item,key)=>{
+          if (item.value==this.userType){
+            userType = item.label
+          }
+        })
+        this.integralSetting.push({
+          membership:membershipValue,
+          userType:userType,
+          integralValue: addSub + this.integralValue
+        })
+
       },
-      handleTimeLable(value){
-            console.log(value)
-            this.effectiveTime = '';
+      //删除积分类型
+      deleateIntegralType(index){
+        this.integralSetting.splice(index,1)
       },
-    },
+      //时间改变
+      timeChange(val){
+        val?this.checked=false:'';
+      },
+      //选择框改变
+      radioChange(val){
+        val?this.form.effectiveTime='':'';
+      },
+      //保存积分规则
+      handleSaveRules(){
+        this.$refs['ruleForm'].validate((valid)=>{
+          if (valid){
+            let params = {};
+            const  {integralId,integralName} = this.integralItem;
+            params.linkUserId = 1;
+            params.interalNameId = integralId;
+            if (this.isSave){
+              params.integralRecordId = this.integralRecordId;
+            }
+            params.integralName = integralName;
+            params.remark  = this.form.remark;
+            if (this.form.effectiveTime.length===0&&this.checked==false){
+              this.$message({
+                message: '请选择有效时间',
+                type: 'warning'
+              });
+              return
+            }
+            if (this.integralSetting.length===0){
+              this.$message({
+                message: '请添加积分值设置',
+                type: 'warning'
+              });
+              return
+            }
+            this.integralSetting.length>0?this.integralSetting.forEach((item,index)=>{
+              params['membershipValues['+index+'].membership']=item.membership
+              params['membershipValues['+index+'].userType']=item.userType
+              params['membershipValues['+index+'].integralValue']=item.integralValue
+            }):'';
+            // params.membershipValues = this.integralSetting;
+            params.rankOne = this.form.ruleClass[0];
+            params.rankTwo = this.form.ruleClass[1];
+            this.checked?params.perpetual=1:params.perpetual=0; //是否永久
+            if (!this.checked){
+              let effectiveTime = this.form.effectiveTime.toLocaleString().split(',')
+              params.startTime = effectiveTime[0].substring(0,10).split('/').join('-')
+              params.finishTime = effectiveTime[1].substring(0,10).split('/').join('-')
+            }
+            reqSaveIntegralRule(params).then(res=>{
+              if (res.data.errcode===0){
+                this.$message({
+                  message: res.data.errmsg,
+                  type: 'success'
+                });
+               this.dialogFormVisible = false
+              }
+            })
+          }
+        })
+
+      },
+      //获取积分分类
+      reqAllIntegralClass(){
+        reqAllIntegralClass()
+        .then(res=>{
+          if (res.data.errcode===0){
+            let classOptions = [];
+            res.data.data.forEach((item,index)=>{
+              classOptions.push({
+                value:item.code.toString(),
+                label:item.ofTypeName
+              })
+              let i = index
+              classOptions[i].children = []
+              item.integralOfTypes.forEach((value,index)=>{
+                classOptions[i].children.push(
+                  {
+                    value:value.code.toString(),
+                    label:value.ofTypeName
+                  }
+                )
+
+              })
+            })
+            this.classOptions = classOptions;
+          }
+
+        })
+      },
+      //处理等级改变
+      handleLeaveChange(value){
+      },
+      //处理类型改变
+      handleTypeChange(value){
+      },
+      //清空表单
+      clearForm(){
+        this.form.remark = '';
+        this.integralSetting = [];
+        this.form.effectiveTime = '';
+        this.form.ruleClass = '';
+        this.checked = false;
+      },
+      //获取配置数据
+      getIntegralRuleConfig(id){
+        let params = {
+          IntegralNameId:id,
+
+        }
+        reqIntegralRuleConfig(params).then(res=>{
+          if (res.data.errcode===0&&res.data.data){
+            this.isSave = true;
+            this.integralRecordId = res.data.data.integralRecordId;
+            this.form.remark = res.data.data.remark;
+            let newArr = [];
+            let arr = res.data.data.membershipValues;
+            arr.length>0?arr.forEach((item,key)=>{
+               newArr.push({
+                 membership:item.membership,
+                 userType:item.userType,
+                 integralValue: item.integralValue
+               })
+            }):''
+            this.integralSetting = newArr;
+            if (res.data.data.rankOne&&res.data.data.rankTwo){
+              this.form.ruleClass = [res.data.data.rankOne.toString(),res.data.data.rankTwo.toString()];
+            }
+            if (res.data.data.perpetual===1){
+              this.checked = true;
+            }else {
+              this.form.effectiveTime = [res.data.data.startTime,res.data.data.finishTime];
+            }
+          }
+          else {
+            this.isSave = false
+          }
+
+        })
+      },
+      //积分类型修改
+      handleClassChange(val){
+        console.log(val)
+      },
+      //下线
+      editOffLine(row){
+        console.log(row)
+        let data = {
+          state:1,
+          integralId:row.integralId
+        }
+        reqOffLineIntegralRule(data).then(res=>{
+          console.log(res)
+          if (res.data.errcode===0){
+            this.$message({
+              message: res.data.errmsg,
+              type: 'success'
+            });
+            this.getIntegralType();
+          }
+
+        })
+      },
+      //上线
+      editOnLine(row){
+        console.log(row)
+        let data = {
+          state:0,
+          integralId:row.integralId
+        }
+        reqOffLineIntegralRule(data).then(res=>{
+          console.log(res)
+          if (res.data.errcode===0){
+            this.$message({
+              message: res.data.errmsg,
+              type: 'success'
+            });
+            this.getIntegralType();
+          }
+
+        })
+      },
+      handleClick(){
+        this.integralValue = this.integralValue.replace(/[^\w]/g, '');
+      }
+    }
   }
 </script>
 
-<style scoped lang="less">
-  .no_select .vue-treeselect__value-container{
-    display:none;
-  }
-  .no_select .vue-treeselect__x-container{
-    display:none;
-  }
-  .no_select .vue-treeselect__menu-container{
-    position: relative;
-  }
-  .no_select .vue-treeselect__control{
-    display: none!important;
-  }
-  .point_class{
-    cursor: pointer;
-    font-size:16px;
-    font-family:PingFangSC-Medium,PingFang SC;
-    font-weight:500;
-  }
+<style  lang="less">
+  .integral-rule-self {
+    .redSign {
+       label:before {
+         content: '*';
+         color: #F56C6C;
+         margin-right: 4px;
+       }
+    }
+    .integralCenter {
+      box-sizing: border-box;
+    }
+    .integarl-add {
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: -20px;
+    }
+    .integarl-add:hover {
+      color: #2BB1E8;
+    }
+    .el-icon-delete-solid {
+      cursor: pointer;
+    }
+    .el-icon-delete-solid:hover {
+      color: #2BB1E8;
+    }
+    .grid-content {
+      border-radius: 4px;
+      min-height: 36px;
+    }
+    .row-bg {
+      padding: 10px 0;
+      background-color: #f9fafc;
+    }
+    .no_select .vue-treeselect__value-container{
+      display:none;
+    }
+    .no_select .vue-treeselect__x-container{
+      display:none;
+    }
+    .no_select .vue-treeselect__menu-container{
+      position: relative;
+    }
+    .no_select .vue-treeselect__control{
+      display: none!important;
+    }
+    .point_class{
+      cursor: pointer;
+      font-size:16px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
+    }
+    .dialog-footer {
+      text-align: center;
+    }
+    .el-dialog__header {
+     background-color: #F2F7FA;
+      padding-top: 10px;
+      .el-dialog__headerbtn {
+        top: 10px;
+        .el-dialog__close {
+         font-size: 26px;
+        }
+
+      }
+    }
+    .el-dialog__body {
+      padding-right: 127px;
+    }
+    .el-dialog {
+      width: 45%;
+    }
+     }
+
 
 
 </style>

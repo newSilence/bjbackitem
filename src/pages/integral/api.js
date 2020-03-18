@@ -195,5 +195,35 @@ export function reqAllIntegralType(){
     method:'post'
   })
 }
-
+//积分规则全部获取
+export function reqAllIntegralClass(){
+  return request({
+    url:'/manager/Integral/selectAllIntegralOfType',
+    method:'get'
+  })
+}
+//保存积分规则
+export function reqSaveIntegralRule(data){
+  return request({
+    url:'/manager/IntegralRecord/insertUpdateIntegral',
+    data,
+    method:'post'
+  })
+}
+//查询积分规则
+export function reqIntegralRuleConfig(id){
+  return request({
+    url:'/manager/IntegralRecord/selectIntegralRecordByIntegralNameId',
+    params:id,
+    method:'get'
+  })
+}
+//积分规则下线
+export function reqOffLineIntegralRule(data){
+  return request({
+    url:'/manager/Integral/updateIntegralStatue',
+    data,
+    method:'post'
+  })
+}
 
