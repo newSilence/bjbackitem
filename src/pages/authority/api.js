@@ -197,10 +197,18 @@ export function saveMenuData(data){
         method:'post'
     })
 }
-//会员账号管理查询接口
+//会员账号审核查询接口
 export function getMemAccountData(data){
     return request({
         url:'/manager/userManager/selectAuditUser',
+        params:data,
+        method:'get'
+    })
+}
+//会员账号管理查询接口
+export function getAllMemAccountData(data){
+    return request({
+        url:'/manager/userManager/selectAllUserInfo',
         params:data,
         method:'get'
     })

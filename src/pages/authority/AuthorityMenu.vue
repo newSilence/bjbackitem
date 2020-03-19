@@ -376,7 +376,7 @@
 
 <script>
 import { getAdminManageTable  , getAllDepartData , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
-import { getMemAccountData , getMemAccountDetailData , getAccountMemPermWebrole , setAccountRolePerUrl , getAccountPermWebrole , getMemAccountSelectAuthenticationData , updateCanOrUse } from './api'
+import { getAllMemAccountData , getMemAccountDetailData , getAccountMemPermWebrole , setAccountRolePerUrl , getAccountPermWebrole , getMemAccountSelectAuthenticationData , updateCanOrUse } from './api'
 
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -600,7 +600,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 let param={userId:this.userId};
                 getAccountPermWebrole(param).then(res=>{
                     console.log("sssresponse",res);
-                    if(res.data.code==0){
+                    if(res.data.ret){
                         
                         let roleIdList=res.data.data.roleIdList.filter(val=>{
                             return val==1||val==3
@@ -619,7 +619,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
                 getAccountMemPermWebrole().then(res=>{
                     console.log(res);
-                    if(res.data.code==0){
+                    if(res.data.ret){
                         let list=res.data.data;
                         this.roleOptionsData = list.filter(val=>{
                             return val.roleId=='1'||val.roleId=='3'
@@ -644,7 +644,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 // return
                 setAccountRolePerUrl(param).then(res=>{
                     console.log("resdddd",res);
-                    if(res.data.code==0){
+                    if(res.data.ret){
                         this.dialogSetPermitFormVisible=false;
                     }else{
                         this.$message({
@@ -832,11 +832,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //获取表格数据
             fetchData(){
-                getMemAccountData(this.formInline).then(res=>{
-                    console.log('resssssssssssssssssssssssvbsvgvg',res);
+                getAllMemAccountData(this.formInline).then(res=>{
+                    console.log('resssssssssssssssssssssssvbsvgvg',res.data.ret);
                     if(res.data.ret){
                         
-                        this.tableData=res.data.data.data.list;
+                        this.tableData=res.data.data.list;
                         for(let i=0;i<this.tableData.length;i++){
                             if(this.tableData[i].expertInfo&&this.tableData[i].facilitator){
                                 let facilitator=JSON.parse(JSON.stringify(this.tableData[i].facilitator));
@@ -852,7 +852,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                             }
                         }
                         console.log('this.tableData',this.tableData)
-                        this.total=res.data.data.data.total;
+                        this.total=res.data.data.total;
                     }
                 })
             },
