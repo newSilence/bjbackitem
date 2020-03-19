@@ -172,8 +172,8 @@
         classOptions:[],
         leaveOptions:[
           {
-            value:'Vip0',
-            label:'Vip0'
+            value:'全部',
+            label:'全部'
           },
           {
             value:'Vip1',
