@@ -92,7 +92,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item prop="useArea" label="应用领域：：">
+                        <el-form-item prop="useArea" label="应用领域：">
                             <el-select multiple :disabled="!isEdit" style="width:100%" v-model="form.useArea" placeholder="应用领域：">
                                 <el-option v-for="item in UserAreaData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                             </el-select>
@@ -253,6 +253,7 @@
                 <!-- 上传视频 -->
                 <!-- action="http://139.196.236.125:8080/upLoading" -->
                 <el-form-item label="宣传视频（开头）：">
+                    <label slot="label">宣传视频<br>(开头)：</label>
                     <el-upload
                         :class="{disabled:form.startVideo.length>0}"
                         :disabled="!isEdit"  
@@ -280,14 +281,15 @@
                     <P class="text">请保证视频格式正确，且不超过50M</P> -->
                 </el-form-item>
                 <el-form-item label="项目详情：">
-                    <button @click="getTemplate" :disabled="!isEdit" style="background:rgba(43,177,232,1);border-radius:2px;border:none;padding:6px 15px;color:white;cursor:pointer">获取项目面板</button>
-                    <button @click="clearTemplate" :disabled="!isEdit" style="margin-left:10px;border-radius:2px;border:1px solid #2BB1E8;padding:6px 15px;color:#2BB1E8;cursor:pointer">自定义项目面板</button>
+                    <button @click="getTemplate" :disabled="!isEdit" style="background:rgba(43,177,232,1);border-radius:2px;border:none;padding:6px 15px;color:white;cursor:pointer">获取项目模版</button>
+                    <button @click="clearTemplate" :disabled="!isEdit" style="margin-left:10px;border-radius:2px;border:1px solid #2BB1E8;padding:6px 15px;color:#2BB1E8;cursor:pointer">自定义项目模版</button>
                 </el-form-item>
                 <el-form-item  class="edit_container news">
                     <!-- :action="baseUrl+'/fileUpload'" -->
                     <!-- action="http://139.196.236.125:8088/upLoading" -->
                     <el-upload
                         class="avatar-uploader quill-img"
+                        style="height:0px"
                         :headers="myHeaders"
                         :action="baseUrl+'/upLoading'"
                         :data="{model:'publish'}"                      
@@ -304,6 +306,7 @@
                 </el-form-item>
                 <!-- 上传视频 -->
                 <el-form-item label="宣传视频（结束）：">
+                    <label slot="label">宣传视频<br>(结束)：</label>
                     <!-- <el-upload :data="{model:'video'}" accept=".mp4,.ogg,.avi,.flv,.wmv,.rmvb" :limit="1" list-type="picture-card" class="avatar-uploader el-upload--text" action="http://139.196.236.125:8088/upLoading" :show-file-list="false" :on-success="handleEndVideoSuccess" :before-upload="beforeUploadVideo">
                         <video v-if="form.endVideo !='' && videoEndFlag == false" :src="form.endVideo" class="avatar" controls="controls">您的浏览器不支持视频播放</video>
                         <i v-else-if="form.endVideo =='' && videoEndFlag == false" class="el-icon-plus avatar-uploader-icon"></i>

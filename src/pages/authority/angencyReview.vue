@@ -283,8 +283,8 @@
                 let param={};
                 param={...this.transferQuery};
                 param.linkId=this.linkId;
-                console.log(param);
-                return
+                // console.log(param);
+                // return
                 accountReviewInter(param).then(res=>{
                     console.log('resresres',res);
                     if(res.data.ret){
@@ -359,7 +359,7 @@
                             }
                         }
                         this.form.district=resData.provinceName+'/'+resData.cityName;
-                        this.linkId = resData.userId;
+                        this.linkId = resData.linkUserId;
                         this.form.companyTypeDetail=resData.companyType==1?'私企'
                                                     :resData.companyType==2?'国企'
                                                     :resData.companyType==3?'混合'

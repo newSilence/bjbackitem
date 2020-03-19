@@ -80,7 +80,7 @@
                 prop="provinceName"
                 label="所在地区"
                 show-overflow-tooltip>
-                    <template slot-scope="scope">{{ scope.row.provinceName+ '/'+ scope.row.cityName}}</template>
+                    <template slot-scope="scope">{{ scope.row.provinceName?(scope.row.provinceName+ '/'+ scope.row.cityName):''}}</template>
                 </el-table-column>
                 <el-table-column
                 prop="createTime"
