@@ -93,8 +93,7 @@
 </template>
 
 <script>
-  import { reqIntegralTypeModify,reqAddIntegralPort,reqAddIntegralType,reqIntegralType,getAdminManageTable , getAllRoleData , updateRoleStatus ,getAllDepartData ,getAllSelectFuncPerm , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from '../api'
-  import Treeselect from '@riophae/vue-treeselect'
+  import { reqIntegralTypeModify,reqAddIntegralPort,reqAddIntegralType,reqIntegralType, getAllRoleData , updateRoleStatus , getAllFuncPerm , updateRoleData , saveRoleData  } from '../api'
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     export default {
         name: "Integral-type",
