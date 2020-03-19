@@ -25,7 +25,17 @@ export function request(config){
         return config;//config为请求配置，须返回config
     },function(error){})
     instance.interceptors.response.use((response)=>{
-        // console.log("response",response)
+        console.log("response",response)
+        if(!response.data.ret){
+            Message.error(
+                {
+                    showClose: true,
+                    message: response.data.errmsg,
+                    type: 'error'
+                }
+            )
+            return false;
+        }
         // if(response.data.code!=0){
         //     Message.error(
         //         {

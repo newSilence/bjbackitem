@@ -204,7 +204,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                             menuId:row.menuId
                         }
                         deleteMenuData(param).then(res=>{
-                            if(res.data.code==0){
+                            if(res.data.ret){
                                 this.fetchData();
                             }else{
                                 this.$message({
@@ -229,7 +229,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 if(this.form.menuId){
                     updateMenuData(this.form).then(res=>{
                         console.log(res);
-                        if(res.data.code==0){
+                        if(res.data.ret){
                             this.dialogFormVisible=false;
                             this.fetchData();
                         }
@@ -237,7 +237,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 }else{
                     saveMenuData(this.form).then(res=>{
                         console.log(res);
-                        if(res.data.code==0){
+                        if(res.data.ret){
                             this.dialogFormVisible=false;
                             this.fetchData();
                         }
@@ -262,7 +262,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             fetchData(){
                 getAllFuncPerm().then(res=>{
                     console.log("fetchData",res);
-                    if(res.data.code==0){
+                    if(res.data.ret){
                         this.tableData=JSON.parse(JSON.stringify(res.data.data));
                         this.tableData=treeData.treeData(this.tableData,'menuId','parentId','children',0);
                         console.log("tableDatatableData",this.tableData);

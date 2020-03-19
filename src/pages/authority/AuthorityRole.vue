@@ -358,7 +358,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     row.status=1;
                     param.status=1;
                     updateRoleStatus(param).then(res=>{
-                        if(res.data.code==0){
+                        if(res.data.ret){
                             this.tableData.splice(index,1,row);
                         }else{}
                         // console.log(res);
@@ -368,7 +368,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     row.status=0;
                     param.status=0;
                     updateRoleStatus(param).then(res=>{
-                        if(res.data.code==0){
+                        if(res.data.ret){
                             this.tableData.splice(index,1,row);
                         }else{}
                         // console.log(res);
@@ -395,8 +395,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //获取表格数据
             fetchData(){
                 getAllRoleData(this.formInline).then(res=>{
-                    console.log(res);
-                    if(res.data.code==0){
+                    console.log("ressssss",res);
+                    if(res.data.ret){
                         this.tableData=res.data.data.list;
 
                         console.log('this.tableData',this.tableData)

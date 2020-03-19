@@ -833,10 +833,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //获取表格数据
             fetchData(){
                 getMemAccountData(this.formInline).then(res=>{
-                    console.log('resssssssssssssssssssssssvbsvgvg',res.status);
-                    if(res.status==200){
+                    console.log('resssssssssssssssssssssssvbsvgvg',res);
+                    if(res.data.ret){
                         
-                        this.tableData=res.data.data.list;
+                        this.tableData=res.data.data.data.list;
                         for(let i=0;i<this.tableData.length;i++){
                             if(this.tableData[i].expertInfo&&this.tableData[i].facilitator){
                                 let facilitator=JSON.parse(JSON.stringify(this.tableData[i].facilitator));
@@ -852,7 +852,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                             }
                         }
                         console.log('this.tableData',this.tableData)
-                        this.total=res.data.data.total;
+                        this.total=res.data.data.data.total;
                     }
                 })
             },

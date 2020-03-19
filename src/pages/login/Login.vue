@@ -62,7 +62,8 @@ import loginBk from "../../assets/loginBk.png";
             },
             loginClick() {
                 login(this.ruleForm).then(res=>{
-                    if(res.data.code==0){
+                    console.log(res);
+                    if(res.data.ret){
                         sessionStorage.setItem('username',this.ruleForm.username);
                         this.$store.commit('changeUserName',this.ruleForm.username);
                         sessionStorage.setItem('token',res.data.data);

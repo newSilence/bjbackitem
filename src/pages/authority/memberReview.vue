@@ -749,8 +749,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 getMemAccountData(this.formInline).then(res=>{
                     console.log('resssssssssssssssssssssssvbsvgvg',res);
                     if(res.data.ret){
-                        this.tableData=res.data.data.list;
-                        this.total=res.data.data.total;
+                        this.tableData=res.data.data.data.list;
+                        this.total=res.data.data.data.total;
+                        this.accountAuditType[1].num=res.data.data.count;
                     }
                     // if(res.status==200){
                         
