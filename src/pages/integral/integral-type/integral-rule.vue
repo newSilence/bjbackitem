@@ -176,6 +176,10 @@
             label:'全部'
           },
           {
+            value:'Vip0',
+            label:'Vip0'
+          },
+          {
             value:'Vip1',
             label:'Vip1'
           },
