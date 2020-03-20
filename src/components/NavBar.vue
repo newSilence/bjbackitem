@@ -49,10 +49,10 @@ export default {
     // store,
     methods: {
         menuClick(key,keyPath){
-            console.log(key);
-            console.log(keyPath);
+            // console.log(key);
+            // console.log(keyPath);
             let menuTitle;
-            console.log('this.navbarData',this.navbarData);
+            // console.log('this.navbarData',this.navbarData);
             for(let i=0;i<this.navbarData.length;i++){
                 if(this.navbarData[i].list&&this.navbarData[i].list.length>0){
                     let filterData=this.navbarData[i].list.filter(val=>{
@@ -63,15 +63,15 @@ export default {
                         break;
                     }
                 }else{
-                    console.log('ifelse');
+                    // console.log('ifelse');
                     if(this.navbarData[i].url==key){
-                        console.log('this.navbarData[i]',this.navbarData[i]);
+                        // console.log('this.navbarData[i]',this.navbarData[i]);
                         menuTitle=this.navbarData[i].name;
                         break;
                     }
                 }
             }
-            console.log('menuTitle',menuTitle);
+            // console.log('menuTitle',menuTitle);
             this.$store.commit('changeMenuTitle',menuTitle);
             sessionStorage['menuTitle']=menuTitle;
             // let title=this.navbarData.filter((val)=>{

@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div style="margin:20px">
+        <div style="margin:20px;padding-top:20px;margin-top:0px">
             <div>
                 <span @click="changeTypeMem(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountAuditType" :key="key">
                     {{item.label}}
-                    <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
+                    <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;width:22px;height:22px;text-align:center;font-size:10px;line-height:22px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num>99?'99+':item.num:''}}</span>
                 </span>
             </div>
         </div>
@@ -33,6 +33,8 @@
         <div>
             <el-table
                 @selection-change="chooseTr"
+                :header-row-style="theadRowStyle"
+                :header-cell-style="theadRowCellStyle"
                 :data="tableData"
                 ref="multipleTable"
                 tooltip-effect="dark"
@@ -93,7 +95,10 @@
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
-                        <el-button @click="seenDeatil(scope.row)" type="text" size="small">审核</el-button>
+                        <el-button @click="seenDeatil(scope.row)" type="text" size="small">
+                            <span v-if="scope.row.auditStatus===0">审核</span>
+                            <span style="color:#F3A157" v-else>查看</span>
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -509,6 +514,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         },
         components: { Treeselect },
         methods: {
+            //设置表格样式
+            theadRowStyle(){
+                return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+            },
+            theadRowCellStyle(){
+                return 'background:rgba(250,250,252,1);'
+            },
             chooseTr(val){
                 this.chooseUseData=val;
             },

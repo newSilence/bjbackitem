@@ -8,9 +8,10 @@ const state={
   menuIsCollapse:false,
   headTabClickIndexStr:0,
   routerWidth:"88vw",
+  isShowMessage:true,
   navbarData:[
     // {icon:'el-icon-phone',url:'/index',name:'首页'},
-    {icon:'el-icon-user',url:'/index/authority/memberreview',name:'会员账号审核认证'},
+    {icon:'el-icon-user',url:'/index/authority/memberreview',name:'会员审核认证'},
     {icon:'el-icon-user',url:'/index/authoritys',name:'账号管理',list:[
       {icon:'el-icon-user',url: '/index/authority/menu',name: '会员账号管理'},
     ]},
@@ -60,7 +61,10 @@ const mutations={
     state.homeTabList=data;
   },
   setToken(state,data){
-    state.token=data
+    state.token=data;
+  },
+  setIsShowMessage(state,data){
+    state.isShowMessage=data;
   }
 }
 export default new Vuex.Store({state,mutations})

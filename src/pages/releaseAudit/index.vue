@@ -109,6 +109,8 @@
         <div>
             <el-table
                 :data="tableData"
+                :header-row-style="theadRowStyle"
+                :header-cell-style="theadRowCellStyle"
                 ref="multipleTable"
                 @selection-change="checkboxChange"
                 style="width: 100%">
@@ -297,6 +299,13 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             }
         },
         methods: {
+            //设置表格样式
+            theadRowStyle(){
+                return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+            },
+            theadRowCellStyle(){
+                return 'background:rgba(250,250,252,1);'
+            },
             handleSelect(){
                 this.fetch();
             },
