@@ -5,46 +5,34 @@
             <div style="margin:20px">
                 <span class="point_class" @click="changeTypeMem(0)" :style="{paddingRight:20+'px',color:typeMember==0?'#2BB1E8':'#333333'}">会员角色</span>
                 <el-divider direction="vertical"></el-divider>
-                <!-- @click="changeTypeMem(1)" -->
                 <span class="point_class"  :style="{paddingRight:20+'px',paddingLeft:20+'px',color:typeMember==1?'#2BB1E8':'#333333'}">中心角色</span>
                 <el-divider direction="vertical"></el-divider>
-                 <!-- @click="changeTypeMem(2)" -->
                 <span class="point_class" :style="{paddingLeft:20+'px',color:typeMember==2?'#2BB1E8':'#333333'}">机构角色</span>
             </div>
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
-                    <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
                     <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入角色名称"  v-model="formInline.roleName">
                         <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                    <!-- <el-button type="primary" @click="onSearch">查询</el-button> -->
                     <el-button style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);color:white" @click="onAddnew">新建</el-button>
                 </el-form-item>
             </el-form>
         </div>
         <div>
             <el-table
-                
+                :header-row-style="theadRowStyle"
+                :header-cell-style="theadRowCellStyle"
                 :data="tableData"
                 tooltip-effect="dark"
                 style="width: 100%"
                 >
-                <!-- <el-table-column
-                type="selection"
-                width="55">
-                </el-table-column> -->
-                <!-- <el-table-column
-                label="角色ID"
-                width="120">
-                <template slot-scope="scope">{{ scope.row.roleId }}</template>
-                </el-table-column> -->
-                <!-- <el-table-column
-                prop="roleName"
-                label="角色名称"
-                width="">
-                </el-table-column> -->
+                <el-table-column
+                prop=""
+                label=""
+                width="80"
+                ></el-table-column>
                 <el-table-column
                 prop="roleName"
                 label="角色名称"
@@ -64,7 +52,6 @@
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
-                        <!-- <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button> -->
                         <el-button @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
                         <button :style="{border:'none',color:scope.row.status==1?'#FD2044':'#F3A157'}" @click="changeStatus(scope.row,scope.$index)" type="text"  size="small">
                             {{scope.row.status==1?'禁用':'启用'}}
@@ -73,7 +60,7 @@
                 </el-table-column>
             </el-table>
         </div>
-        <div>
+        <div style="text-align:right">
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -89,17 +76,16 @@
             <el-form :model="form" :rules="rules" ref="ruleForm" label-width="100px">
                 <el-form-item label="角色名称：" prop="roleName">
                     <el-col :span="8">
-                        <el-input v-model="form.roleName"></el-input>
+                        <el-input style="width:407px" v-model="form.roleName"></el-input>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="备注：" prop="remark">
                     <el-col :span="8">
-                        <el-input type="textarea" placeholder="请输入备注，限制在100字以内" :rows="4" v-model="form.remark"></el-input>
+                        <el-input style="width:407px" type="textarea" placeholder="请输入备注，限制在100字以内" :rows="4" v-model="form.remark"></el-input>
                     </el-col>
                 </el-form-item>
                 <el-form-item label="权限配置：" prop="remark">
-                    <!-- <el-col :span="8"> -->
-                        <div style="height:300px;overflow:auto">
+                        <div style="height:665px;overflow:auto">
                             <treeselect
                             class="no_select"
                             value-consists-of="ALL_WITH_INDETERMINATE"
@@ -111,12 +97,11 @@
                             :default-expand-level="Infinity" 
                             :options="deptSelectOptions" />
                          </div>
-                    <!-- </el-col> -->
                 </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="confirmAdd">确 定</el-button>
+            <div style="position:absolute;bottom:55px;left:557px">
+                <el-button type="primary" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border:none" @click="confirmAdd">保存</el-button>
+                <el-button style="background:rgba(255,255,255,1);color:#8A8A8A" @click="dialogFormVisible = false">返回</el-button>
             </div>
         </el-dialog>
     </div>
@@ -221,6 +206,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         },
         components: { Treeselect },
         methods: {
+            //设置表格样式
+            theadRowStyle(){
+                return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+            },
+            theadRowCellStyle(){
+                return 'background:rgba(250,250,252,1);'
+            },
             //切换会员类型
             changeTypeMem(type){
                 if(this.typeMember!=type){
@@ -254,12 +246,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
                     console.log('promise',result);
                     this.deptSelectOptions=result[0].data.data;
-                    // for(let i=0;i<this.funcSelectOptions.length;i++){
-                    //     this.funcSelectOptions[i].id=this.funcSelectOptions[i].menuId;
-                    //     this.funcSelectOptions[i].label=this.funcSelectOptions[i].name;
-                    // }
-                    // this.funcSelectOptions=this.treeData(this.funcSelectOptions,'menuId','parentId','children');
-                    // this.deptSelectOptions=result[1].data.data;
                     for(let i=0;i<this.deptSelectOptions.length;i++){
                         this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
                         this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
@@ -337,10 +323,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         this.form[key]=result[1].data.data[key];
                         console.log("ghsghghdsghs",this.form)
                     }
-                    // this.form=result[1].data.data;
-                    // this.form.menuIdList=result[1].data.data.selectMenuIdList?result[1].data.data.selectMenuIdList:[];
-                    // this.form.deptIdList=result[1].data.data.selectDeptIdList?result[1].data.data.selectDeptIdList:[];
-                    
                 }).catch(err=>{
                     this.$message({
                         showClose: true,
@@ -354,14 +336,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 let param={};
                 param.roleId=row.roleId;
                 if(row.status!=1){
-                    // this.tableData[index].status=1;
                     row.status=1;
                     param.status=1;
                     updateRoleStatus(param).then(res=>{
                         if(res.data.ret){
                             this.tableData.splice(index,1,row);
                         }else{}
-                        // console.log(res);
                     })
                     
                 }else{
@@ -427,6 +407,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
+    // .el-table tbody tr:hover>td { 
+    //     background-color:#E6F7FF!important
+    // }
     .no_select .vue-treeselect__value-container{
         display:none;
     }
@@ -438,6 +421,10 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     }
     .no_select .vue-treeselect__control{
         display: none!important;
+    }
+    .no_select .vue-treeselect__menu{
+        max-height:665px!important;
+        width:407px;
     }
     .point_class{
         cursor: pointer;

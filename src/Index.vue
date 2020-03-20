@@ -12,8 +12,8 @@
             <i class="el-icon-close"></i>
           </span>
         </div>
-        <div v-bind:style="{border:'1px solid #DCDCDC',minHeight:'85.5vh',overflow:'auto',marginLeft:'23px',paddingRight:'22px'}">
-            <div style="width:100%">
+        <div v-bind:style="{border:'1px solid #DCDCDC',minHeight:'85.5vh',overflow:'auto',marginLeft:'23px',paddingRight:'22px',background:'white'}">
+            <div style="width:100%;background:white">
               <router-view/>
             </div>
             

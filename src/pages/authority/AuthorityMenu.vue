@@ -34,6 +34,8 @@
         <div>
             <el-table
                 @selection-change="chooseTr"
+                :header-row-style="theadRowStyle"
+                :header-cell-style="theadRowCellStyle"
                 :data="tableData"
                 ref="multipleTable"
                 tooltip-effect="dark"
@@ -340,7 +342,7 @@
             </div>
         </el-dialog>
         <!-- 权限设置页面 -->
-        <el-dialog title="权限设置" :visible.sync="dialogSetPermitFormVisible">
+        <el-dialog title="权限设置" width="453px" class="set_auth_dialog" :visible.sync="dialogSetPermitFormVisible">
             <el-form :model="permitForm">
                 <el-form-item label="基本角色：" label-width="100px">
                     <el-select v-model="permitForm.roleId" placeholder="请选择">
@@ -366,9 +368,9 @@
                     {{optionName}}
                 </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogSetPermitFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="confirmSetAccountRolePer">确 定</el-button>
+            <div style="text-align:center">
+                <el-button style="background:rgba(251,251,251,1);;color:#828282" @click="dialogSetPermitFormVisible = false">取 消</el-button>
+                <el-button type="primary" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border:none" @click="confirmSetAccountRolePer">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -516,6 +518,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         },
         components: { Treeselect },
         methods: {
+            //设置表格样式
+            theadRowStyle(){
+                return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+            },
+            theadRowCellStyle(){
+                return 'background:rgba(250,250,252,1);'
+            },
             chooseTr(val){
                 this.chooseUseData=val;
             },
@@ -833,8 +842,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //获取表格数据
             fetchData(){
                 getAllMemAccountData(this.formInline).then(res=>{
-                    console.log('resssssssssssssssssssssssvbsvgvg',res.data.ret);
-                    if(res.data.ret){
+                    // console.log('resssssssssssssssssssssssvbsvgvg',res);
+                    if(res&&res.data.ret){
                         
                         this.tableData=res.data.data.list;
                         for(let i=0;i<this.tableData.length;i++){
@@ -898,5 +907,18 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         font-size:16px;
         font-family:PingFangSC-Medium,PingFang SC;
         font-weight:500;
+    }
+    .set_auth_dialog .el-dialog__header{
+        text-align: center;
+        background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+        // background: rgba(243,247,250,1);
+        height: 44px;
+    }
+    .set_auth_dialog .el-dialog__headerbtn{
+        top:15px;
+    }
+    .set_auth_dialog .el-dialog__title{
+        line-height: 8px;
+        color:#FFFFFF;
     }
 </style>

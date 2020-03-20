@@ -24,14 +24,20 @@ export function request(config){
         //一般在这之前对config做处理
         return config;//config为请求配置，须返回config
     },function(error){})
+    console.log('dddd',store.state.isShowMessage)
     instance.interceptors.response.use((response)=>{
-        console.log("response",response)
-        if(!response.data.ret){
+        
+        // console.log("response",response)
+        if(store.state.isShowMessage&&!response.data.ret){
+            store.commit('setIsShowMessage',false);
             Message.error(
                 {
                     showClose: true,
                     message: response.data.errmsg,
-                    type: 'error'
+                    type: 'error',
+                    onClose:function(){
+                        store.commit('setIsShowMessage',true)
+                    }
                 }
             )
             return false;
