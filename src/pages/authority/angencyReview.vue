@@ -99,12 +99,13 @@
                 <el-col :span="24">
                     <el-col :span="12">
                         <el-form-item label="营业执照：">
-                            <img :src="form.businessLicense" alt="营业执照">
+                            <img v-if="form.businessLicense" :src="form.businessLicense" alt="营业执照">
+                            <span v-else>无</span>
                         </el-form-item>
                     </el-col>
                 </el-col>
                 <el-col :span="24">
-                    <el-form-item  label="公司介绍：" class="edit_container news">
+                    <el-form-item  label="公司介绍：" class="angency_review">
                         <div class="ql-editor" v-html="form.companyProviders" style="min-height:60px;width:100%;border:1px solid #EDEDED;border-radius:2px"></div>
                     </el-form-item>
                 </el-col>
@@ -393,8 +394,8 @@
         width:100%
     }
 }
-.edit_container.news .ql-editor{
-    min-height:160px
+.angency_review .ql-editor{
+    min-height:60px
 }
 .turn_down_dialog .el-dialog__header{
     text-align: center;

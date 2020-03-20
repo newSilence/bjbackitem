@@ -124,10 +124,6 @@
                     </quill-editor>
                 </el-form-item>
             </el-form>
-            <!-- {{ruleForm.detail}} -->
-            <!-- <div  class="ql-editor" v-html="ruleForm.detail">
-                
-            </div> -->
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="confirm">确 定</el-button>
@@ -367,7 +363,7 @@
 </script>
 
 <style>
-.news .ql-editor{
+/* .news .ql-editor{
     height:300px
-}
+} */
 </style>

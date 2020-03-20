@@ -596,6 +596,11 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
 
 <style lang="less">
 .auditMainList{
+    .search_input .el-input__inner{
+        border:1px solid #01A2E4;
+        border-top-left-radius:12px;
+        border-bottom-left-radius:12px;
+    }
     .el-form--inline .el-form-item{
         margin-right:0px;
         // margin-bottom:10px;

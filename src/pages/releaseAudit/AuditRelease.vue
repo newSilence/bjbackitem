@@ -1103,9 +1103,9 @@
         width:100%
     }
 }
-.edit_container.news .ql-editor{
-    min-height:160px
-}
+// .edit_container.news .ql-editor{
+//     min-height:160px
+// }
 .turn_down_dialog .el-dialog__header{
     text-align: center;
     background: rgba(243,247,250,1);
