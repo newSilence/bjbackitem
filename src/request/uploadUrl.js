@@ -27,25 +27,11 @@ function treeData(source, id, parentId, children , flag){
     })
 };
 //  const uploadUrl="http://192.168.30.36:8088/";
-//  const uploadUrl="";
+ const uploadUrl="";
 // const uploadUrl="http://192.168.30.51:8090/";
-<<<<<<< HEAD
-
- const uploadUrl="http://139.196.236.125:8080/";
-//  const uploadUrl="http://192.168.20.21:8080/";
-
-//  const uploadUrl="http://192.168.30.51:8088/";
-// const uploadUrl="http://192.168.30.51:8088/";
-//  const uploadUrl="http://139.196.236.125:8088/"
-
-//  const uploadUrl="http://139.196.236.125:8080/";
-//  const uploadUrl="http://192.168.20.21:8080/";】
-
-=======
-// 测试
 //  const uploadUrl="http://139.196.236.125:8080/";
 //  const uploadUrl="http://192.168.20.21:8080/";
->>>>>>> 3bb34fea864e89867c05d2aca798952bab7cc027
+
 export default {
     uploadUrl,toolbarOptions,treeData
 }
