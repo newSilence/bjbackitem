@@ -24,8 +24,8 @@
             </el-form>
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
-                    <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入会员名称或账号"  v-model="formInline.keyWord">
-                        <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
+                    <el-input class="search_input" placeholder="请输入会员名称或账号"  v-model="formInline.keyWord">
+                        <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;border:1px solid #01A2E4;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
                     </el-input>
                 </el-form-item>
             </el-form>
@@ -812,6 +812,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
+    .search_input .el-input__inner{
+        border:1px solid #01A2E4;
+        border-top-left-radius:12px;
+        border-bottom-left-radius:12px;
+    }
     .no_select .vue-treeselect__value-container{
         display:none;
     }

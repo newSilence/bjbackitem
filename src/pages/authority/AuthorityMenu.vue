@@ -25,8 +25,8 @@
             </el-form>
             <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
-                    <el-input style="border:1px solid #01A2E4;border-radius:12px" placeholder="请输入关键词"  v-model="formInline.keyWord">
-                        <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
+                    <el-input class="search_input" style="" placeholder="请输入关键词"  v-model="formInline.keyWord">
+                        <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white;border:1px solid #01A2E4;" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
                     </el-input>
                 </el-form-item>
             </el-form>
@@ -343,8 +343,8 @@
         </el-dialog>
         <!-- 权限设置页面 -->
         <el-dialog title="权限设置" width="453px" class="set_auth_dialog" :visible.sync="dialogSetPermitFormVisible">
-            <el-form :model="permitForm">
-                <el-form-item label="基本角色：" label-width="100px">
+            <el-form :model="permitForm" label-width="120px">
+                <el-form-item label="基本角色：">
                     <el-select v-model="permitForm.roleId" placeholder="请选择">
                         <el-option
                         v-for="item in roleOptionsData"
@@ -354,7 +354,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="自定义角色：" label-width="100px">
+                <el-form-item label="自定义角色：">
                     <el-select v-model="permitForm.customRoleId" multiple placeholder="请选择">
                         <el-option
                         v-for="item in customRoleOptionsData"
@@ -364,7 +364,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="操作管理员：" label-width="100px">
+                <el-form-item label="操作管理员：">
                     {{optionName}}
                 </el-form-item>
             </el-form>
@@ -890,6 +890,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
+    .search_input .el-input__inner{
+        border:1px solid #01A2E4;
+        border-top-left-radius:12px;
+        border-bottom-left-radius:12px;
+    }
     .no_select .vue-treeselect__value-container{
         display:none;
     }

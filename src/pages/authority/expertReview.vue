@@ -142,13 +142,11 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label-width="30px">
-                            <!-- <span style="color:#2BB1E8 ; cursor:pointer"> -->
-                                <a style="text-decoration:none;color:#2BB1E8 ; cursor:pointer" :href="form.titleCertificate" :download="form.titleCertificate">
+                                <span @click="batchDownload" style="color:#2BB1E8 ; cursor:pointer"><i class="el-icon-download"></i>职称审核材料</span>
+                                <!-- <a style="text-decoration:none;color:#2BB1E8 ; cursor:pointer" :href="form.titleCertificate" :download="form.titleCertificate">
                                     <i class="el-icon-download"></i>
                                     职称审核材料
-                                </a>
-                            <!-- </span> -->
-                            <!-- <el-input :readonly="!isEdit" v-model="form.email"></el-input> -->
+                                </a> -->
                         </el-form-item>
                     </el-col>
                 </el-col>
@@ -176,12 +174,13 @@
                 <el-col :span="24">
                     <el-col :span="12">
                         <el-form-item prop="phoneNumber" label="宣传照：">
-                            <img :src="form.headPortrait" alt="宣传照">
+                            <img v-if="form.headPortrait" :src="form.headPortrait" alt="宣传照">
+                            <span v-else>无</span>
                         </el-form-item>
                     </el-col>
                 </el-col>
                 <el-col :span="24">
-                    <el-form-item  label="个人简介：" class="edit_container news">
+                    <el-form-item  label="个人简介：" class="angency_review">
                         <div class="ql-editor" v-html="form.individual" style="min-height:60px;width:100%;border:1px solid #EDEDED;border-radius:2px"></div>
                     </el-form-item>
                 </el-col>
@@ -293,6 +292,23 @@
             }
         },
         methods: {
+            //自定义下载
+            batchDownload(){
+                // console.log(this.form.titleCertificate);
+                let batchArr=this.form.titleCertificate.split(',');
+                for (let i = 0; i < batchArr.length; i++) {
+                    this.downloadMaterial(batchArr[i]);
+                }
+                console.log(batchArr);
+            },
+            downloadMaterial(href){
+                var a = document.createElement("a"), //创建a标签
+                e = document.createEvent("MouseEvents"); //创建鼠标事件对象
+                e.initEvent("click", false, false); //初始化事件对象
+                a.href = href; //设置下载地址
+                a.download = href; //设置下载文件名
+                a.dispatchEvent(e); //给指定的元素，执行事件click事件
+            },
             //返回上一页
             goBack(){
                 this.$router.back(-1);
@@ -486,8 +502,8 @@
         width:100%
     }
 }
-.edit_container.news .ql-editor{
-    min-height:160px
+.angency_review .ql-editor{
+    min-height:60px
 }
 .turn_down_dialog .el-dialog__header{
     text-align: center;
