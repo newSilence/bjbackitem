@@ -176,20 +176,20 @@
             label:'全部'
           },
           {
-            value:'Vip0',
-            label:'Vip0'
+            value:'VIP0',
+            label:'VIP0'
           },
           {
-            value:'Vip1',
-            label:'Vip1'
+            value:'VIP1',
+            label:'VIP1'
           },
           {
-            value:'Vip2',
-            label:'Vip2'
+            value:'VIP2',
+            label:'VIP2'
           },
           {
-            value:'Vip3',
-            label:'Vip3'
+            value:'VIP3',
+            label:'VIP3'
           }
         ],//会员等级数据
         personTypeOptions:[
