@@ -10,7 +10,7 @@
         <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
         <el-input
           style="border-radius:12px;width: 368px"
-          placeholder="请输入ID、积分接口、积分类型、说明"
+          placeholder="请输入ID、积分类型、积分状态、备注"
           v-model="formInline.roleName"
         >
           <el-button
@@ -26,28 +26,42 @@
       <el-table :data="IntegralData" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="integralId" label="ID" show-overflow-tooltip></el-table-column>
         <el-table-column prop="integralName" label="积分类型" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="explain" label="说明" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="createName" label="积分状态" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="explain" label="备注" show-overflow-tooltip></el-table-column>
         <el-table-column prop="createName" label="操作人" show-overflow-tooltip></el-table-column>
         <el-table-column prop="newTime" label="最后更新时间" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
             <el-button @click="editClick(scope.row)" type="text" size="small">配置</el-button>
-            <el-button
-              @click="editOnLine(scope.row)"
-              type="text"
-              size="small"
+            <el-popover
+              placement="top"
+              width="160"
               v-if="scope.row.state===1"
-            >上线</el-button>
-            <el-button
-              @click="editOffLine(scope.row)"
-              style="border: none; color: rgb(253, 32, 68);"
-              type="text"
-              size="small"
-              v-else
-            >下线</el-button>
+              v-model="visible1">
+              <p>请确认是否上线？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="visible1 = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="editOnLine(scope.row)">确定</el-button>
+              </div>
+              <el-button slot="reference" type="text">上线</el-button>
+            </el-popover>
+            <el-popover
+              placement="top"
+              width="160"
+              v-if="scope.row.state===0"
+              v-model="visible2">
+              <p>请确认是否下线？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="visible2 = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="editOffLine(scope.row)">确定</el-button>
+              </div>
+              <el-button slot="reference" type="text">下线</el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>
+
+
     </div>
     <div style="text-align: right;margin: 20px">
       <el-pagination
@@ -102,55 +116,7 @@
               <div class="grid-content bg-purple" style="width:120px;">积分值</div>
             </el-col>
           </el-row>
-
-          <!-- <el-row :gutter="10">
-            <el-col :span="8">
-              <div class="grid-content bg-purple">
-                <i class="el-icon-circle-plus integarl-add" @click="addTntegral"></i>
-                <el-select
-                  v-model="membership"
-                  @change="handleLeaveChange"
-                  placeholder="请选择"
-                  style="display: inline-block;width: 120px;"
-                >
-                  <el-option
-                    v-for="item in leaveOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="grid-content bg-purple">
-                <el-select
-                  v-model="userType"
-                  @change="handleTypeChange"
-                  placeholder="请选择"
-                  style="width:120px"
-                >
-                  <el-option
-                    v-for="item in personTypeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  ></el-option>
-                </el-select>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="grid-content bg-purple">
-                <el-input
-                  v-model="integralValue"
-                  @keyup.enter.native="handleClick"
-                  placeholder="请输入内容"
-                  style="width:120px"
-                ></el-input>
-              </div>
-            </el-col>
-          </el-row> -->
-          <el-row :gutter="10" v-for="(item,index) in formDatas" :key="index">
+          <el-row :gutter="10" v-for="(item,index) in formDatas" :key="index" style="margin-bottom: 8px">
             <el-col :span="8">
               <div class="grid-content bg-purple">
                 <i v-if="index===0" class="el-icon-circle-plus integarl-add" @click="addTntegral"></i>
@@ -192,43 +158,11 @@
                 <el-input
                   v-model="formDatas[index].integralValue"
                   @keyup.enter.native="handleClick"
-                  placeholder="请输入内容"
-                  style="width:120px"
+                  :placeholder="form.ruleClass[0]=='2000'?'请输入扣减积分值':'请输入奖励积分值'"
+                  style="width:130px"
                 ></el-input>
               </div>
             </el-col>
-            <!-- <el-col :span="8">
-              <div class="grid-content bg-purple integralCenter">
-                <el-tag style="width:120px" :key="1" effect="plain">{{item.membership}}</el-tag>
-              </div>
-            </el-col>
-
-
-            <el-col :span="8">
-              <div class="grid-content bg-purple integralCenter">
-                <el-tag
-                  style="width:120px"
-                  :key="1"
-                  :type="'success'"
-                  effect="plain"
-                >{{item.userType}}</el-tag>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="grid-content bg-purple integralCenter">
-                <el-tag
-                  style="width:120px"
-                  :key="1"
-                  :type="'info'"
-                  effect="plain"
-                >{{item.integralValue}}</el-tag>
-                <i
-                  @click="deleateIntegralType(index)"
-                  class="el-icon-delete-solid"
-                  style="font-size: 20px;margin-left: 10px;vertical-align: middle"
-                ></i>
-              </div>
-            </el-col> -->
           </el-row>
         </el-form-item>
         <el-form-item label="备注：" prop="remark">
@@ -256,11 +190,13 @@ import {
   getAllFuncPerm,
   updateRoleData,
   saveRoleData
-} from "../api";
+} from "../api"
 export default {
   name: "Integral-type",
   data() {
     return {
+      visible1:false,
+      visible2:false,
       isSave: false, //是否保存
       membership: "",
       userType: "",
@@ -355,7 +291,8 @@ export default {
       dialogFormVisible: false,
       dialogFormVisibleTitle: "新增",
       IntegralData: [], //积分类型
-      totalPage: ""
+      totalPage: "",
+      total:0
     };
   },
   created() {
@@ -363,6 +300,7 @@ export default {
     this.reqAllIntegralClass();
   },
   methods: {
+
     onSearch() {
       this.pageNumber = 1;
       this.isSearch = true;
@@ -584,76 +522,6 @@ export default {
       this.formDatas.push({
         membership:''
       });
-      console.log("this.form.ruleClass", this.form.ruleClass);
-      // if (this.form.ruleClass[0] == "2000") {
-      //   addSub = "-";
-      // } else if (this.form.ruleClass[0] == "1000") {
-      //   addSub = "";
-      // } else if (this.form.ruleClass.length != 2) {
-      //   this.$message({
-      //     message: "请先选择分类",
-      //     type: "warning"
-      //   });
-      //   return;
-      // }
-      // if (this.membership === "") {
-      //   this.$message({
-      //     message: "请先选择会员等级",
-      //     type: "warning"
-      //   });
-      //   return;
-      // }
-      // if (this.userType === "") {
-      //   this.$message({
-      //     message: "请先选择用户类型",
-      //     type: "warning"
-      //   });
-      //   return;
-      // }
-      // if (this.integralValue === "") {
-      //   this.$message({
-      //     message: "请输入积分值",
-      //     type: "warning"
-      //   });
-      //   return;
-      // }
-
-      // //重复性判断
-      // var isRepeat = false;
-      // this.integralSetting.length > 0
-      //   ? this.integralSetting.forEach((item, key) => {
-      //       if (
-      //         item.membership == this.membership &&
-      //         item.userType == this.userType
-      //       ) {
-      //         this.$message({
-      //           message: "请勿重复添加",
-      //           type: "warning"
-      //         });
-      //         isRepeat = true;
-      //       }
-      //     })
-      //   : "";
-      // if (isRepeat) {
-      //   return;
-      // }
-      // let membershipValue;
-      // this.leaveOptions.forEach((item, key) => {
-      //   if (item.value == this.membership) {
-      //     membershipValue = item.label;
-      //   }
-      // });
-      // let userType;
-      // this.personTypeOptions.forEach((item, key) => {
-      //   if (item.value == this.userType) {
-      //     userType = item.label;
-      //   }
-      // });
-      // this.integralSetting.push({
-      //   membership: membershipValue,
-      //   userType: userType,
-      //   integralValue: addSub + this.integralValue
-      // });
     },
     //删除积分类型
     deleateIntegralType(index) {
@@ -672,7 +540,6 @@ export default {
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
           console.log('formDatas ', this.formDatas);
-          return;
           let params = {};
           const { integralId, integralName } = this.integralItem;
           params.linkUserId = 1;
@@ -689,35 +556,19 @@ export default {
             });
             return;
           }
-
-          //
-          console.log("membership ", this.membership);
-          console.log("userType ", this.userType);
-          console.log("integralValue ", this.integralValue);
-
-          if (this.integralSetting.length === 0) {
-            if (
-              this.membership.length !== 0 &&
-              this.userType.length !== 0 &&
-              this.integralValue.length !== 0
-            ) {
-              this.integralSetting = [
-                {
-                  membership: this.membership,
-                  userType: this.userType,
-                  integralValue: this.integralValue
-                }
-              ];
-            } else {
-              this.$message({
-                message: "请添加积分值设置",
-                type: "warning"
-              });
-              return;
-            }
+          if (this.formDatas.length===0){
+            this.$message({
+              message: "请添加积分值设置",
+              type: "warning"
+            });
           }
-          this.integralSetting.length > 0
-            ? this.integralSetting.forEach((item, index) => {
+          //重复性检查
+
+
+          let newArr = [];
+          this.formDatas.length > 0
+            ? this.formDatas.forEach((item, index) => {
+                newArr.push(item.userType)
                 params["membershipValues[" + index + "].membership"] =
                   item.membership;
                 params["membershipValues[" + index + "].userType"] =
@@ -726,7 +577,21 @@ export default {
                   item.integralValue;
               })
             : "";
-          // params.membershipValues = this.integralSetting;
+          console.log('newArr',newArr);
+          var s = newArr.join(",")+",";
+          let isRepeat = false;
+          for(var i=0;i<newArr.length;i++) {
+            if (s.replace(newArr[i] + ",", "").indexOf(newArr[i] + ",") > -1) {
+               isRepeat = true;
+            }
+          }
+          if (isRepeat){
+            this.$message({
+              message: '积分值设置有重复添加',
+              type: 'warning'
+            });
+            return false
+          }
           params.rankOne = this.form.ruleClass[0];
           params.rankTwo = this.form.ruleClass[1];
           this.checked ? (params.perpetual = 1) : (params.perpetual = 0); //是否永久
@@ -813,7 +678,7 @@ export default {
                 });
               })
             : "";
-          this.integralSetting = newArr;
+          this.formDatas = newArr;
           if (res.data.data.rankOne && res.data.data.rankTwo) {
             this.form.ruleClass = [
               res.data.data.rankOne.toString(),
@@ -848,9 +713,10 @@ export default {
         console.log(res);
         if (res.data.errcode === 0) {
           this.$message({
-            message: res.data.errmsg,
+            message: '下线成功',
             type: "success"
           });
+          this.visible2 = false;
           this.getIntegralType();
         }
       });
@@ -866,9 +732,10 @@ export default {
         console.log(res);
         if (res.data.errcode === 0) {
           this.$message({
-            message: res.data.errmsg,
+            message: '上线成功',
             type: "success"
           });
+          this.visible1 = false;
           this.getIntegralType();
         }
       });
