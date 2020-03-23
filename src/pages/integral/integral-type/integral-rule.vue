@@ -103,7 +103,7 @@
             </el-col>
           </el-row>
 
-          <el-row :gutter="10">
+          <!-- <el-row :gutter="10">
             <el-col :span="8">
               <div class="grid-content bg-purple">
                 <i class="el-icon-circle-plus integarl-add" @click="addTntegral"></i>
@@ -149,11 +149,13 @@
                 ></el-input>
               </div>
             </el-col>
-          </el-row>
-          <el-row :gutter="10" v-for="(item,index) in integralSetting" :key="index">
+          </el-row> -->
+          <el-row :gutter="10" v-for="(item,index) in formDatas" :key="index">
             <el-col :span="8">
               <div class="grid-content bg-purple">
-                <i class="el-icon-circle-plus integarl-add" @click="addTntegral"></i>
+                <i v-if="index===0" class="el-icon-circle-plus integarl-add" @click="addTntegral"></i>
+                <i v-else class="el-icon-remove-outline integarl-add" @click="removeTntegral(index)"></i>
+
                 <el-select
                   v-model="formDatas[index].membership"
                   placeholder="请选择"
@@ -588,80 +590,86 @@ export default {
         }
       });
     },
+    removeTntegral(index){
+      this.formDatas.splice(index,1);
+    },
     //添加积分规则
     addTntegral() {
       //添加默认 + - 号
       let addSub = "";
+      this.formDatas.push({
+        membership:''
+      });
       console.log("this.form.ruleClass", this.form.ruleClass);
-      if (this.form.ruleClass[0] == "2000") {
-        addSub = "-";
-      } else if (this.form.ruleClass[0] == "1000") {
-        addSub = "";
-      } else if (this.form.ruleClass.length != 2) {
-        this.$message({
-          message: "请先选择分类",
-          type: "warning"
-        });
-        return;
-      }
-      if (this.membership === "") {
-        this.$message({
-          message: "请先选择会员等级",
-          type: "warning"
-        });
-        return;
-      }
-      if (this.userType === "") {
-        this.$message({
-          message: "请先选择用户类型",
-          type: "warning"
-        });
-        return;
-      }
-      if (this.integralValue === "") {
-        this.$message({
-          message: "请输入积分值",
-          type: "warning"
-        });
-        return;
-      }
+      // if (this.form.ruleClass[0] == "2000") {
+      //   addSub = "-";
+      // } else if (this.form.ruleClass[0] == "1000") {
+      //   addSub = "";
+      // } else if (this.form.ruleClass.length != 2) {
+      //   this.$message({
+      //     message: "请先选择分类",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
+      // if (this.membership === "") {
+      //   this.$message({
+      //     message: "请先选择会员等级",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
+      // if (this.userType === "") {
+      //   this.$message({
+      //     message: "请先选择用户类型",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
+      // if (this.integralValue === "") {
+      //   this.$message({
+      //     message: "请输入积分值",
+      //     type: "warning"
+      //   });
+      //   return;
+      // }
 
-      //重复性判断
-      var isRepeat = false;
-      this.integralSetting.length > 0
-        ? this.integralSetting.forEach((item, key) => {
-            if (
-              item.membership == this.membership &&
-              item.userType == this.userType
-            ) {
-              this.$message({
-                message: "请勿重复添加",
-                type: "warning"
-              });
-              isRepeat = true;
-            }
-          })
-        : "";
-      if (isRepeat) {
-        return;
-      }
-      let membershipValue;
-      this.leaveOptions.forEach((item, key) => {
-        if (item.value == this.membership) {
-          membershipValue = item.label;
-        }
-      });
-      let userType;
-      this.personTypeOptions.forEach((item, key) => {
-        if (item.value == this.userType) {
-          userType = item.label;
-        }
-      });
-      this.integralSetting.push({
-        membership: membershipValue,
-        userType: userType,
-        integralValue: addSub + this.integralValue
-      });
+      // //重复性判断
+      // var isRepeat = false;
+      // this.integralSetting.length > 0
+      //   ? this.integralSetting.forEach((item, key) => {
+      //       if (
+      //         item.membership == this.membership &&
+      //         item.userType == this.userType
+      //       ) {
+      //         this.$message({
+      //           message: "请勿重复添加",
+      //           type: "warning"
+      //         });
+      //         isRepeat = true;
+      //       }
+      //     })
+      //   : "";
+      // if (isRepeat) {
+      //   return;
+      // }
+      // let membershipValue;
+      // this.leaveOptions.forEach((item, key) => {
+      //   if (item.value == this.membership) {
+      //     membershipValue = item.label;
+      //   }
+      // });
+      // let userType;
+      // this.personTypeOptions.forEach((item, key) => {
+      //   if (item.value == this.userType) {
+      //     userType = item.label;
+      //   }
+      // });
+      // this.integralSetting.push({
+      //   membership: membershipValue,
+      //   userType: userType,
+      //   integralValue: addSub + this.integralValue
+      // });
     },
     //删除积分类型
     deleateIntegralType(index) {
@@ -679,6 +687,8 @@ export default {
     handleSaveRules() {
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
+          console.log('formDatas ', this.formDatas);
+          return;
           let params = {};
           const { integralId, integralName } = this.integralItem;
           params.linkUserId = 1;
