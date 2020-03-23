@@ -6,8 +6,8 @@
         <span  :class="{'active':isActive_1}" @click="toggleContent(1)">积分类型配置</span>
         <el-divider direction="vertical"></el-divider>
         <span :class="{'active':isActive_2}" @click="toggleContent(2)">积分规则配置</span>
-        <el-divider direction="vertical"></el-divider>
-        <span :class="{'active':isActive_3}" @click="toggleContent(3)">积分兑换活动设置</span>
+        <!-- <el-divider direction="vertical"></el-divider>
+        <span :class="{'active':isActive_3}" @click="toggleContent(3)">积分兑换活动设置</span> -->
       </div>
     </div>
     <component :is="currentComponent"></component>
