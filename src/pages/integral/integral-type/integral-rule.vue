@@ -152,10 +152,56 @@
           </el-row>
           <el-row :gutter="10" v-for="(item,index) in integralSetting" :key="index">
             <el-col :span="8">
+              <div class="grid-content bg-purple">
+                <i class="el-icon-circle-plus integarl-add" @click="addTntegral"></i>
+                <el-select
+                  v-model="formDatas[index].membership"
+                  placeholder="请选择"
+                  style="display: inline-block;width: 120px;"
+                >
+                  <el-option
+                    v-for="item in leaveOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="grid-content bg-purple">
+                <el-select
+                  v-model="formDatas[index].userType"
+                  @change="handleTypeChange"
+                  placeholder="请选择"
+                  style="width:120px"
+                >
+                  <el-option
+                    v-for="item in personTypeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="grid-content bg-purple">
+                <el-input
+                  v-model="formDatas[index].integralValue"
+                  @keyup.enter.native="handleClick"
+                  placeholder="请输入内容"
+                  style="width:120px"
+                ></el-input>
+              </div>
+            </el-col>
+            <!-- <el-col :span="8">
               <div class="grid-content bg-purple integralCenter">
                 <el-tag style="width:120px" :key="1" effect="plain">{{item.membership}}</el-tag>
               </div>
             </el-col>
+
+
             <el-col :span="8">
               <div class="grid-content bg-purple integralCenter">
                 <el-tag
@@ -180,7 +226,7 @@
                   style="font-size: 20px;margin-left: 10px;vertical-align: middle"
                 ></i>
               </div>
-            </el-col>
+            </el-col> -->
           </el-row>
         </el-form-item>
         <el-form-item label="备注：" prop="remark">
@@ -272,6 +318,9 @@ export default {
         children: "children",
         label: "label"
       },
+      formDatas:[{
+        membership:''
+      }],
       tableData: [
         {
           userId: 1,
@@ -738,7 +787,9 @@ export default {
     //处理等级改变
     handleLeaveChange(value) {},
     //处理类型改变
-    handleTypeChange(value) {},
+    handleTypeChange(value) {
+      
+    },
     //清空表单
     clearForm() {
       this.form.remark = "";
