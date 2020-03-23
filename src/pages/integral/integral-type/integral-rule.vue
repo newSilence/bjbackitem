@@ -194,6 +194,10 @@
         ],//会员等级数据
         personTypeOptions:[
           {
+            value:'全部',
+            label:'全部'
+          },
+          {
             value:'普通用户',
             label:'普通用户'
           },
