@@ -110,6 +110,7 @@
             <el-table
                 :data="tableData"
                 :header-row-style="theadRowStyle"
+                :cell-style="cellStyleFunc"
                 :header-cell-style="theadRowCellStyle"
                 ref="multipleTable"
                 @selection-change="checkboxChange"
@@ -125,7 +126,8 @@
                     <template slot-scope="scope">
                         <div style="display:flex;flex-wrap:wrap">
                             <span>{{scope.row.projectName}}</span>
-                            <span v-if="scope.row.approvalState==1&&scope.row.isRecommend" style="border:1px solid rgba(43,177,232,1);color:#01A2E4;padding:0px 3px;font-size:12px">推荐</span>
+                            <span v-if="scope.row.approvalState==1&&scope.row.isRecommend" style="border:1px solid rgba(43,177,232,1);color:#01A2E4;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">推荐</span>
+                            <span v-if="scope.row.approvalState==4&&scope.row.isRecommend" style="border:1px solid #A7A7A7;color:color:#A7A7A7;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">推荐</span>
                             <!-- {{scope.row.projectName+'/'+scope.row.cityName}} -->
                         </div>
                     </template>
@@ -156,7 +158,12 @@
                     label="当前进度">
                     <template slot-scope="scope">
                         <div>
-                            {{scope.row.approvalState==4?'已下线':scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}}
+                            <span style="color:#A7A7A7" v-if="scope.row.approvalState==4">已下线</span>
+                            <span style="color:#333333" v-else-if="scope.row.approvalState==0">待审核</span>
+                            <span style="color:#F3A157" v-else-if="scope.row.approvalState==1">发布中</span>
+                            <span style="color:#FD2044" v-else-if="scope.row.approvalState==2">未通过</span>
+                            <span v-else></span>
+                            <!-- {{scope.row.approvalState==4?'已下线':scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}} -->
                             <!-- {{scope.row.processTypeStr && scope.row.processTypeStr.length>0?scope.row.processTypeStr.join():''}} -->
                         </div>
                     </template>
@@ -166,13 +173,13 @@
                     width="140">
                     <template slot-scope="scope">
                         <el-button type="text" size="small">
-                            <span @click="seen(scope.row)" style="color:#2BB1E8" >
+                            <span @click="seen(scope.row)" style="color:#2BB1E8;font-size:14px" >
                                 查看
                             </span>
                         </el-button>
                         <!-- <div> -->
                         <el-dropdown style="display:inline-block;margin-left:10px" placement="right">
-                            <span style="color:#2BB1E8" class="el-dropdown-link">
+                            <span style="color:#2BB1E8;font-size:14px" class="el-dropdown-link">
                                 更多<i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
@@ -300,6 +307,13 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
         },
         methods: {
             //设置表格样式
+            cellStyleFunc(row,column,roeIndex){
+                // #A7A7A7
+                if(row.row.approvalState==4){
+                    return 'color:#A7A7A7'
+                }
+                // console.log(row.row.approvalState);
+            },
             theadRowStyle(){
                 return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
             },
@@ -598,8 +612,8 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
 .auditMainList{
     .search_input .el-input__inner{
         border:1px solid #01A2E4;
-        border-top-left-radius:12px;
-        border-bottom-left-radius:12px;
+        border-top-left-radius:4px;
+        border-bottom-left-radius:4px;
     }
     .el-form--inline .el-form-item{
         margin-right:0px;
