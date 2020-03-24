@@ -26,16 +26,11 @@ function treeData(source, id, parentId, children , flag){
         return father[parentId] == flag        // 如果第一层不是parentId=0，请自行修改
     })
 };
-<<<<<<< HEAD
  // const uploadUrl="http://192.168.30.36:8088/";
  const uploadUrl="";
-=======
-//  const uploadUrl="http://192.168.30.36:8088/";
-//  const uploadUrl="";
->>>>>>> 095e11f39b56fbbb14913b9aa82ef06c0bbcda37
 // const uploadUrl="http://192.168.30.51:8090/";
 // 测试
- const uploadUrl="http://139.196.236.125:8080/";
+//  const uploadUrl="http://139.196.236.125:8080/";
 //  const uploadUrl="http://192.168.20.21:8080/";
 
 export default {
