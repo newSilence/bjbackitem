@@ -240,14 +240,12 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 cascaderProps:{
                     lazy: true,
                     lazyLoad: (node,resolve)=>{
-                        // console.log("node",node);
                         const { level } = node;
                         let data={
                             provinceId:node.value
                         }
                         !node.value?''
                         :getProvinceAllCity(data).then(res=>{
-                            // console.log('resfshgfhsgh',res);
                             if(res.data.data){
                                 let data=res.data.data;
                                 const nodes=data.map(item => ({
@@ -312,7 +310,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 if(row.row.approvalState==4){
                     return 'color:#A7A7A7'
                 }
-                // console.log(row.row.approvalState);
             },
             theadRowStyle(){
                 return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
@@ -337,26 +334,21 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     this.formInline.pageIndex=1;
                     this.fetch();
                 }
-                // console.log(item,key);
             },
             handleSizeChange(val) {
                 this.formInline.pageSize=val;
                 this.formInline.pageIndex=1;
                 this.fetch();
-                // console.log(`每页 ${val} 条`);
             },
             handleCurrentChange(val) {
                 this.formInline.pageIndex=val;
                 this.fetch();
-                // console.log(`当前页: ${val}`);
             },
             // 复选框全选事件
             checkChoose(){
-                // console.log(this.isAllChecked);
                 this.$refs.multipleTable.toggleAllSelection();
             },
             checkboxChange(selection){
-                // console.log(selection);
                 this.checkboxSelected=selection;
                 if(selection.length!=this.tableData.length){
                     this.isAllChecked=false
@@ -365,29 +357,21 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 }
             },
             handleAreaChange(val){
-                // console.log(val);
+                this.formInline.pageIndex=1;
                 this.fetch();
-                // console.log(val);
-                
-                // console.log(this.formInline.selectedOptions);
             },
             seen(row){
-                // console.log(row);
-                // return;
                 this.$router.push({path:'/index/releaseAudit/AuditRelease',query:{id:row.projectId}})
             },
             //获取所有的省
             getAllPrivinceData(){
                 getAllProvince().then(res=>{
-                    // console.log(res);
                     if(res.data.ret){
                         this.optionsArea = res.data.data;
                         for(let i=0;i<this.optionsArea.length;i++){
                             this.optionsArea[i].label=this.optionsArea[i].name;
                             this.optionsArea[i].value=this.optionsArea[i].regionId;
-                            // this.optionsArea[i].level=this.optionsArea[i].enumRegionLevel
                         }
-                        // console.log("this.optionsArea",this.optionsArea)
                     }
                     
                 });
@@ -395,7 +379,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             //获取技术领域
             getAllSelectData(){
                 getListSkillArea().then(res=>{
-                    // console.log("getListSkillArea()",res);
                     if(res.data.ret){
                         this.SkillAreaData=res.data.data;
                     }
@@ -404,34 +387,28 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     if(res.data.ret){
                         this.UserAreaData=res.data.data;
                     }
-                    // console.log("getListUserArea()",res);
                 })
                 getListProcessType().then(res=>{
                     if(res.data.ret){
                         this.ProcessTypeData=res.data.data;
                     }
-                    // console.log("getListProcessType()",res);
                 })
                 getListFruitType().then(res=>{
                     if(res.data.ret){
                         this.FruitTypeData=res.data.data;
                     }
-                    // console.log("getListFruitType()",res);
                 })
                 getAllFinancingType().then(res=>{
                     if(res.data.ret){
                         this.FinancingTypeData=res.data.data;
                     }
-                    // console.log("getAllFinancingType()",res);
                 })
             },
             //下线
             offlineRow(row){
-                // console.log(row);
                 let param={};
                 param.id=row.projectId;
                 offLineFun(param).then(res=>{
-                    // console.log(res);
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
@@ -444,11 +421,9 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             },
             //删除
             deleteRow(row){
-                // console.log(row);
                 let param={};
                 param.id=row.projectId;
                 deleteProFun(param).then(res=>{
-                    // console.log(res);
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
@@ -461,13 +436,11 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             },
             //推荐 
             recommendRow(row){
-                // console.log(row);
                 let param={};
                 param.id=row.projectId;
                 param.state=row.isRecommend==1?0:1;
                 let str=row.isRecommend==1?'取消推荐':'设置推荐';
                 recommendProFun(param).then(res=>{
-                    // console.log(res);
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
@@ -498,9 +471,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                         showClose: true,
                         message:'功能待开发',
                         onClose:()=>{
-                            // console.log("flag",flag);
                             if(flag==1){
-                                // console.log("设置")
                                 this.isAllowedButtonClick.batchDeleteButton=false;
                             }
                             if(flag==2){
@@ -509,7 +480,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                             if(flag==3){
                                 this.isAllowedButtonClick.batchTrunOther=false;
                             }
-                            // console.log('关闭')
                         }
                     })
                     return false;
@@ -521,9 +491,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                         showClose: true,
                         message:'请选择要操作的数据',
                         onClose:()=>{
-                            // console.log("flag",flag);
                             if(flag==1){
-                                // console.log("设置")
                                 this.isAllowedButtonClick.batchDeleteButton=false;
                             }
                             if(flag==2){
@@ -532,7 +500,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                             if(flag==3){
                                 this.isAllowedButtonClick.batchTrunOther=false;
                             }
-                            // console.log('关闭')
                         }
                     })
                     return false;
@@ -545,15 +512,12 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 param.ids=ids.join();
                 
                 optionFunc(param).then(res=>{
-                    // console.log(res);
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
                         message:res.data.ret?`${str}成功`:`${str}失败`,
                         onClose:()=>{
-                            // console.log("flag",flag);
                             if(flag==1){
-                                console.log("设置")
                                 this.isAllowedButtonClick.batchDeleteButton=false;
                             }
                             if(flag==2){
@@ -562,7 +526,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                             if(flag==3){
                                 this.isAllowedButtonClick.batchTrunOther=false;
                             }
-                            // console.log('关闭')
                         }
                     })
                     if(res.data.ret){
@@ -570,10 +533,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     }
                 })
             },
-            // 批量设为推荐 batchRecommendProFun
-            // batchProRecommend(){
-            //     console.log('批量')
-            // },
             //获取列表数据
             fetch(){
                 this.formInline.provinceId=this.formInline.selectedOptions[0];
@@ -586,7 +545,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 }
                 delete searchForm.selectedOptions;
                 getProjectList(searchForm).then(res=>{
-                    console.log('gdhgdhres',res);
                     if(res.data && res.data.data){
                         this.tableData = res.data.data.data.list;
                         this.totalAll=res.data.data.data.total-0;

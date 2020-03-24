@@ -166,7 +166,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 // };
                 this.dialogClose();
                 getAllSelectFuncPerm().then(res=>{
-                    console.log("dddddeeppt",res);
                     this.deptSelectOptions=res.data.data;
                     for(let i=0;i<this.deptSelectOptions.length;i++){
                         this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
@@ -183,11 +182,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //编辑
             editClick(row) {
-                console.log(row);
                 this.dialogFormVisibleTitle="编辑菜单"
                 this.dialogClose();
                 getAllSelectFuncPerm().then(res=>{
-                    console.log("dddddeeppt",res);
                     this.deptSelectOptions=res.data.data;
                     for(let i=0;i<this.deptSelectOptions.length;i++){
                         this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
@@ -223,7 +220,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                                     type: 'error'
                                 });
                             }
-                            console.log(res);
                         })
                     }).catch(() => {
                         this.$message({
@@ -231,14 +227,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                             message: '已取消删除'
                         });          
                     });
-                
-                console.log(row);
             },
             //确认编辑或者新增
             confirmAdd(){
                 if(this.form.menuId){
                     updateMenuData(this.form).then(res=>{
-                        console.log(res);
                         if(res.data.ret){
                             this.dialogFormVisible=false;
                             this.fetchData();
@@ -246,7 +239,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     })
                 }else{
                     saveMenuData(this.form).then(res=>{
-                        console.log(res);
                         if(res.data.ret){
                             this.dialogFormVisible=false;
                             this.fetchData();
@@ -256,7 +248,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 
             },
             deptSelected(node){
-                console.log(node);
                 this.form.parentName=node.label;
             },
             dialogClose(){
@@ -271,22 +262,15 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             fetchData(){
                 getAllFuncPerm().then(res=>{
-                    console.log("fetchData",res);
                     if(res.data.ret){
                         this.tableData=JSON.parse(JSON.stringify(res.data.data));
                         this.tableData=treeData.treeData(this.tableData,'menuId','parentId','children',0);
-                        console.log("tableDatatableData",this.tableData);
-                        // this.deptSelectOptions=JSON.parse(JSON.stringify(res.data.data));
-                        // for(let )
                     }
                 })
             }
         },
         created () {
-            console.log(treeData);
             this.fetchData();
-            
-            console.log(this.tableData);
         },
     }
 </script>

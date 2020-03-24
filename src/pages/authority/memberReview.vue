@@ -546,28 +546,18 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //点击表格行
             seenDeatil(row){
-                console.log(row);
-                // return
-                // this.$router.push({path:'/index/authority/expertReview'});
-                // return false;
                 if(row.nickname=='专家'){
                     this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:1}})
-                    // this.dialogExpertFormVisible=true;
                 }
                 if(row.nickname=='机构'){
                     this.$router.push({path:'/index/authority/angencyReview',query:{id:row.userId,approvalType:2}})
                 }
-                // if(row.type==2&&!row.facilitator){
-                //     this.$router.push({path:'/index/authority/angencyReview',query:{linkUserId:row.userId,type:row.type}})
-                // }
             },
             //权限设置
             setPermit(row){
-                console.log(row);
                 this.userId=row.userId;
                 let param={userId:this.userId};
                 getAccountPermWebrole(param).then(res=>{
-                    console.log("sssresponse",res);
                     if(res.data.code==0){
                         this.permitForm.roleId=res.data.data.roleIdList;
                     }
@@ -576,7 +566,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.dialogSetPermitFormVisible=true;
 
                 getAccountMemPermWebrole().then(res=>{
-                    console.log(res);
                     if(res.data.code==0){
                         this.roleOptionsData=res.data.data;
                     }else{
@@ -590,10 +579,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 let param={};
                 param.roleIdList=this.permitForm.roleId;
                 param.userId=this.userId;
-                // console.log(this.permitForm.roleId);
-                // return
                 setAccountRolePerUrl(param).then(res=>{
-                    console.log("resdddd",res);
                     if(res.data.code==0){
                         this.dialogSetPermitFormVisible=false;
                     }else{
@@ -614,20 +600,18 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         type: 'warn'
                     });
                 }else{
-                    // this.$refs.multipleTable.clearSelection();
                 }
             },
             getTreeData(){
-                console.log("获取",this.$refs.func_tree);
-                console.log(this.$refs.func_tree.getCheckedNodes(false,true));
-                console.log(this.$refs.func_tree.getCheckedKeys());
-                console.log(this.$refs.func_tree.getHalfCheckedKeys());
-                console.log('value',this.value);
+                // console.log("获取",this.$refs.func_tree);
+                // console.log(this.$refs.func_tree.getCheckedNodes(false,true));
+                // console.log(this.$refs.func_tree.getCheckedKeys());
+                // console.log(this.$refs.func_tree.getHalfCheckedKeys());
+                // console.log('value',this.value);
             },
             onSearch() {
                 this.formInline.pageNumber=1;
                 this.fetchData();
-                console.log("search");
             },
             //处理部门数据，返回符合渲染的数据格式
             treeData(source, id, parentId, children){   
@@ -640,7 +624,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //部门下拉框点击事件
             deptSelected(node){
-                console.log(node);
                 this.form.deptName=node.label;
             },
             opendialog(){
@@ -649,7 +632,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //promise关于角色和部门请求接口封装
             getRoleOrDeptData(){
                 return Promise.all( [ getAllFuncPerm() , getAllDepartData() ] ).then(result=>{
-                    console.log('promise',result);
                     this.funcSelectOptions=result[0].data.data;
                     for(let i=0;i<this.funcSelectOptions.length;i++){
                         this.funcSelectOptions[i].id=this.funcSelectOptions[i].menuId;
@@ -662,7 +644,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
                     }
                     this.deptSelectOptions=this.treeData(this.deptSelectOptions,'deptId','parentId','children');
-                    // console.log("promise",res);
                 }).catch(err=>{
                     this.$message({
                         showClose: true,
@@ -682,41 +663,30 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             confirmAdd(){
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
-                        console.log(this.form);
                         let param={};
                         for(let key in this.form){
-                            // if(key=="roleIdList"){
-                            //     param[key]=JSON.stringify(this.form[key])
-                            // }else{
-                            //     param[key]=this.form[key];
-                            // }
                             param[key]=this.form[key];
                         }
                         delete param.createTime;
                         param.selectMenuIdList=this.$refs.func_tree.getCheckedKeys()?this.$refs.func_tree.getCheckedKeys():[];
                         let halfMenuId=this.$refs.func_tree.getHalfCheckedKeys()?this.$refs.func_tree.getHalfCheckedKeys():[];
-                        // console.log("halfMenuId",halfMenuId)
                         param.menuIdList=param.selectMenuIdList.concat(halfMenuId);
-                        // console.log('this.$refs.dept_tree.getCheckedKeys()',this.$refs.dept_tree.getCheckedKeys());
-                        // console.log("this.$refs.dept_tree.getHalfCheckedKeys()",this.$refs.dept_tree.getHalfCheckedKeys());
                         param.selectDeptIdList=this.$refs.dept_tree.getCheckedKeys()?this.$refs.dept_tree.getCheckedKeys():[];
                         param.deptIdList=param.selectDeptIdList.concat(this.$refs.dept_tree.getHalfCheckedKeys()?this.$refs.dept_tree.getHalfCheckedKeys():[]);
                         if(param.roleId){
                             updateRoleData(param).then(res=>{
-                                // console.log(res);
                                 this.fetchData();
                                 this.dialogClose();
                             })
                         }else{
                             saveRoleData(param).then(res=>{
-                                console.log(res);
                                 this.fetchData();
                                 this.dialogClose();
                             })
                         }
                         
                     } else {
-                        console.log('error submit!!');
+                        // console.log('error submit!!');
                         return false;
                     }
                 });
@@ -726,14 +696,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             editClick(row){
                 this.dialogExpertFormVisible=true;
                 return false;
-                console.log(row);
                 this.dialogFormVisible=true;
                 this.dialogFormVisibleTitle="编辑"
                 let param={
                     roleId:row.roleId
                 }
                 Promise.all([this.getRoleOrDeptData(),getRoleDetailInfo(param)]).then(result=>{
-                    console.log(result);
+                    // console.log(result);
                     this.form=result[1].data.data;
                     // this.form.menuIdList=result[1].data.data.selectMenuIdList?result[1].data.data.selectMenuIdList:[];
                     // this.form.deptIdList=result[1].data.data.selectDeptIdList?result[1].data.data.selectDeptIdList:[];
@@ -765,33 +734,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //获取表格数据
             fetchData(){
                 getMemAccountData(this.formInline).then(res=>{
-                    // console.log('resssssssssssssssssssssssvbsvgvg',res);
                     if(res.data.ret){
                         this.tableData=res.data.data.data.list;
                         this.total=res.data.data.data.total;
                         this.accountAuditType[1].num=res.data.data.count;
-                        // this.accountAuditType[1].num=0;
                     }
-                    // if(res.status==200){
-                        
-                    //     this.tableData=res.data.data.list;
-                    //     for(let i=0;i<this.tableData.length;i++){
-                    //         if(this.tableData[i].expertInfo&&this.tableData[i].facilitator){
-                    //             let facilitator=JSON.parse(JSON.stringify(this.tableData[i].facilitator));
-                    //             let expertInfo=JSON.parse(JSON.stringify(this.tableData[i].expertInfo));
-                                
-                    //             this.tableData[i].facilitator=null;
-                    //             this.tableData[i].expertInfo=null;
-                    //             let obj=JSON.parse(JSON.stringify(this.tableData[i]));
-                    //             this.tableData[i].facilitator=facilitator;
-                    //             obj.expertInfo=expertInfo;
-                    //             this.tableData.splice(i,0,obj);
-                    //             i++;
-                    //         }
-                    //     }
-                    //     console.log('this.tableData',this.tableData)
-                    //     this.total=res.data.data.total;
-                    // }
                 })
             },
             //分页功能
@@ -805,7 +752,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             }
         },
         created () {
-            console.log('sessionStorage',sessionStorage['username']);
+            // console.log('sessionStorage',sessionStorage['username']);
             this.optionName=sessionStorage['username'];
             this.fetchData();
             //先处理成vue-treeselect的需求字段。
@@ -813,7 +760,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
                 this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
             }
-            console.log('this.treeData',this.treeData(this.deptSelectOptions,'deptId','parentId','children'));
+            // console.log('this.treeData',this.treeData(this.deptSelectOptions,'deptId','parentId','children'));
         },
     }
 </script>
