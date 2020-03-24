@@ -76,6 +76,11 @@
             <el-input v-model="form.port"></el-input>
           </el-col>
         </el-form-item>
+        <el-form-item label="对应页面：" prop="page">
+          <el-col :span="8">
+            <el-input v-model="form.hopRouting"></el-input>
+          </el-col>
+        </el-form-item>
         <el-form-item label="说明：" prop="explain">
           <el-col :span="8">
             <el-input type="textarea" :maxlength="50" placeholder="请输入备注，限制在50字以内" :rows="4" v-model="form.explain"></el-input>
@@ -141,6 +146,7 @@
               integralName:'',
               explain:'',
               port:'',
+              hopRouting:''
             },
             rules:{
               integralName:[
@@ -149,6 +155,9 @@
               ],
               port:[
                 { required: true, message: '请输入触发接口', trigger: 'blur' }
+              ],
+              hopRouting:[
+                { required: false }
               ]
             },
             deptSelectOptions:[
@@ -250,6 +259,7 @@
           this.dialogFormVisibleTitle = '编辑';
           this.form.integralName = row.integralName;
           this.form.explain = row.explain;
+          this.form.hopRouting = row.hopRouting;
           let params = {
             integralId:row.integralId
           }
@@ -362,8 +372,8 @@
         //修改积分类型数据
         modifyIntegralType(){
           const {integralId} = this.integralItem;
-          const {port,integralName,explain} = this.form;
-          let params = {integralId,integralName,explain,port};
+          const {port,integralName,explain,hopRouting} = this.form;
+          let params = {integralId,integralName,explain,port,hopRouting};
           reqIntegralTypeModify(params)
             .then(res=>{
               if (res.data.errcode===0){
