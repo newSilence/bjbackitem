@@ -62,25 +62,15 @@ import loginBk from "../../assets/loginBk.png";
             },
             loginClick() {
                 login(this.ruleForm).then(res=>{
-                    console.log(res);
                     if(res.data.ret){
                         sessionStorage.setItem('username',this.ruleForm.username);
                         this.$store.commit('changeUserName',this.ruleForm.username);
                         sessionStorage.setItem('token',res.data.data);
                         this.$store.commit('setToken',res.data.data);
-                        // getNavMenuData().then(res=>{
-                        //     console.log("responsemenu",res);
-                        //     this.$store.commit('changeHomeTabList',res.data.data);
-                        //     sessionStorage['headTabClickIndexStr']=this.$store.state.headTabClickIndexStr;
-                        //     sessionStorage.setItem('homeTabList',JSON.stringify(res.data.data));
-                        //     this.$router.push('/');
-                        //     // let homeDataArray=res.data.data;
-                        // })
                         this.$router.push('/index/authority/menu');
                         this.$store.commit('changeMenuTitle','会员账号管理');
                         sessionStorage['menuTitle']="会员账号管理";
                     }
-                    console.log('logres',res);
                 })
             }
         },
