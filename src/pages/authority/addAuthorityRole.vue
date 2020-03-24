@@ -72,21 +72,18 @@
         components: { Treeselect },
         methods: {
             deptSelected(node){
-                console.log(node);
                 // this.form.deptName=node.label;
             },
             fetchData(row){
-                console.log(row);
+                this.loading=true;
                 // return
                 let param={
                     roleId:row.roleId
                 }
                 Promise.all([this.getRoleOrDeptData(),getRoleDetailInfo(param)]).then(result=>{
-                    console.log(result);
+                    this.loading=false;
                     for(let key in this.form){
-                        
                         this.form[key]=result[1].data.data[key];
-                        console.log("ghsghghdsghs",this.form)
                     }
                 }).catch(err=>{
                     this.$message({
@@ -94,6 +91,7 @@
                         message: err,
                         type: 'error'
                     });
+                    this.loading=false;
                 })
             },
             //处理部门数据，返回符合渲染的数据格式
@@ -108,14 +106,12 @@
             //promise关于角色和部门请求接口封装
             getRoleOrDeptData(){
                 return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
-                    console.log('promise',result);
                     this.deptSelectOptions=result[0].data.data;
                     for(let i=0;i<this.deptSelectOptions.length;i++){
                         this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
                         this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
                     }
                     this.deptSelectOptions=this.treeData(this.deptSelectOptions,'menuId','parentId','children');
-                    // console.log("promise",res);
                 }).catch(err=>{
                     this.$message({
                         showClose: true,
@@ -129,12 +125,10 @@
             },
             //确认新增
             confirmAdd(){
-                console.log(this.form);
                 // return false;
 
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
-                        console.log(this.form);
                         let param={};
                         for(let key in this.form){
                             param[key]=this.form[key];
@@ -144,7 +138,6 @@
                         this.loading=true;
                         if(param.roleId){
                             updateRoleData(param).then(res=>{
-                                console.log(res.data.ret);
                                 // this.fetchData();
                                 if(res&&res.data.ret){
                                     this.dialogClose();
@@ -153,18 +146,15 @@
                             })
                         }else{
                             saveRoleData(param).then(res=>{
-                                console.log(res);
                                 if(res&&res.data.ret){
                                     this.dialogClose();
                                 }
                                 this.loading=false;
-                                // this.fetchData();
                                 
                             })
                         }
                         
                     } else {
-                        console.log('error submit!!');
                         return false;
                     }
                 });
@@ -172,7 +162,6 @@
             },
         },
         created () {
-            console.log(this.$route.query)
             if(this.$route.query.flag==1){
                 let row = {roleId:this.$route.query.roleId}
                 this.fetchData(row)
@@ -180,7 +169,6 @@
             if(this.$route.query.flag==0){
                 this.getRoleOrDeptData();
             }
-            // this.fetchData();
         },
     }
 </script>
