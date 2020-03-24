@@ -1,20 +1,19 @@
 <template>
   <div style="box-sizing: border-box;padding: 32px 40px 26px 40px">
     <div class="integral-title">
-      <span :class="{'active':isActive}" @click="toggleTitle(1)">积分账户查询</span>
-      <span :class="{'active':!isActive}" @click="toggleTitle(2)">积分明细</span>
+      <span >积分账户查询</span>
+      <span class="active" >积分明细</span>
     </div>
-    <component :is="currentComponent"></component>
+    <IntegralAccount></IntegralAccount>
   </div>
 </template>
 <script>
   import IntegralAccount from './integral-rules/integral-account'
-  import IntegralDetail from './integral-rules/integral-detail'
   export default {
     data() {
       return {
         isActive:true,
-        currentComponent:'IntegralAccount'
+
       }
     },
     created () {
@@ -22,18 +21,10 @@
     },
     components: {
       IntegralAccount,
-      IntegralDetail
+
     },
     methods: {
-      toggleTitle(i){
-        if (i==1){
-          this.isActive = true;
-          this.currentComponent = 'IntegralAccount'
-        }else {
-          this.isActive = false;
-          this.currentComponent = 'IntegralDetail'
-        }
-      }
+
     },
   }
 </script>
@@ -46,7 +37,7 @@
     box-sizing: border-box;
     padding-bottom: 22px;
     span {
-      cursor: pointer;
+
     }
     span:hover{
       color:#2BB1E8!important;

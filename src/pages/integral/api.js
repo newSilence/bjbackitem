@@ -226,4 +226,12 @@ export function reqOffLineIntegralRule(data){
     method:'post'
   })
 }
+//积分账户明细
+export function reqUserIntegralHistoryManager(data){
+  return request({
+    url:'/manager/UserIntegralHistoryManager/adminSelectUserIntegralHistory',
+    data,
+    method:'post'
+  })
+}
 
