@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="integralTypeSelf">
     <el-form style="margin:20px;float: right" :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="">
         <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
-        <el-input style="border-radius:12px;width: 368px" placeholder="请输入ID、积分接口、积分类型、说明"  v-model="formInline.roleName">
-          <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
+        <el-input style="border-radius:12px;width: 368px" placeholder="请输入ID、积分接口、积分类型、说明" @keyup.enter.native="onSearch"  v-model="formInline.roleName">
+          <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch"  icon="el-icon-search">搜索</el-button>
         </el-input>
       </el-form-item>
       <el-form-item>
@@ -14,6 +14,8 @@
     </el-form>
     <div>
       <el-table
+        :header-row-style="theadRowStyle"
+        :header-cell-style="theadRowCellStyle"
         :data="IntegralData"
         tooltip-effect="dark"
         style="width: 100%"
@@ -64,33 +66,32 @@
       </el-pagination>
     </div>
     <!-- 新增或者编辑弹框 -->
-    <el-dialog :title="dialogFormVisibleTitle" @open="openDialog" :visible.sync="dialogFormVisible" @close="dialogClose">
-      <el-form :model="form" :rules="rules" ref="ruleForm" label-width="100px">
+    <el-dialog width="49%" :title="dialogFormVisibleTitle" @open="openDialog" :visible.sync="dialogFormVisible" @close="dialogClose">
+      <el-form :model="form" :rules="rules" ref="ruleForm" label-width="180px">
         <el-form-item label="积分类型：" prop="integralName">
-          <el-col :span="8">
+          <el-col :span="18">
             <el-input v-model="form.integralName"></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="触发接口：" prop="port">
-          <el-col :span="8">
+          <el-col :span="18">
             <el-input v-model="form.port"></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="对应页面：" prop="page">
-          <el-col :span="8">
+          <el-col :span="18">
             <el-input v-model="form.hopRouting"></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="说明：" prop="explain">
-          <el-col :span="8">
+          <el-col :span="18">
             <el-input type="textarea" :maxlength="50" placeholder="请输入备注，限制在50字以内" :rows="4" v-model="form.explain"></el-input>
           </el-col>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="AddIntegralType" v-show="dialogFormVisibleTitle==='新增'">确定</el-button>
-        <el-button type="primary" @click="modifyIntegralType" v-show="dialogFormVisibleTitle==='编辑'">修改</el-button>
+        <el-button type="primary" class="sure" @click="AddIntegralType" v-show="dialogFormVisibleTitle==='新增'">确定</el-button>
+        <el-button type="primary" class="save" @click="modifyIntegralType" v-show="dialogFormVisibleTitle==='编辑'">保存</el-button>
       </div>
     </el-dialog>
   </div>
@@ -180,6 +181,13 @@
         this.getIntegralType();
       },
       methods: {
+        //设置表格样式
+        theadRowStyle(){
+          return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+        },
+        theadRowCellStyle(){
+          return 'background:rgba(250,250,252,1);'
+        },
         onSearch() {
            console.log(this.formInline.roleName)
            this.pageNumber = 1;
@@ -390,25 +398,55 @@
     }
 </script>
 
-<style scoped lang="less">
-  .no_select .vue-treeselect__value-container{
-    display:none;
+<style  lang="less">
+  .integralTypeSelf {
+    .no_select .vue-treeselect__value-container{
+      display:none;
+    }
+    .no_select .vue-treeselect__x-container{
+      display:none;
+    }
+    .no_select .vue-treeselect__menu-container{
+      position: relative;
+    }
+    .no_select .vue-treeselect__control{
+      display: none!important;
+    }
+    .point_class{
+      cursor: pointer;
+      font-size:16px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
+    }
+    .el-dialog__header {
+      background-color: #F2F7FA;
+      font-size:22px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
+      color:rgba(51,51,51,1);
+      text-align: center;
+      padding: 15px 20px 15px;
+      .el-dialog__headerbtn {
+        top: 15px;
+      }
+      .el-icon-close {
+        font-size: 26px;
+      }
+    }
+    .save {
+      width:82px;
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+      border-radius:4px;
+      border: none;
+    }
+    .el-dialog__footer {
+      text-align: center;
+    }
+    .sure {
+      width:82px;
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+      border-radius:4px;
+      border: none;
+    }
   }
-  .no_select .vue-treeselect__x-container{
-    display:none;
-  }
-  .no_select .vue-treeselect__menu-container{
-    position: relative;
-  }
-  .no_select .vue-treeselect__control{
-    display: none!important;
-  }
-  .point_class{
-    cursor: pointer;
-    font-size:16px;
-    font-family:PingFangSC-Medium,PingFang SC;
-    font-weight:500;
-  }
-
-
 </style>

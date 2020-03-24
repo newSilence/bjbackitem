@@ -12,6 +12,7 @@
           style="border-radius:12px;width: 368px"
           placeholder="请输入ID、积分类型、积分状态、备注"
           v-model="formInline.roleName"
+          @keyup.enter.native="onSearch"
         >
           <el-button
             style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white"
@@ -23,40 +24,41 @@
       </el-form-item>
     </el-form>
     <div>
-      <el-table :data="IntegralData" tooltip-effect="dark" style="width: 100%">
+      <el-table :data="IntegralData" tooltip-effect="dark" style="width: 100%" :header-row-style="theadRowStyle"
+                :header-cell-style="theadRowCellStyle">
         <el-table-column prop="integralId" label="ID" show-overflow-tooltip></el-table-column>
         <el-table-column prop="integralName" label="积分类型" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="createName" label="积分状态" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="explain" label="备注" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="stateName" label="积分状态" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="integralRecord.remark" label="备注" show-overflow-tooltip></el-table-column>
         <el-table-column prop="createName" label="操作人" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="newTime" label="最后更新时间" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="integralRecord.updateTime" label="最后更新时间" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
             <el-button @click="editClick(scope.row)" type="text" size="small">配置</el-button>
-            <el-popover
-              placement="top"
-              width="160"
-              v-if="scope.row.state===1"
-              v-model="visible1">
-              <p>请确认是否上线？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="visible1 = false">取消</el-button>
-                <el-button type="primary" size="mini" @click="editOnLine(scope.row)">确定</el-button>
-              </div>
-              <el-button slot="reference" type="text">上线</el-button>
-            </el-popover>
-            <el-popover
-              placement="top"
-              width="160"
-              v-if="scope.row.state===0"
-              v-model="visible2">
-              <p>请确认是否下线？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="visible2 = false">取消</el-button>
-                <el-button type="primary" size="mini" @click="editOffLine(scope.row)">确定</el-button>
-              </div>
-              <el-button slot="reference" type="text">下线</el-button>
-            </el-popover>
+<!--            <el-popover-->
+<!--              placement="top"-->
+<!--              width="160"-->
+<!--              v-if="scope.row.state===1"-->
+<!--              v-model="visible1">-->
+<!--              <p>请确认是否上线？</p>-->
+<!--              <div style="text-align: right; margin: 0">-->
+<!--                <el-button size="mini" type="text" @click="visible1 = false">取消</el-button>-->
+<!--                <el-button type="primary" size="mini" @click="editOnLine(scope.row)">确定</el-button>-->
+<!--              </div>-->
+              <el-button slot="reference" v-if="scope.row.state===1" @click="editOnLine(scope.row)"  style="color: rgb(243, 161, 87)" type="text">上线</el-button>
+<!--            </el-popover>-->
+<!--            <el-popover-->
+<!--              placement="top"-->
+<!--              width="160"-->
+<!--              v-if="scope.row.state===0"-->
+<!--              v-model="visible2">-->
+<!--              <p>请确认是否下线？</p>-->
+<!--              <div style="text-align: right; margin: 0">-->
+<!--                <el-button size="mini" type="text" @click="visible2 = false">取消</el-button>-->
+<!--                <el-button type="primary" size="mini" @click="">确定</el-button>-->
+<!--              </div>-->
+              <el-button slot="reference" v-if="scope.row.state===0" @click="editOffLine(scope.row)"  type="text">下线</el-button>
+<!--            </el-popover>-->
           </template>
         </el-table-column>
       </el-table>
@@ -97,8 +99,9 @@
           <el-date-picker
             v-model="form.effectiveTime"
             type="daterange"
+            value-format="yyyy-MM-dd">
             @change="timeChange"
-            range-separator
+            range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
           ></el-date-picker>
@@ -170,7 +173,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="this.handleSaveRules">保存</el-button>
+        <el-button type="primary" style="width:82px;border:none;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;" @click="this.handleSaveRules">保存</el-button>
       </div>
     </el-dialog>
   </div>
@@ -189,7 +192,8 @@ import {
   updateRoleStatus,
   getAllFuncPerm,
   updateRoleData,
-  saveRoleData
+  saveRoleData,
+  reqRuleList
 } from "../api"
 export default {
   name: "Integral-type",
@@ -300,7 +304,13 @@ export default {
     this.reqAllIntegralClass();
   },
   methods: {
-
+    //设置表格样式
+    theadRowStyle(){
+      return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+    },
+    theadRowCellStyle(){
+      return 'background:rgba(250,250,252,1);'
+    },
     onSearch() {
       this.pageNumber = 1;
       this.isSearch = true;
@@ -430,7 +440,17 @@ export default {
     fetchData() {
       getAllRoleData(this.formInline).then(res => {
         if (res.data.code == 0) {
-          this.tableData = res.data.data.list;
+          let tableData = res.data.data.list
+          tableData.forEach((item,key)=>{
+            console.log(item)
+            if (item.state==0){
+              tableData[key].stateName = '生效中'
+            }else {
+              tableData[key].stateName = '未生效'
+            }
+          });
+          console.log(tableData)
+          this.tableData = tableData;
           this.total = res.data.data.totalCount;
         }
       });
@@ -451,18 +471,28 @@ export default {
         pageSize: this.pageLimit
       };
       this.isSearch ? (params.keyWord = this.formInline.roleName) : "";
-      reqIntegralType(params).then(res => {
+      reqRuleList(params).then(res => {
         if (res.data.errcode === 0) {
           //时间格式化获取前10位
-          res.data.data.list.length > 0
-            ? res.data.data.list.forEach((item, key) => {
-                res.data.data.list[key].newTime = item.updateTime.substring(
-                  0,
-                  10
-                );
-              })
-            : "";
-          this.IntegralData = res.data.data.list;
+          // res.data.data.list.length > 0
+          //   ? res.data.data.list.forEach((item, key) => {
+          //       res.data.data.list[key].newTime = item.updateTime.substring(
+          //         0,
+          //         10
+          //       );
+          //     })
+          //   : "";
+          let tableData = res.data.data.list
+          tableData.forEach((item,key)=>{
+            console.log(item)
+            if (item.state==0){
+              tableData[key].stateName = '生效中'
+            }else {
+              tableData[key].stateName = '未生效'
+            }
+          });
+          this.IntegralData = tableData;
+          console.log('IntegralData',this.IntegralData)
           this.totalPage = res.data.data.total;
         }
       });
@@ -597,16 +627,9 @@ export default {
           this.checked ? (params.perpetual = 1) : (params.perpetual = 0); //是否永久
           if (!this.checked) {
             let effectiveTime = this.form.effectiveTime
-              .toLocaleString()
-              .split(",");
             params.startTime = effectiveTime[0]
-              .substring(0, 10)
-              .split("/")
-              .join("-");
             params.finishTime = effectiveTime[1]
-              .substring(0, 10)
-              .split("/")
-              .join("-");
+
           }
           reqSaveIntegralRule(params).then(res => {
             if (res.data.errcode === 0) {
@@ -694,6 +717,9 @@ export default {
             ];
           }
         } else {
+          this.formDatas = [{
+            membership:''
+          }]
           this.isSave = false;
         }
       });
@@ -749,6 +775,10 @@ export default {
 
 <style  lang="less">
 .integral-rule-self {
+  .el-dialog__header {
+    text-align: center;
+    padding: 15px 20px 15px;
+  }
   .redSign {
     overflow: hidden;
     label:before {
@@ -808,9 +838,8 @@ export default {
   }
   .el-dialog__header {
     background-color: #f2f7fa;
-    padding-top: 10px;
     .el-dialog__headerbtn {
-      top: 10px;
+      top: 15px;
       .el-dialog__close {
         font-size: 26px;
       }

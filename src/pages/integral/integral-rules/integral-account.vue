@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="integral-account-self">
       <div style="display:flex;justify-content:space-between">
         <el-form style="" :inline="true" :model="params" class="demo-form-inline">
           <el-date-picker
@@ -25,14 +25,16 @@
         </el-form>
         <el-form style="" :inline="true" :model="params" class="demo-form-inline">
           <el-form-item label="">
-            <el-input style="border-radius:12px;width: 368px" placeholder="请输入用户名、手机号、描述"  v-model="params.keyWord">
-              <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
+            <el-input style="border-radius:12px;width: 368px" placeholder="请输入用户名、手机号、描述"  @keyup.enter.native="onSearch"   v-model="params.keyWord">
+              <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white" slot="append"  @click="onSearch"   icon="el-icon-search">搜索</el-button>
             </el-input>
           </el-form-item>
         </el-form>
       </div>
       <div>
         <el-table
+          :header-row-style="theadRowStyle"
+          :header-cell-style="theadRowCellStyle"
           :data="pageDatas"
           tooltip-effect="dark"
           style="width: 100%"
@@ -89,6 +91,10 @@
             currentPage:1,
             classOptions:[
               {
+                value:'全部',
+                label:'全部'
+              },
+              {
                 value:'收入',
                 label:'收入'
               },
@@ -104,7 +110,7 @@
               }
             ],
             startEndTime:'',
-            classification:'',
+            classification:'全部',
             params:{
               pageNumber:1,
               pageSize:10,
@@ -116,14 +122,19 @@
           this.getDetails()
       },
       methods:{
+        //设置表格样式
+        theadRowStyle(){
+          return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+        },
+        theadRowCellStyle(){
+          return 'background:rgba(250,250,252,1);'
+        },
         //分页功能
         handleSizeChange(val){
-          console.log('handleSizeChange',val)
           this.params.pageSize = val;
           this.getDetails();
         },
         handleCurrentChange(val){
-          console.log('handleCurrentChange',val)
           this.params.pageNumber = val;
           this.getDetails();
         },
@@ -131,7 +142,6 @@
         getDetails(){
           let params = this.params;
           reqUserIntegralHistoryManager(params).then(res=>{
-            console.log(res)
             if (res.data.errcode===0){
                this.total = res.data.data.total;
                this.pageDatas = res.data.data.list;
@@ -140,12 +150,10 @@
         },
         //积分账户搜索
         onSearch(){
-          console.log(this.params)
           this.getDetails();
         },
         //日期改变
         handleDataSearch(val){
-          console.log(val);
           if (val){
             this.params.startTime = val[0];
             this.params.endTime = val[1];
@@ -153,38 +161,45 @@
             this.params.startTime = '';
             this.params.endTime = '';
           }
+          this.getDetails();
         },
         //分类改变
         handleClassChange(val){
-          console.log(val)
           if (val==='收入'){
             this.params.income = '收入';
             this.params.expenditure = '';
-          }else {
+          }else if (val==='支出') {
             this.params.income = '';
             this.params.expenditure = '支出';
+          }else {
+            this.params.income = '';
+            this.params.expenditure = '';
           }
+          this.getDetails();
         }
       }
     }
 </script>
 
 <style scoped lang="less">
-  .no_select .vue-treeselect__value-container{
-    display:none;
+  .integral-account-self {
+    .no_select .vue-treeselect__value-container{
+      display:none;
+    }
+    .no_select .vue-treeselect__x-container{
+      display:none;
+    }
+    .no_select .vue-treeselect__menu-container{
+      position: relative;
+    }
+    .no_select .vue-treeselect__control{
+      display: none!important;
+    }
+    .point_class{
+      font-size:16px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
+    }
   }
-  .no_select .vue-treeselect__x-container{
-    display:none;
-  }
-  .no_select .vue-treeselect__menu-container{
-    position: relative;
-  }
-  .no_select .vue-treeselect__control{
-    display: none!important;
-  }
-  .point_class{
-    font-size:16px;
-    font-family:PingFangSC-Medium,PingFang SC;
-    font-weight:500;
-  }
+
 </style>

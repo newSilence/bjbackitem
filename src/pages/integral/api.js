@@ -234,4 +234,11 @@ export function reqUserIntegralHistoryManager(data){
     method:'post'
   })
 }
-
+//积分规则列表
+export function reqRuleList(data){
+  return request({
+    url:'/manager/Integral/selectIntegralrecordByIntegral',
+    data,
+    method:'post'
+  })
+}
