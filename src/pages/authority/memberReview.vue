@@ -4,7 +4,7 @@
             <div>
                 <span @click="changeTypeMem(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountAuditType" :key="key">
                     {{item.label}}
-                    <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;width:22px;height:22px;text-align:center;font-size:10px;line-height:22px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num>99?'99+':item.num:''}}</span>
+                    <span v-show="item.value==='0'&&item.num" style="position:absolute;top:-10px;border-radius:50%;width:22px;height:22px;text-align:center;font-size:10px;line-height:22px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num>99?'99+':item.num:''}}</span>
                 </span>
             </div>
         </div>
@@ -695,15 +695,15 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         delete param.createTime;
                         param.selectMenuIdList=this.$refs.func_tree.getCheckedKeys()?this.$refs.func_tree.getCheckedKeys():[];
                         let halfMenuId=this.$refs.func_tree.getHalfCheckedKeys()?this.$refs.func_tree.getHalfCheckedKeys():[];
-                        console.log("halfMenuId",halfMenuId)
+                        // console.log("halfMenuId",halfMenuId)
                         param.menuIdList=param.selectMenuIdList.concat(halfMenuId);
-                        console.log('this.$refs.dept_tree.getCheckedKeys()',this.$refs.dept_tree.getCheckedKeys());
-                        console.log("this.$refs.dept_tree.getHalfCheckedKeys()",this.$refs.dept_tree.getHalfCheckedKeys());
+                        // console.log('this.$refs.dept_tree.getCheckedKeys()',this.$refs.dept_tree.getCheckedKeys());
+                        // console.log("this.$refs.dept_tree.getHalfCheckedKeys()",this.$refs.dept_tree.getHalfCheckedKeys());
                         param.selectDeptIdList=this.$refs.dept_tree.getCheckedKeys()?this.$refs.dept_tree.getCheckedKeys():[];
                         param.deptIdList=param.selectDeptIdList.concat(this.$refs.dept_tree.getHalfCheckedKeys()?this.$refs.dept_tree.getHalfCheckedKeys():[]);
                         if(param.roleId){
                             updateRoleData(param).then(res=>{
-                                console.log(res);
+                                // console.log(res);
                                 this.fetchData();
                                 this.dialogClose();
                             })
@@ -765,11 +765,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //获取表格数据
             fetchData(){
                 getMemAccountData(this.formInline).then(res=>{
-                    console.log('resssssssssssssssssssssssvbsvgvg',res);
+                    // console.log('resssssssssssssssssssssssvbsvgvg',res);
                     if(res.data.ret){
                         this.tableData=res.data.data.data.list;
                         this.total=res.data.data.data.total;
                         this.accountAuditType[1].num=res.data.data.count;
+                        // this.accountAuditType[1].num=0;
                     }
                     // if(res.status==200){
                         

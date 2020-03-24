@@ -518,6 +518,7 @@
                     // province:'',
                     provinceId:'',
                     cityId:'',
+                    createId:'',
                     // city:'',
                 },
                 rules:{
