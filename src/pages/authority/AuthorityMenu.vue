@@ -1,14 +1,5 @@
 <template>
     <div style="padding:22px 40px">
-        <!-- <div style="margin:20px">
-            <span class="point_class" @click="changeTypeMem('')" :style="{paddingRight:20+'px',color:formInline.auditStatus===''?'#2BB1E8':'#333333'}">全部</span>
-            <el-divider direction="vertical"></el-divider>
-            <span class="point_class" @click="changeTypeMem(0)" :style="{paddingRight:20+'px',paddingLeft:20+'px',color:formInline.auditStatus===0?'#2BB1E8':'#333333'}">待审核</span>
-            <el-divider direction="vertical"></el-divider>
-            <span class="point_class" @click="changeTypeMem(2)" :style="{paddingRight:20+'px',paddingLeft:20+'px',color:formInline.auditStatus===2?'#2BB1E8':'#333333'}">未通过</span>
-            <el-divider direction="vertical"></el-divider>
-            <span class="point_class" @click="changeTypeMem(1)" :style="{paddingLeft:20+'px',color:formInline.auditStatus===1?'#2BB1E8':'#333333'}">已通过</span>
-        </div> -->
         <!-- 会员账号管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
             <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
@@ -755,11 +746,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     if (valid) {
                         let param={};
                         for(let key in this.form){
-                            // if(key=="roleIdList"){
-                            //     param[key]=JSON.stringify(this.form[key])
-                            // }else{
-                            //     param[key]=this.form[key];
-                            // }
                             param[key]=this.form[key];
                         }
                         delete param.createTime;
@@ -789,19 +775,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //编辑行
             editClick(row){
                 this.dialogExpertFormVisible=true;
-                // return false;
-                console.log(row);
                 this.dialogFormVisible=true;
                 this.dialogFormVisibleTitle="编辑"
                 let param={
                     roleId:row.roleId
                 }
                 Promise.all([this.getRoleOrDeptData(),getRoleDetailInfo(param)]).then(result=>{
-                    console.log(result);
                     this.form=result[1].data.data;
-                    // this.form.menuIdList=result[1].data.data.selectMenuIdList?result[1].data.data.selectMenuIdList:[];
-                    // this.form.deptIdList=result[1].data.data.selectDeptIdList?result[1].data.data.selectDeptIdList:[];
-                    
                 }).catch(err=>{
                     this.$message({
                         showClose: true,
@@ -868,7 +848,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
                 this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
             }
-            // console.log('this.treeData',this.treeData(this.deptSelectOptions,'deptId','parentId','children'));
         },
     }
 </script>

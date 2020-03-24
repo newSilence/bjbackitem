@@ -143,10 +143,6 @@
                     <el-col :span="12">
                         <el-form-item label-width="30px">
                                 <span @click="batchDownload" style="color:#2BB1E8 ; cursor:pointer"><i class="el-icon-download"></i>职称审核材料</span>
-                                <!-- <a style="text-decoration:none;color:#2BB1E8 ; cursor:pointer" :href="form.titleCertificate" :download="form.titleCertificate">
-                                    <i class="el-icon-download"></i>
-                                    职称审核材料
-                                </a> -->
                         </el-form-item>
                     </el-col>
                 </el-col>
@@ -294,12 +290,10 @@
         methods: {
             //自定义下载
             batchDownload(){
-                // console.log(this.form.titleCertificate);
                 let batchArr=this.form.titleCertificate.split(',');
                 for (let i = 0; i < batchArr.length; i++) {
                     this.downloadMaterial(batchArr[i]);
                 }
-                console.log(batchArr);
             },
             downloadMaterial(href){
                 var a = document.createElement("a"), //创建a标签
@@ -380,14 +374,14 @@
             },
             //保存或者审核，根据flag判断，1代表审核，2代表保存
             saveDetail(flag){
-                console.log(this.transferQuery);
+                // console.log(this.transferQuery);
                 let param={};
                 param={...this.transferQuery};
                 param.linkId=this.linkId;
                 // console.log(param);
                 // return
                 accountReviewInter(param).then(res=>{
-                    console.log('resresres',res);
+                    // console.log('resresres',res);
                     if(res.data.ret){
                         this.$message({
                             message:res.data.data,
@@ -462,31 +456,13 @@
                         this.form.district=resData.provinceName+'/'+resData.cityName;
                         this.linkId = resData.userId;
                     }
-                    console.log('reslinkUserId',res.data.data);
                 })
-                // getMemAccountSelectAuthenticationData({ id , type }).then(res=>{
-                //     console.log('getMemAccountSelectAuthenticationData',res);
-                //     if(res.data.ret){
-                //         let resData=res.data.data;
-                //         for(let key in this.form){
-                //             if(resData.hasOwnProperty(key)){
-                //                 this.form[key] = resData[key];
-                //             }
-                //         }
-                //     }
-                // })
             },
         },
         created () {
-            console.log(this.$route.query);
             this.transferQuery=this.$route.query;
-            // this.getAllSelectData();
-            // console.log("myHeaders",sessionStorage.token);
             this.myHeaders.token=sessionStorage.token;
             this.fetch(this.$route.query);
-            // this.rowId=this.$route.query.id;
-
-            // console.log("this.$route.query.id",this.$route.query.id)
         },
     }
 </script>
