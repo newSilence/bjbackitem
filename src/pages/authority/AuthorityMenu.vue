@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="padding:22px 40px">
         <!-- <div style="margin:20px">
             <span class="point_class" @click="changeTypeMem('')" :style="{paddingRight:20+'px',color:formInline.auditStatus===''?'#2BB1E8':'#333333'}">全部</span>
             <el-divider direction="vertical"></el-divider>
@@ -11,7 +11,7 @@
         </div> -->
         <!-- 会员账号管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
-            <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="账号性质：">
                     <el-select v-model="formInline.identity" placeholder="请选择">
                         <el-option
@@ -23,7 +23,7 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-            <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
                     <el-input class="search_input" style="" placeholder="请输入关键词"  v-model="formInline.keyWord">
                         <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white;border:1px solid #01A2E4;" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
@@ -33,11 +33,11 @@
         </div>
         <div>
             <el-table
-                @selection-change="chooseTr"
                 :header-row-style="theadRowStyle"
                 :header-cell-style="theadRowCellStyle"
                 :data="tableData"
                 ref="multipleTable"
+                @selection-change="checkboxChange"
                 tooltip-effect="dark"
                 style="width: 100%"
                 >
@@ -48,9 +48,10 @@
                 <el-table-column
                 label="会员名称"
                 
-                width="120">
+                width="">
+                 <!-- @click="seenDeatil(scope.row)" -->
                 <template slot-scope="scope">
-                    <p :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}"  @click="seenDeatil(scope.row)">{{ scope.row.realName }}</p>
+                    <p :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}" >{{ scope.row.realName }}</p>
                 </template>
                 </el-table-column>
                 <!-- scope.row.facilitator&&scope.row.facilitator.facilitatorId?'服务商'
@@ -63,6 +64,7 @@
                 </el-table-column>
                 <el-table-column
                 label="账号性质"
+                width="120"
                 show-overflow-tooltip>
                     <template slot-scope="scope">{{ 
                         scope.row.type==1?'个人'
@@ -93,14 +95,17 @@
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
-                        <el-button @click="setPermit(scope.row)" type="text" size="small">权限设置</el-button>
+                        <el-button @click="setPermit(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">权限设置</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
         <div style="display:flex;justify-content:space-between">
             <div style="margin-top:10px">
-                <button @click="canUse(0)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">启用</button>
+                <span style="margin-left:15px">
+                    <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
+                </span>
+                <button @click="canUse(0)" style="margin-left:5px;margin-right:5px;color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">启用</button>
                 <button @click="canUse(2)" style="color:white;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;width:70px;height:32px">禁用</button>
             </div>
             <el-pagination
@@ -112,6 +117,9 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
             </el-pagination>
+        </div>
+        <div style="margin-left:75px">
+            <span style="color:#FD2044;font-size:12px">会员名称标红时，则该账号权限已被禁用</span>
         </div>
         <!-- 新增或者编辑弹框 -->
         <el-dialog :title="dialogFormVisibleTitle" @open="openDialog" :visible.sync="dialogFormVisible" @close="dialogClose">
@@ -387,6 +395,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         data() {
             return {
                 //复选框选择的数据
+                isAllChecked:false,
                 chooseUseData:[],
                 optionName:'',
                 accountTypeData:[//账号性质
@@ -525,9 +534,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             theadRowCellStyle(){
                 return 'background:rgba(250,250,252,1);'
             },
-            chooseTr(val){
-                this.chooseUseData=val;
-            },
+            // chooseTr(val){
+            //     this.chooseUseData=val;
+            // },
             //切换会员类型
             changeTypeMem(type){
                 if(this.formInline.auditStatus!==type){
@@ -601,6 +610,21 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     }
                     console.log("resdddddddddd",res);
                 })
+            },
+            // 复选框全选事件
+            checkChoose(){
+                // console.log(this.isAllChecked);
+                this.$refs.multipleTable.toggleAllSelection();
+            },
+            checkboxChange(selection){
+                // console.log(selection);
+                // this.checkboxSelected=selection;
+                this.chooseUseData=selection;
+                if(selection.length!=this.tableData.length){
+                    this.isAllChecked=false
+                }else{
+                    this.isAllChecked=true;
+                }
             },
             //权限设置
             setPermit(row){
@@ -890,10 +914,17 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
+    thead .el-checkbox{
+        display:none;
+    }
+    .el-table tbody tr:hover>td { 
+        background-color:#E6F7FF!important
+    }
     .search_input .el-input__inner{
         border:1px solid #01A2E4;
-        border-top-left-radius:12px;
-        border-bottom-left-radius:12px;
+        width:293px;
+        border-top-left-radius:4px;
+        border-bottom-left-radius:4px;
     }
     .no_select .vue-treeselect__value-container{
         display:none;

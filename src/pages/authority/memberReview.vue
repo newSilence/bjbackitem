@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div style="margin:20px;padding-top:20px;margin-top:0px">
+    <div style="padding:15px 40px">
+        <div style="margin:6px 20px 12px 20px;padding-top:26px;">
             <div>
                 <span @click="changeTypeMem(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountAuditType" :key="key">
                     {{item.label}}
@@ -10,7 +10,7 @@
         </div>
         <!-- 会员账号管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
-            <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="账号性质：">
                     <el-select @change="selectChange" v-model="formInline.type" placeholder="请选择">
                         <el-option
@@ -22,7 +22,7 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-            <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
                     <el-input class="search_input" placeholder="请输入会员名称或账号"  v-model="formInline.keyWord">
                         <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;border:1px solid #01A2E4;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
@@ -45,9 +45,7 @@
                 width="55">
                 </el-table-column>
                 <el-table-column
-                label="会员名称"
-                
-                width="">
+                label="会员名称">
                 <template slot-scope="scope">
                     <p style="cursor:pointer;height:23px"  @click="seenDeatil(scope.row)">{{ scope.row.realName }}</p>
                 </template>
@@ -61,6 +59,7 @@
                 </el-table-column>
                 <el-table-column
                 label="账号性质"
+                width="80px"
                 show-overflow-tooltip>
                     <template slot-scope="scope">{{ 
                         scope.row.type==1?'个人'
@@ -69,7 +68,7 @@
                 <el-table-column
                 prop="nickname"
                 label="申请权限"
-                width="">
+                width="100px">
                 </el-table-column>
                 <el-table-column
                 prop="provinceName"
@@ -80,13 +79,20 @@
                 <el-table-column
                 prop="createTime"
                 label="创建时间"
+                width="200px"
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
                 prop="auditStatus"
                 label="认证状态"
                 width="">
-                    <template slot-scope="scope">{{ scope.row.auditStatus===0?'待审核':scope.row.auditStatus===1?'通过':scope.row.auditStatus===2?'驳回':''}}</template>
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.auditStatus===1" style="color:#F3A157">已通过</span>
+                        <span v-else-if="scope.row.auditStatus===0" style="color:#4B4B4B">待审核</span>
+                        <span v-else-if="scope.row.auditStatus===2" style="color:#FD2044">未通过</span>
+                        <span v-else></span>
+                        <!-- {{ scope.row.auditStatus===0?'待审核':scope.row.auditStatus===1?'已通过':scope.row.auditStatus===2?'未通过':''}} -->
+                    </template>
                 <!-- 0:待审核
                 2:驳回
                 1:通过 -->
@@ -96,8 +102,8 @@
                     width="100">
                     <template slot-scope="scope">
                         <el-button @click="seenDeatil(scope.row)" type="text" size="small">
-                            <span v-if="scope.row.auditStatus===0">审核</span>
-                            <span style="color:#F3A157" v-else>查看</span>
+                            <span style="color:#2BB1E8;font-size:14px" v-if="scope.row.auditStatus===0">审核</span>
+                            <span style="color:#F3A157;font-size:14px" v-else>查看</span>
                         </el-button>
                     </template>
                 </el-table-column>
@@ -812,10 +818,14 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
+    .el-table tbody tr:hover>td { 
+        background-color:#E6F7FF!important
+    }
     .search_input .el-input__inner{
         border:1px solid #01A2E4;
-        border-top-left-radius:12px;
-        border-bottom-left-radius:12px;
+        width: 293px;
+        border-top-left-radius:4px;
+        border-bottom-left-radius:4px;
     }
     .no_select .vue-treeselect__value-container{
         display:none;

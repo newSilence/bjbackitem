@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="padding:12px 40px">
         <!-- 角色管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="margin:20px">
@@ -9,7 +9,7 @@
                 <el-divider direction="vertical"></el-divider>
                 <span class="point_class" :style="{paddingLeft:20+'px',color:typeMember==2?'#2BB1E8':'#333333'}">机构角色</span>
             </div>
-            <el-form style="margin:20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form style="margin:25px 20px 20px 20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
                     <el-input  class="search_input" placeholder="请输入角色名称"  v-model="formInline.roleName">
                         <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;border:1px solid #01A2E4;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
@@ -52,15 +52,15 @@
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
-                        <el-button @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
-                        <button :style="{border:'none',color:scope.row.status==1?'#FD2044':'#F3A157'}" @click="changeStatus(scope.row,scope.$index)" type="text"  size="small">
+                        <el-button style="color:#2BB1E8;font-size:14px" @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
+                        <button :style="{cursor:'pointer',border:'none',color:scope.row.status==1?'#FD2044':'#F3A157',fontSize:'14px'}" @click="changeStatus(scope.row,scope.$index)" type="text"  size="small">
                             {{scope.row.status==1?'禁用':'启用'}}
                         </button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
-        <div style="text-align:right">
+        <div style="text-align:right;margin-top:30px">
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -262,6 +262,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //新增
             onAddnew(){
+                this.$router.push({path:'/index/authority/modifyrole',query:{flag:0}});
                 this.dialogFormVisible=true;
                 this.dialogFormVisibleTitle="新增"
                 // 后端联调放开
@@ -310,6 +311,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //编辑行
             editClick(row){
+                // flag:1代表编辑
+                this.$router.push({path:'/index/authority/modifyrole',query:{flag:1,roleId:row.roleId}});
                 console.log(row);
                 this.dialogFormVisible=true;
                 this.dialogFormVisibleTitle="编辑"
@@ -407,13 +410,14 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
-    // .el-table tbody tr:hover>td { 
-    //     background-color:#E6F7FF!important
-    // }
+    .el-table tbody tr:hover>td { 
+        background-color:#E6F7FF!important
+    }
     .search_input .el-input__inner{
+        width: 293px;
         border:1px solid #01A2E4;
-        border-top-left-radius:12px;
-        border-bottom-left-radius:12px;
+        border-top-left-radius:4px;
+        border-bottom-left-radius:4px;
     }
     .no_select .vue-treeselect__value-container{
         display:none;

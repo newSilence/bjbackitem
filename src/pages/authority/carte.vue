@@ -1,28 +1,27 @@
 <template>
-    <div>
+    <div style="padding:20px 40px">
         <div style="text-align:right">
-            <el-button style="margin:20px;" type="primary" @click="onAddnew">新增</el-button>
+            <el-button style="margin:20px;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border:none" type="primary" @click="onAddnew">新增</el-button>
             <!-- <el-button style="margin:20px;" type="primary" @click="onDelete">删除</el-button> -->
         </div>
         
         <el-table
             :data="tableData"
+            :header-row-style="theadRowStyle"
+            :header-cell-style="theadRowCellStyle"
             style="width: 100%;margin-bottom: 20px;"
             row-key="menuId"
             :indent="24"
-            border
             :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
             <el-table-column
             prop="menuId"
             label="菜单ID"
-            sortable
-            width="180">
+            width="">
             </el-table-column>
             <el-table-column
             prop="name"
             label="菜单名称"
-            sortable
-            width="180">
+            width="">
             </el-table-column>
             <el-table-column
             prop="parentName"
@@ -30,6 +29,7 @@
             </el-table-column>
             <el-table-column
             prop="parentName"
+            width="100px"
             label="图标">
                 <template slot-scope="scope">
                     <i :class="scope.row.icon" size="small"></i>
@@ -37,9 +37,12 @@
             </el-table-column>
             <el-table-column
             prop="parentName"
+            width="100px"
             label="类型">
                 <template slot-scope="scope">
-                    {{scope.row.type==0?'目录':scope.row.type==1?'菜单':scope.row.type==2?'按钮':''}}
+                    <!-- <span style="border:1px solid #999999;border-radius:4px;padding:2px 13px;font-size:14px"> -->
+                        {{scope.row.type==0?'目录':scope.row.type==1?'菜单':scope.row.type==2?'按钮':''}}
+                    <!-- </span> -->
                 </template>
             </el-table-column>
             <el-table-column
@@ -54,8 +57,8 @@
                 label="操作"
                 width="100">
                 <template slot-scope="scope">
-                    <el-button @click="editClick(scope.row)" type="text" icon="el-icon-edit" size="small"></el-button>
-                    <el-button @click="deleteClick(scope.row)" type="text" icon="el-icon-delete" size="small"></el-button>
+                    <el-button style="color:#2BB1E8;font-size:14px" @click="editClick(scope.row)" type="text" size="small">编辑</el-button>
+                    <el-button style="color:#2BB1E8;font-size:14px" @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -147,6 +150,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
         },
         components: { Treeselect },
         methods: {
+            //设置表格样式
+            theadRowStyle(){
+                return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
+            },
+            theadRowCellStyle(){
+                return 'background:rgba(250,250,252,1);'
+            },
             //新增
             onAddnew(){
                 this.dialogFormVisibleTitle="新增菜单"
@@ -281,6 +291,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     }
 </script>
 
-<style lang="less" scoped>
-
+<style lang="less">
+    .el-table tbody tr:hover>td { 
+        background-color:#E6F7FF!important
+    }
 </style>

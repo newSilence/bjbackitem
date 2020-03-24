@@ -24,7 +24,7 @@ export function request(config){
         //一般在这之前对config做处理
         return config;//config为请求配置，须返回config
     },function(error){})
-    console.log('dddd',store.state.isShowMessage)
+    // console.log('dddd',store.state.isShowMessage)
     instance.interceptors.response.use((response)=>{
         
         // console.log("response",response)

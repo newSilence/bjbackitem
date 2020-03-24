@@ -5,6 +5,7 @@ import Index from '@/Index'
 import AuthorityAdmin from '@/pages/authority/AuthorityAdmin'
 import AuthorityDepart from '@/pages/authority/AuthorityDepart'
 import AuthorityRole from '@/pages/authority/AuthorityRole'
+import AddAuthorityRole from '@/pages/authority/addAuthorityRole'
 import AuthorityMenu from '@/pages/authority/AuthorityMenu'
 import memberReview from '@/pages/authority/memberReview'
 import ExpertReview from '@/pages/authority/expertReview'
@@ -56,6 +57,10 @@ const routerAll=new Router({
           path: 'authority/role',
           name: 'AuthorityRole',
           component: AuthorityRole
+        },{
+          path: 'authority/modifyrole',
+          name: 'AddAuthorityRole',
+          component: AddAuthorityRole
         },{
           path: 'authority/menu',//会员账号
           name: 'AuthorityMenu',
