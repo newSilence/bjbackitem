@@ -28,6 +28,7 @@ export function request(config){
     instance.interceptors.response.use((response)=>{
         
         // console.log("response",response)
+        // console.log('dddd',store.state.isShowMessage)
         if(store.state.isShowMessage&&!response.data.ret){
             store.commit('setIsShowMessage',false);
             Message.error(

@@ -15,7 +15,9 @@
                 </el-form-item>
                 <el-form-item label="权限配置：" prop="remark">
                         <div style="height:665px;overflow:auto">
+                            <!-- v-show="deptSelectOptions.length>0" -->
                             <treeselect
+                            v-show="deptSelectOptions.length>0"
                             class="no_select"
                             value-consists-of="ALL_WITH_INDETERMINATE"
                             :always-open="true"
@@ -75,7 +77,7 @@
                 // this.form.deptName=node.label;
             },
             fetchData(row){
-                this.loading=true;
+                
                 // return
                 let param={
                     roleId:row.roleId
@@ -105,6 +107,7 @@
             },
             //promise关于角色和部门请求接口封装
             getRoleOrDeptData(){
+                this.loading=true;
                 return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
                     this.deptSelectOptions=result[0].data.data;
                     for(let i=0;i<this.deptSelectOptions.length;i++){
@@ -112,12 +115,14 @@
                         this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
                     }
                     this.deptSelectOptions=this.treeData(this.deptSelectOptions,'menuId','parentId','children');
+                    this.loading=false;
                 }).catch(err=>{
                     this.$message({
                         showClose: true,
                         message: err,
                         type: 'error'
                     });
+                    this.loading=false;
                 })
             },
             dialogClose(){
@@ -162,6 +167,7 @@
             },
         },
         created () {
+            // this.loading=true;
             if(this.$route.query.flag==1){
                 let row = {roleId:this.$route.query.roleId}
                 this.fetchData(row)
