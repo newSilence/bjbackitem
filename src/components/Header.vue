@@ -83,7 +83,7 @@ import { Logout } from "./api";
             
         },
         created () {
-            console.log(this.$store.state.headTabClickIndexStr);
+            // console.log(this.$store.state.headTabClickIndexStr);
             
         },
     }

@@ -125,16 +125,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 }
                 //如果没有用户Id
                 if (!this.form.userId) {
-                    // console.log('jjjj');
                     if(!this.form.password){
                         callback(new Error('请输入密码'));
                     }else if(this.form.password.length>20||this.form.password.length<6){
                         callback(new Error('请输入6-20位密码'));
                     }else{
-                        console.log("yanzheng")
                         callback()
                     };
-                    console.log(this.$refs.ruleForm.validateField('passwords'));
                 }
                 callback();
             };
@@ -222,7 +219,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             onSearch() {
                 this.formInline.page=1;
                 this.fetchData();
-                console.log("search");
             },
             //处理部门数据，返回符合渲染的数据格式
             treeData(source, id, parentId, children){   
@@ -235,7 +231,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //部门下拉框点击事件
             deptSelected(node){
-                console.log(node);
                 // this.form.deptName=node.label;
             },
             opendialog(){
@@ -244,14 +239,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //promise关于角色和部门请求接口封装
             getRoleOrDeptData(){
                 return Promise.all( [ getAllFuncPerm() ] ).then(result=>{
-                    console.log('promise',result);
                     this.deptSelectOptions=result[0].data.data;
                     for(let i=0;i<this.deptSelectOptions.length;i++){
                         this.deptSelectOptions[i].id=this.deptSelectOptions[i].menuId;
                         this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
                     }
                     this.deptSelectOptions=this.treeData(this.deptSelectOptions,'menuId','parentId','children');
-                    // console.log("promise",res);
                 }).catch(err=>{
                     this.$message({
                         showClose: true,
@@ -270,13 +263,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //确认新增
             confirmAdd(){
-                console.log(this.form);
                 // return false;
                 this.$refs['ruleForm'].validate((valid) => {
                     if (valid) {
-                        console.log(this.form);
-                        // return;
-                        // console.log('console.log(this.form);',this.value)
                         let param={};
                         for(let key in this.form){
                             // if(key=="roleIdList"){
@@ -290,20 +279,17 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         delete param.createTime;
                         if(param.roleId){
                             updateRoleData(param).then(res=>{
-                                console.log(res);
                                 this.fetchData();
                                 this.dialogClose();
                             })
                         }else{
                             saveRoleData(param).then(res=>{
-                                console.log(res);
                                 this.fetchData();
                                 this.dialogClose();
                             })
                         }
                         
                     } else {
-                        console.log('error submit!!');
                         return false;
                     }
                 });
@@ -313,18 +299,14 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             editClick(row){
                 // flag:1代表编辑
                 this.$router.push({path:'/index/authority/modifyrole',query:{flag:1,roleId:row.roleId}});
-                console.log(row);
                 this.dialogFormVisible=true;
                 this.dialogFormVisibleTitle="编辑"
                 let param={
                     roleId:row.roleId
                 }
                 Promise.all([this.getRoleOrDeptData(),getRoleDetailInfo(param)]).then(result=>{
-                    console.log(result);
                     for(let key in this.form){
-                        
                         this.form[key]=result[1].data.data[key];
-                        console.log("ghsghghdsghs",this.form)
                     }
                 }).catch(err=>{
                     this.$message({
@@ -335,7 +317,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 })
             },
             changeStatus(row,index){
-                console.log(row);
                 let param={};
                 param.roleId=row.roleId;
                 if(row.status!=1){
@@ -354,10 +335,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         if(res.data.ret){
                             this.tableData.splice(index,1,row);
                         }else{}
-                        // console.log(res);
                     })
                 }
-                console.log(this.tableData)
             },
             //关闭弹框
             dialogClose(){
@@ -378,11 +357,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             //获取表格数据
             fetchData(){
                 getAllRoleData(this.formInline).then(res=>{
-                    console.log("ressssss",res);
                     if(res.data.ret){
                         this.tableData=res.data.data.list;
-
-                        console.log('this.tableData',this.tableData)
                         this.total=res.data.data.totalCount;
                     }
                 })
@@ -404,7 +380,6 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.deptSelectOptions[i].id=this.deptSelectOptions[i].deptId;
                 this.deptSelectOptions[i].label=this.deptSelectOptions[i].name;
             }
-            console.log('this.treeData',this.treeData(this.deptSelectOptions,'deptId','parentId','children'));
         },
     }
 </script>

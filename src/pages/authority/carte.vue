@@ -4,7 +4,6 @@
             <el-button style="margin:20px;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border:none" type="primary" @click="onAddnew">新增</el-button>
             <!-- <el-button style="margin:20px;" type="primary" @click="onDelete">删除</el-button> -->
         </div>
-        
         <el-table
             :data="tableData"
             :header-row-style="theadRowStyle"
