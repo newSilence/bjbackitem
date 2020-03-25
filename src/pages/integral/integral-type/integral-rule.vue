@@ -43,22 +43,22 @@
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
             <el-button @click="editClick(scope.row)" type="text" size="small">配置</el-button>
-            <el-popconfirm
-              class="IntegralTypePopconfirm"
-              v-if="scope.row.state===1"
-              @onConfirm="editOnLine(scope.row)"
-              title="请确定是否上线？"
-            >
-              <el-button style="color: rgb(243, 161, 87)" type="text" slot="reference">上线</el-button>
-            </el-popconfirm>
-            <el-popconfirm
-              class="IntegralTypePopconfirm"
-              v-if="scope.row.state===0"
-              @onConfirm="editOffLine(scope.row)"
-              title="请确定是否下线？"
-            >
-              <el-button type="text" slot="reference">下线</el-button>
-            </el-popconfirm>
+<!--            <el-popconfirm-->
+<!--              class="IntegralTypePopconfirm"-->
+<!--              v-if="scope.row.state===1"-->
+<!--              @onConfirm="editOnLine(scope.row)"-->
+<!--              title="请确定是否上线？"-->
+<!--            >-->
+              <el-button style="color: rgb(243, 161, 87)"  v-if="scope.row.state===1" @click="editOnLine(scope.row)" type="text" >上线</el-button>
+<!--            </el-popconfirm>-->
+<!--            <el-popconfirm-->
+<!--              class="IntegralTypePopconfirm"-->
+<!--              v-if="scope.row.state===0"-->
+<!--              @onConfirm="editOffLine(scope.row)"-->
+<!--              title="请确定是否下线？"-->
+<!--            >-->
+              <el-button type="text" v-if="scope.row.state===0" @click="editOffLine(scope.row)">下线</el-button>
+<!--            </el-popconfirm>-->
           </template>
         </el-table-column>
       </el-table>
