@@ -80,7 +80,7 @@
                     width="150">
                     <template slot-scope="scope">
                         <!-- @click="seenDeatil(scope.row)" -->
-                        <!-- <el-button @click="seenDeatil(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">查看</el-button> -->
+                        <el-button @click="seenDeatil(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">查看</el-button>
                         <el-button @click="setPermit(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">权限设置</el-button>
                     </template>
                 </el-table-column>
@@ -536,9 +536,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 if(row.nickname=='个人'){
                     this.$router.push({path:'/index/authority/detailself',query:{id:row.userId,type:1}})
                 }
-                if(row.nickname=='专家'){
-                    this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:3}})
-                }
+                // if(row.nickname=='专家'){
+                //     this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:3}})
+                // }
                 if(row.nickname=='机构'){
                     this.$router.push({path:'/index/authority/detailangency',query:{id:row.userId,type:2}})
                 }
