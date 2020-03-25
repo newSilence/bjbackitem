@@ -45,9 +45,6 @@
                     <p :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}" >{{ scope.row.realName }}</p>
                 </template>
                 </el-table-column>
-                <!-- scope.row.facilitator&&scope.row.facilitator.facilitatorId?'服务商'
-                        :scope.row.expertInfo&&scope.row.expertInfo.expertId?'专家'
-                        : -->
                 <el-table-column
                 prop="phoneNumber"
                 label="会员账号"
@@ -66,10 +63,6 @@
                 prop="identity"
                 label="身份"
                 width="">
-                    <!-- <template slot-scope="scope">{{ 
-                        scope.row.type==1?'个人'
-                        :scope.row.type==2?'机构':''}}
-                    </template> -->
                 </el-table-column>
                 <el-table-column
                 prop="provinceName"
@@ -78,14 +71,16 @@
                     <template slot-scope="scope">{{ scope.row.provinceName?(scope.row.provinceName+ '/'+ scope.row.cityName):''}}</template>
                 </el-table-column>
                 <el-table-column
-                prop="createTime"
+                prop="updateTime"
                 label="更新时间"
                 show-overflow-tooltip>
                 </el-table-column>
                  <el-table-column
                     label="操作"
-                    width="100">
+                    width="150">
                     <template slot-scope="scope">
+                        <!-- @click="seenDeatil(scope.row)" -->
+                        <!-- <el-button @click="seenDeatil(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">查看</el-button> -->
                         <el-button @click="setPermit(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">权限设置</el-button>
                     </template>
                 </el-table-column>
@@ -183,8 +178,6 @@
                             <span style="border:1px solid #EDEDED;padding:10px">
                                 {{baseform.companyName}}
                             </span>
-                            
-                            <!-- <el-input v-model=""></el-input> -->
                         </el-form-item>
                         <el-form-item label="所在城市：">
                             <el-input readonly v-model="baseform.cityName"></el-input>
@@ -193,7 +186,7 @@
                 </el-form>
             </div>
             <!-- 专家描述 -->
-            <div v-show="isShowOther" style="display:flex">
+            <!-- <div v-show="isShowOther" style="display:flex">
                 <div style="width:100px">
                     <span style="padding-left:10px;border-left:3px solid #2BB1E8;color:#333333;font-size:16px;font-weight:500;vertical-align:middle">专家描述：</span>
                 </div>
@@ -248,9 +241,9 @@
                         </div>
                     </el-form>
                 </el-form>
-            </div>
+            </div> -->
             <!-- 经纪人信息 -->
-            <div v-show="isShowOther" style="display:flex">
+            <!-- <div v-show="isShowOther" style="display:flex">
                 <div style="width:100px">
                     <span style="padding-left:10px;border-left:3px solid #2BB1E8;color:#333333;font-size:16px;font-weight:500;vertical-align:middle">专家描述：</span>
                 </div>
@@ -263,7 +256,7 @@
                         </el-form-item>
                     </el-form>
                 </el-form>
-            </div>
+            </div> -->
         </el-dialog>
         <!-- 机构详情、审核状态 -->
         <el-dialog  :title="dialogFactoraFormTitle" :visible.sync="dialogFactoraFormVisible">
@@ -537,6 +530,19 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //点击表格行
             seenDeatil(row){
+                // console.log(row);
+                // return
+                // return row.nickname=='专家'
+                if(row.nickname=='个人'){
+                    this.$router.push({path:'/index/authority/detailself',query:{id:row.userId,type:1}})
+                }
+                if(row.nickname=='专家'){
+                    this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:3}})
+                }
+                if(row.nickname=='机构'){
+                    this.$router.push({path:'/index/authority/detailangency',query:{id:row.userId,type:2}})
+                }
+                return;
                 if(row.expertInfo||row.type==1){
                     this.dialogExpertFormVisible=true;
                 }
@@ -652,6 +658,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 param.userId=this.userId;
                 setAccountRolePerUrl(param).then(res=>{
                     if(res.data.ret){
+                        this.fetchData();
                         this.dialogSetPermitFormVisible=false;
                     }else{
                         this.$message({

@@ -8,6 +8,8 @@ import AuthorityRole from '@/pages/authority/AuthorityRole'
 import AddAuthorityRole from '@/pages/authority/addAuthorityRole'
 import AuthorityMenu from '@/pages/authority/AuthorityMenu'
 import memberReview from '@/pages/authority/memberReview'
+import DetailSelf from '@/pages/authority/DetailSelf'
+import DetailAngency from '@/pages/authority/DetailAngency'
 import ExpertReview from '@/pages/authority/expertReview'
 import ServiceReview from '@/pages/authority/serviceReview'
 import AngencyReview from '@/pages/authority/angencyReview'
@@ -73,6 +75,14 @@ const routerAll=new Router({
           path: 'authority/memberreview',//会员账号审核认证
           name: 'memberReview',
           component: memberReview
+        },{
+          path: 'authority/detailself',//会员账号审核认证
+          name: 'DetailSelf',
+          component: DetailSelf
+        },{
+          path: 'authority/detailangency',//会员账号审核认证
+          name: 'DetailAngency',
+          component: DetailAngency
         },{
           path: 'authority/expertReview',//ExpertReview
           name: 'expertReview',
