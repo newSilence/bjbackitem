@@ -536,9 +536,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 if(row.nickname=='个人'){
                     this.$router.push({path:'/index/authority/detailself',query:{id:row.userId,type:1}})
                 }
-                // if(row.nickname=='专家'){
-                //     this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:3}})
-                // }
+                if(row.nickname=='专家'){
+                    this.$router.push({path:'/index/authority/detailexpert',query:{id:row.userId,type:3}})
+                }
                 if(row.nickname=='机构'){
                     this.$router.push({path:'/index/authority/detailangency',query:{id:row.userId,type:2}})
                 }

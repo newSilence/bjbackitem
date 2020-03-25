@@ -10,6 +10,7 @@ import AuthorityMenu from '@/pages/authority/AuthorityMenu'
 import memberReview from '@/pages/authority/memberReview'
 import DetailSelf from '@/pages/authority/DetailSelf'
 import DetailAngency from '@/pages/authority/DetailAngency'
+import DetailExpert from '@/pages/authority/DetailExpert'
 import ExpertReview from '@/pages/authority/expertReview'
 import ServiceReview from '@/pages/authority/serviceReview'
 import AngencyReview from '@/pages/authority/angencyReview'
@@ -83,6 +84,10 @@ const routerAll=new Router({
           path: 'authority/detailangency',//会员账号审核认证
           name: 'DetailAngency',
           component: DetailAngency
+        },{
+          path: 'authority/detailexpert',//会员账号审核认证
+          name: 'DetailExpert',
+          component: DetailExpert
         },{
           path: 'authority/expertReview',//ExpertReview
           name: 'expertReview',
