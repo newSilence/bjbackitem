@@ -2,6 +2,7 @@ import axios from 'axios'
 import Qs from 'qs'
 import baseUrl from './uploadUrl'
 import store from '@/vuex/store'
+import Router from '@/router/index'
 import { Message } from 'element-ui';
 export function request(config){
     // console.log("baseUrl",baseUrl.uploadUrl);
@@ -29,6 +30,9 @@ export function request(config){
         
         // console.log("response",response)
         // console.log('dddd',store.state.isShowMessage)
+        if(response.data.errcode=="500405"){
+            Router.push('/login');
+        }
         if(store.state.isShowMessage&&!response.data.ret){
             store.commit('setIsShowMessage',false);
             Message.error(

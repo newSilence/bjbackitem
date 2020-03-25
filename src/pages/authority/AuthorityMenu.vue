@@ -42,7 +42,7 @@
                 width="">
                  <!-- @click="seenDeatil(scope.row)" -->
                 <template slot-scope="scope">
-                    <p :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}" >{{ scope.row.realName }}</p>
+                    <p @click="seenDeatil(scope.row)" :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}" >{{ scope.row.realName }}</p>
                 </template>
                 </el-table-column>
                 <el-table-column
