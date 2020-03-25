@@ -1,16 +1,24 @@
 <template>
   <div class="integral-rule-self">
+    <el-select style="margin: 20px" @change="searchState" v-model="integralState" placeholder="请选择积分状态">
+      <el-option
+        v-for="item in stateOptions"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value">
+      </el-option>
+    </el-select>
     <el-form
       style="margin:20px;float: right"
       :inline="true"
       :model="formInline"
       class="demo-form-inline"
     >
-      <el-form-item label>
+      <el-form-item >
         <!-- <el-input v-model="formInline.username" placeholder="角色名称"></el-input> -->
         <el-input
           style="border-radius:12px;width: 368px"
-          placeholder="请输入ID、积分类型、积分状态、备注"
+          placeholder="请输入ID、积分类型、备注"
           v-model="formInline.roleName"
           @keyup.enter.native="onSearch"
         >
@@ -35,30 +43,22 @@
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
             <el-button @click="editClick(scope.row)" type="text" size="small">配置</el-button>
-<!--            <el-popover-->
-<!--              placement="top"-->
-<!--              width="160"-->
-<!--              v-if="scope.row.state===1"-->
-<!--              v-model="visible1">-->
-<!--              <p>请确认是否上线？</p>-->
-<!--              <div style="text-align: right; margin: 0">-->
-<!--                <el-button size="mini" type="text" @click="visible1 = false">取消</el-button>-->
-<!--                <el-button type="primary" size="mini" @click="editOnLine(scope.row)">确定</el-button>-->
-<!--              </div>-->
-              <el-button slot="reference" v-if="scope.row.state===1" @click="editOnLine(scope.row)"  style="color: rgb(243, 161, 87)" type="text">上线</el-button>
-<!--            </el-popover>-->
-<!--            <el-popover-->
-<!--              placement="top"-->
-<!--              width="160"-->
-<!--              v-if="scope.row.state===0"-->
-<!--              v-model="visible2">-->
-<!--              <p>请确认是否下线？</p>-->
-<!--              <div style="text-align: right; margin: 0">-->
-<!--                <el-button size="mini" type="text" @click="visible2 = false">取消</el-button>-->
-<!--                <el-button type="primary" size="mini" @click="">确定</el-button>-->
-<!--              </div>-->
-              <el-button slot="reference" v-if="scope.row.state===0" @click="editOffLine(scope.row)"  type="text">下线</el-button>
-<!--            </el-popover>-->
+            <el-popconfirm
+              class="IntegralTypePopconfirm"
+              v-if="scope.row.state===1"
+              @onConfirm="editOnLine(scope.row)"
+              title="请确定是否上线？"
+            >
+              <el-button style="color: rgb(243, 161, 87)" type="text" slot="reference">上线</el-button>
+            </el-popconfirm>
+            <el-popconfirm
+              class="IntegralTypePopconfirm"
+              v-if="scope.row.state===0"
+              @onConfirm="editOffLine(scope.row)"
+              title="请确定是否下线？"
+            >
+              <el-button type="text" slot="reference">下线</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -99,7 +99,7 @@
           <el-date-picker
             v-model="form.effectiveTime"
             type="daterange"
-            value-format="yyyy-MM-dd">
+            value-format="yyyy-MM-dd"
             @change="timeChange"
             range-separator="-"
             start-placeholder="开始日期"
@@ -199,6 +199,21 @@ export default {
   name: "Integral-type",
   data() {
     return {
+      integralState:2,
+      stateOptions:[
+        {
+          value: 2,
+          label: '全部'
+        },
+        {
+          value: 0,
+          label: '生效中'
+        },
+        {
+          value: 1,
+          label: '未生效'
+        }
+      ],
       visible1:false,
       visible2:false,
       isSave: false, //是否保存
@@ -295,7 +310,7 @@ export default {
       dialogFormVisible: false,
       dialogFormVisibleTitle: "新增",
       IntegralData: [], //积分类型
-      totalPage: "",
+      totalPage: 0,
       total:0
     };
   },
@@ -304,6 +319,13 @@ export default {
     this.reqAllIntegralClass();
   },
   methods: {
+    //搜索状态
+    searchState(val){
+
+        this.pageNumber = 1;
+        this.isSearch = true;
+        this.getIntegralType();
+    },
     //设置表格样式
     theadRowStyle(){
       return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
@@ -442,16 +464,14 @@ export default {
         if (res.data.code == 0) {
           let tableData = res.data.data.list
           tableData.forEach((item,key)=>{
-            console.log(item)
             if (item.state==0){
               tableData[key].stateName = '生效中'
             }else {
               tableData[key].stateName = '未生效'
             }
           });
-          console.log(tableData)
           this.tableData = tableData;
-          this.total = res.data.data.totalCount;
+          this.total = Number(res.data.data.totalCount) ;
         }
       });
     },
@@ -471,6 +491,7 @@ export default {
         pageSize: this.pageLimit
       };
       this.isSearch ? (params.keyWord = this.formInline.roleName) : "";
+      this.integralState===2?params.state='':params.state=this.integralState;
       reqRuleList(params).then(res => {
         if (res.data.errcode === 0) {
           //时间格式化获取前10位
@@ -484,7 +505,6 @@ export default {
           //   : "";
           let tableData = res.data.data.list
           tableData.forEach((item,key)=>{
-            console.log(item)
             if (item.state==0){
               tableData[key].stateName = '生效中'
             }else {
@@ -492,8 +512,7 @@ export default {
             }
           });
           this.IntegralData = tableData;
-          console.log('IntegralData',this.IntegralData)
-          this.totalPage = res.data.data.total;
+          this.totalPage = Number(res.data.data.total) ;
         }
       });
     },
@@ -569,7 +588,6 @@ export default {
     handleSaveRules() {
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          console.log('formDatas ', this.formDatas);
           let params = {};
           const { integralId, integralName } = this.integralItem;
           params.linkUserId = 1;
@@ -607,7 +625,6 @@ export default {
                   item.integralValue;
               })
             : "";
-          console.log('newArr',newArr);
           var s = newArr.join(",")+",";
           let isRepeat = false;
           for(var i=0;i<newArr.length;i++) {
@@ -726,17 +743,14 @@ export default {
     },
     //积分类型修改
     handleClassChange(val) {
-      console.log(val);
     },
     //下线
     editOffLine(row) {
-      console.log(row);
       let data = {
         state: 1,
         integralId: row.integralId
       };
       reqOffLineIntegralRule(data).then(res => {
-        console.log(res);
         if (res.data.errcode === 0) {
           this.$message({
             message: '下线成功',
@@ -749,13 +763,11 @@ export default {
     },
     //上线
     editOnLine(row) {
-      console.log(row);
       let data = {
         state: 0,
         integralId: row.integralId
       };
       reqOffLineIntegralRule(data).then(res => {
-        console.log(res);
         if (res.data.errcode === 0) {
           this.$message({
             message: '上线成功',
@@ -774,7 +786,18 @@ export default {
 </script>
 
 <style  lang="less">
+  .el-popconfirm__main {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .el-popconfirm__action {
+    margin-top: 5px;
+  }
+  .IntegralTypePopconfirm {
+
+  }
 .integral-rule-self {
+
   .el-dialog__header {
     text-align: center;
     padding: 15px 20px 15px;

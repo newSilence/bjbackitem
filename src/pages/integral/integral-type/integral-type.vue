@@ -174,7 +174,7 @@
             dialogFormVisible:false,
             dialogFormVisibleTitle:'新增',
             IntegralData:[],  //积分类型
-            totalPage:''
+            totalPage:0
           }
       },
       created() {
@@ -321,7 +321,7 @@
           getAllRoleData(this.formInline).then(res=>{
             if(res.data.code==0){
               this.tableData=res.data.data.list;
-              this.total=res.data.data.totalCount;
+              this.total=Number(res.data.data.totalCount) ;
             }
           })
         },
@@ -348,7 +348,7 @@
                 res.data.data.list[key].newTime = item.updateTime.substring(0,10)
               }):'';
               this.IntegralData = res.data.data.list;
-              this.totalPage = res.data.data.total;
+              this.totalPage = Number(res.data.data.total);
             }
           })
         },
