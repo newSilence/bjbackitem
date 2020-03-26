@@ -10,7 +10,7 @@
         <!-- 服务商信息 -->
         <div>
             <div style="border-bottom:1px solid #E9E9E9;padding-bottom:7px;margin-top:26px;font-size:16px;color:#333333;margin-bottom:35px">
-                <span style="border-bottom:2px solid #2BB1E8;padding-bottom:4px">服务商信息</span>
+                <span style="border-bottom:2px solid #2BB1E8;padding-bottom:4px">机构信息</span>
             </div>
                 <el-col :span="24">
                     <el-col :span="12">

@@ -42,7 +42,7 @@
                 width="">
                  <!-- @click="seenDeatil(scope.row)" -->
                 <template slot-scope="scope">
-                    <p :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}" >{{ scope.row.realName }}</p>
+                    <p @click="seenDeatil(scope.row)" :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}" >{{ scope.row.realName }}</p>
                 </template>
                 </el-table-column>
                 <el-table-column
@@ -80,7 +80,7 @@
                     width="150">
                     <template slot-scope="scope">
                         <!-- @click="seenDeatil(scope.row)" -->
-                        <!-- <el-button @click="seenDeatil(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">查看</el-button> -->
+                        <el-button @click="seenDeatil(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">查看</el-button>
                         <el-button @click="setPermit(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">权限设置</el-button>
                     </template>
                 </el-table-column>
@@ -537,7 +537,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     this.$router.push({path:'/index/authority/detailself',query:{id:row.userId,type:1}})
                 }
                 if(row.nickname=='专家'){
-                    this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:3}})
+                    this.$router.push({path:'/index/authority/detailexpert',query:{id:row.userId,type:3}})
                 }
                 if(row.nickname=='机构'){
                     this.$router.push({path:'/index/authority/detailangency',query:{id:row.userId,type:2}})
