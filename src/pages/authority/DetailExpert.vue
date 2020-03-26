@@ -118,7 +118,7 @@
                 <el-col :span="24">
                     <el-col :span="12">
                         <el-form-item prop="phoneNumber" label="宣传照：">
-                            <img v-if="form.headPortrait" :src="form.headPortrait" alt="宣传照">
+                            <img style="width:102px" v-if="form.headPortrait" :src="form.headPortrait" alt="宣传照">
                             <span v-else>无</span>
                         </el-form-item>
                     </el-col>

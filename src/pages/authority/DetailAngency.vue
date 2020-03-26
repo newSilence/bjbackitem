@@ -48,7 +48,7 @@
                 <el-col :span="24">
                     <el-col :span="12">
                         <el-form-item label="营业执照：">
-                            <img v-if="form.businessLicense" :src="form.businessLicense" alt="营业执照">
+                            <img style="width:170px" v-if="form.businessLicense" :src="form.businessLicense" alt="营业执照">
                             <span v-else>无</span>
                         </el-form-item>
                     </el-col>
