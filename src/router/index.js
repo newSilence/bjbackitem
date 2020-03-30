@@ -14,10 +14,13 @@ import DetailExpert from '@/pages/authority/DetailExpert'
 import ExpertReview from '@/pages/authority/expertReview'
 import ServiceReview from '@/pages/authority/serviceReview'
 import AngencyReview from '@/pages/authority/angencyReview'
+//审核模块
 import ReleaseAudit from '@/pages/releaseAudit'
 import AuditRelease from '@/pages/releaseAudit/AuditRelease'
-
-
+import NeedAudit from '@/pages/needAudit'
+import AuditNeed from '@/pages/needAudit/AuditNeed'
+import ActiveAudit from '@/pages/activityAudit'
+import AuditActive from '@/pages/activityAudit/AuditActive'
 import carte from '@/pages/authority/carte'
 import WebMenu from '@/pages/webauthority/WebMenu'
 import WebRole from '@/pages/webauthority/WebRole'
@@ -134,7 +137,24 @@ const routerAll=new Router({
           path: 'releaseAudit/AuditRelease',//项目审核详情页面
           name: 'AuditRelease',
           component: AuditRelease
-        }
+        },{
+          path: 'needAudit/NeedAudit',//发布审核管理主界面
+          name: 'NeedAudit',
+          component: NeedAudit
+        },{
+          path: 'needAudit/AuditRelease',//项目审核详情页面
+          name: 'AuditNeed',
+          component: AuditNeed
+        },{
+          path: 'activeAudit/ActiveAudit',//发布审核管理主界面
+          name: 'ActiveAudit',
+          component: ActiveAudit
+        },{
+          path: 'activeAudit/AuditActive',//项目审核详情页面
+          name: 'AuditActive',
+          component: AuditActive
+        },
+
       ]
     },
     {

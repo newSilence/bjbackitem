@@ -1,5 +1,12 @@
 <template>
     <div style="padding:15px 40px">
+      <div style="margin:6px 20px 12px 20px;padding-top:26px;">
+        <div>
+                <span @click="changePersonType(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==personClickIndex?'#2BB1E8':'#333333',borderRight:(key!=personType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in personType" :key="key">
+                    {{item.label}}
+                </span>
+        </div>
+      </div>
         <div style="margin:6px 20px 12px 20px;padding-top:26px;">
             <div>
                 <span @click="changeTypeMem(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountAuditType" :key="key">
@@ -61,7 +68,7 @@
                 label="账号性质"
                 width="80px"
                 show-overflow-tooltip>
-                    <template slot-scope="scope">{{ 
+                    <template slot-scope="scope">{{
                         scope.row.type==1?'个人'
                         :scope.row.type==2?'机构':''}}</template>
                 </el-table-column>
@@ -149,8 +156,8 @@
                             @select="deptSelected"
                             v-model="value"
                             :multiple="true"
-                            :flat="false" 
-                            :default-expand-level="Infinity" 
+                            :flat="false"
+                            :default-expand-level="Infinity"
                             :options="deptSelectOptions" />
                          </div>
                     </el-col>
@@ -192,7 +199,7 @@
                             <span style="border:1px solid #EDEDED;padding:10px">
                                 {{baseform.companyName}}
                             </span>
-                            
+
                             <!-- <el-input v-model=""></el-input> -->
                         </el-form-item>
                         <el-form-item label="所在城市：">
@@ -224,7 +231,7 @@
                             <el-input readonly v-model="baseform.getTime"></el-input>
                         </el-form-item>
                     </el-form>
-                    
+
                     <el-form-item label="百科人物：">
                         <el-input readonly v-model="baseform.expertLink"></el-input>
                     </el-form-item>
@@ -241,7 +248,7 @@
                                 <el-radio :label="1">否</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        
+
                     </el-form>
                     <el-form-item label="宣传照：">
                         <img :src="baseform.headPortrait" alt="">
@@ -249,7 +256,7 @@
                     <el-form label-width="100px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="个人简介：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
                                 <div  v-html="baseform.individual"></div>
@@ -286,8 +293,8 @@
                         <el-form-item label="单位名称：">
                             <el-input readonly v-model="factoBaseForm.companyName"></el-input>
                         </el-form-item>
-                        
-                        
+
+
                     </el-form>
                     <el-form-item label="统一社会信用代码：">
                         <el-input readonly v-model="factoBaseForm.companyCode"></el-input>
@@ -307,7 +314,7 @@
                     <el-form label-width="150px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="公司介绍：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
                                 <div  v-html="factoBaseForm.serviceProviders"></div>
@@ -326,7 +333,7 @@
                     <el-form label-width="150px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="描述：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%;min-width:200px" class="detail-content content ql-editor" >
                                 <div  v-html="factoBaseForm.applicationDescription"></div>
@@ -338,7 +345,7 @@
                     <el-form label-width="150px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="主营业务介绍：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
                                 <div  v-html="factoBaseForm.description"></div>
@@ -381,10 +388,11 @@ import { getMemAccountData , getMemAccountDetailData , getAccountMemPermWebrole 
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
     export default {
-       
+
         data() {
             return {
                 statusClickIndex:0,
+                personClickIndex:0,
                 //复选框选择的数据
                 chooseUseData:[],
                 optionName:'',
@@ -396,6 +404,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     // {value:'经纪人',label:'经纪人'},
                     //{value:'4',label:'服务商'},
                     // {value:'其他自定义',label:'其他自定义'},
+                ],
+                personType:[
+                  {label:'专家',value:''},
+                  {label:'机构',value:'0'},
+                  {label:'服务商',value:'2'},
+                  {label:'经纪人',value:'1'},
                 ],
                 accountAuditType:[
                     {label:'全部',value:''},
@@ -442,7 +456,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 },
                 factoBaseForm:{
                   companyName:'',
-                  companyCode:'',  
+                  companyCode:'',
                   companyType:'',
                   cityName:'',
                   email:'',
@@ -473,7 +487,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     pageNumber:1,
                     pageSize:10,
                 },
-                
+
                 form:{
                     roleName:'',
                     deptName:'',
@@ -539,6 +553,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     this.fetchData();
                 }
             },
+            changePersonType(item,key){
+                if (this.personClickIndex != key){
+                  this.personClickIndex = key;
+                }
+            },
             //切换账号性质
             selectChange(){
                 this.formInline.pageNumber=1;
@@ -561,7 +580,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     if(res.data.code==0){
                         this.permitForm.roleId=res.data.data.roleIdList;
                     }
-                    
+
                 })
                 this.dialogSetPermitFormVisible=true;
 
@@ -571,7 +590,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     }else{
                         this.roleOptionsData=[];
                     }
-                    
+
                 })
             },
             //确认权限设置
@@ -614,7 +633,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.fetchData();
             },
             //处理部门数据，返回符合渲染的数据格式
-            treeData(source, id, parentId, children){   
+            treeData(source, id, parentId, children){
                 let cloneData = JSON.parse(JSON.stringify(source))
                 return cloneData.filter(father=>{
                     let branchArr = cloneData.filter(child => father[id] == child[parentId]);
@@ -684,13 +703,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                                 this.dialogClose();
                             })
                         }
-                        
+
                     } else {
                         // console.log('error submit!!');
                         return false;
                     }
                 });
-                
+
             },
             //编辑行
             editClick(row){
@@ -706,7 +725,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     this.form=result[1].data.data;
                     // this.form.menuIdList=result[1].data.data.selectMenuIdList?result[1].data.data.selectMenuIdList:[];
                     // this.form.deptIdList=result[1].data.data.selectDeptIdList?result[1].data.data.selectDeptIdList:[];
-                    
+
                 }).catch(err=>{
                     this.$message({
                         showClose: true,
@@ -729,7 +748,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //打开弹框前回调事件
             openDialog(){
-                
+
             },
             //获取表格数据
             fetchData(){
@@ -766,7 +785,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
-    .el-table tbody tr:hover>td { 
+    .el-table tbody tr:hover>td {
         background-color:#E6F7FF!important
     }
     .search_input .el-input__inner{

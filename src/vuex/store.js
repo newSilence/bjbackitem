@@ -16,8 +16,9 @@ const state={
       {icon:'el-icon-user',url: '/index/authority/menu',name: '会员账号管理'},
     ]},
     {icon:'el-icon-user',url:'/index/releaseAudit',name:'发布审核管理',list:[
-      {icon:'el-icon-user',url: '/index/releaseAudit/ReleaseAudit',name: '项目审核'},
-      
+        {icon:'el-icon-user',url: '/index/releaseAudit/ReleaseAudit',name: '项目审核'},
+        {icon:'el-icon-user',url: '/index/needAudit/NeedAudit',name: '需求审核'},
+        {icon:'el-icon-user',url: '/index/activeAudit/ActiveAudit',name: '活动审核'},
     ]},
     {icon:'el-icon-user',url:'/index/authority',name:'权限角色管理',list:[
       {icon:'el-icon-user',url: '/index/authority/role',name: '角色管理'},
@@ -25,9 +26,10 @@ const state={
     ]},
     // {icon:'el-icon-office-building',url:'/index/consultManage',name:'资讯管理'},
 
-
-    {icon:'el-icon-user',url:'/index/integral',name:'积分管理',list:[
+    {icon:'el-icon-user',url:'/index/integral/1',name:'系统设置',list:[
         {icon:'el-icon-user',url: '/index/integral/IntegralType',name: '积分设置'},
+      ]},
+    {icon:'el-icon-user',url:'/index/integral',name:'积分管理',list:[
         {icon:'el-icon-user',url: '/index/integral/IntegralRules',name: '积分账户'},
       ]},
 
