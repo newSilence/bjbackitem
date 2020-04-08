@@ -1,5 +1,5 @@
 <template>
-    <div style="padding:28px 35px;background:white;height:100%">
+    <div style="padding:28px 35px;background:white;height:100%" class="auditNeedSelf">
         <div style="display:flex;justify-content:space-between;font-size:16px;color:#333">
             <span>需求审核</span>
             <span @click="goBack" style="cursor:pointer">
@@ -7,7 +7,7 @@
             </span>
         </div>
         <!-- 待审核 -->
-        <div v-if="form.approvalState==0" style="display:flex;justify-content:space-between;height:51px;align-items:center;
+        <div v-if="needDetails.state==0" style="display:flex;justify-content:space-between;height:51px;align-items:center;
             background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;
             padding-left:20px;padding-right:17px">
             <div>
@@ -15,38 +15,38 @@
                 <span>待审核</span>
             </div>
             <div>
-                <button @click="saveDetail(1)" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
-                <button @click="turnDown" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">驳回</button>
+                <button @click="examinePass" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
+                <button @click="dialogTurnDownVisible=true" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">驳回</button>
                 <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>
-                <button v-show="isEdit" @click="saveDetail(2)" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
+                <button v-show="isEdit" @click="saveDetail()" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
             </div>
         </div>
         <!-- 未通过 -->
-        <div v-if="form.approvalState==2" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
+        <div v-if="needDetails.state==2" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
             <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
                 <div>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;当前进度：</span>
                     <span style="color:#FD2044">未通过</span>
                 </div>
-                <div>
-                    <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>
-                    <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
-                </div>
+<!--                <div>-->
+<!--                    <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>-->
+<!--                    <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>-->
+<!--                </div>-->
             </div>
             <div style="font-size:16px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(94,94,94,1);">
                 <div>
-                    <span>未通过原因：{{form.approvalOpinion}}</span>
+                    <span>未通过原因：{{needDetails.approvalOpinion}}</span>
                 </div>
                 <div style="margin-top:15px">
-                    <span style="padding-right:70px">&nbsp;&nbsp;&nbsp;审核人员：{{form.approvalUser}}</span>
-                    <span>审核时间：{{form.approvalTime}}</span>
+                    <span style="padding-right:70px">&nbsp;&nbsp;&nbsp;审核人员：{{needDetails.approvalUserName}}</span>
+                    <span>审核时间：{{needDetails.approvalDate}}</span>
                 </div>
             </div>
 
         </div>
 
         <!-- 已通过 -->
-        <div v-if="form.approvalState==1" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
+        <div v-if="needDetails.state==1" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
             <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
                 <div>
                     <span>当前进度：</span>
@@ -58,11 +58,27 @@
                 </div>
             </div>
             <div style="font-size:16px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(94,94,94,1);">
-                <span style="padding-right:70px">审核人员：{{form.approvalUser}}</span>
-                <span>审核时间：{{form.approvalTime}}</span>
+                <span style="padding-right:70px">审核人员：{{needDetails.approvalUserName}}</span>
+                <span>审核时间：{{needDetails.approvalDate}}</span>
             </div>
         </div>
-
+        <!-- 已下线 -->
+        <div v-if="needDetails.state==3" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
+        <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
+          <div>
+            <span>当前进度：</span>
+            <span style="color:#F3A157">已下线</span>
+          </div>
+<!--          <div>-->
+<!--            <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>-->
+<!--            <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>-->
+<!--          </div>-->
+        </div>
+        <div style="font-size:16px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(94,94,94,1);">
+          <span style="padding-right:70px">审核人员：{{needDetails.approvalUserName}}</span>
+          <span>审核时间：{{needDetails.approvalDate}}</span>
+        </div>
+      </div>
         <el-form ref="form" :model="form" :rules="isEdit?rules:null" style="overflow:hidden" label-width="110px">
         <!-- 需求描述 -->
         <div>
@@ -71,45 +87,48 @@
             </div>
                <el-col :span="24">
                  <el-col :span="10">
-                   <el-form-item prop="projectName" label="需求名称：">
-                     <el-input :readonly="!isEdit" v-model="form.projectName"></el-input>
+                   <el-form-item prop="title" label="需求名称：">
+                     <el-input  :readonly="!isEdit" placeholder="请一句话描述您的需求，20字以内" v-model="form.title"></el-input>
                    </el-form-item>
                  </el-col>
                </el-col>
                 <el-col :span="24">
                     <el-col :span="10">
-                        <el-form-item prop="useArea" label="需求分类：">
-                            <el-select multiple  style="width:100%" v-model="form.useArea" placeholder="请选择需求分类">
-                                <el-option v-for="item in UserAreaData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
+                        <el-form-item prop="typeLabel" label="需求分类：">
+                            <el-select :disabled="!isEdit"   style="width:100%" v-model="form.typeLabel" placeholder="请选择需求分类">
+                                <el-option v-for="item in UserAreaData" :key="item.id" :label="item.desc" :value="item.desc"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                 </el-col>
                <el-col :span="24">
                  <el-col :span="10">
-                   <el-form-item prop="skillArea" label="技术领域：">
-                     <el-select multiple  style="width:100%" v-model="form.skillArea" placeholder="请选择技术领域，最多选择3个">
-                       <el-option v-for="item in SkillAreaData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
+                   <el-form-item prop="technicalFieldDesc" label="技术领域：">
+                     <el-select :readonly="!isEdit" multiple :multiple-limit="3"  style="width:100%" @change="handleAreaChange" v-model="form.technicalFieldDesc" placeholder="请选择技术领域，最多选择3个">
+                       <el-option v-for="item in SkillAreaData" :key="item.id" :label="item.desc" :value="item.desc"></el-option>
                      </el-select>
                    </el-form-item>
                  </el-col>
                </el-col>
                 <el-col :span="24">
                     <el-col :span="10" >
-                        <el-form-item prop="valuationType" label="预算：">
+                        <el-form-item prop="" label="预算：" :class="isEdit?'redIcon':''">
                             <el-col :span="8" style="min-width:100px">
-                                <el-input placeholder="请输入预算金额" required @change="valuInputChange" :readonly="!isEdit || (isEdit&&form.negotiable)" v-model="form.valuation"></el-input>
+                                <el-input :readonly="!isEdit" placeholder="请输入预算金额" required @input="valuInputChange"  v-model="form.budget"></el-input>
                             </el-col>
                             <span style="padding-left:10px">万元</span>
-                            <el-checkbox :disabled="!isEdit" style="padding-left:15px" @change="checkBoxChange" v-model="form.negotiable" label="1">面议</el-checkbox>
+                            <el-checkbox :disabled="!isEdit" style="padding-left:15px" @change="checkBoxChange" v-model="form.isCheacked" label="1">面议</el-checkbox>
                         </el-form-item>
                     </el-col>
                 </el-col>
                 <el-col :span="24">
                   <el-col :span="10" >
-                    <el-form-item prop="cooperateType" label="截止时间：">
+                    <el-form-item prop="" label="截止时间：">
                       <el-date-picker
-                        v-model="value1"
+                        :readonly="!isEdit"
+                        v-model="form.endDate"
+                        format="yyyy-MM-dd"
+                        value-format="yyyy-MM-dd"
                         type="date"
                         placeholder="选择日期">
                       </el-date-picker>
@@ -118,8 +137,8 @@
                 </el-col>
                 <el-col :span="24">
                   <el-col :span="10" >
-                    <el-form-item prop="yourWant" label="需求描述：">
-                      <el-input :readonly="!isEdit" type="textarea" :rows="2" placeholder="请输入内容" v-model="form.yourWantContent"></el-input>
+                    <el-form-item prop="note" label="需求描述：">
+                      <el-input type="textarea" :readonly="!isEdit"   :autosize="{ minRows: 2, maxRows: 6}" placeholder="请输入您的需求描述" v-model="form.note"></el-input>
                     </el-form-item>
                   </el-col>
                 </el-col>
@@ -129,14 +148,14 @@
                       <el-col :span="10" style="min-width:378px">
                         <el-input :readonly="!isEdit" v-model="searchKeyInput" placeholder="最多5个标签"></el-input>
                       </el-col>
-                      <button :disabled="!isEdit" @click="addSearchKey" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
+                      <button type="button" :disabled="!isEdit" @click="addSearchKey" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
                         <i class="el-icon-plus"></i>
                       </button>
                     </el-form-item>
-                    <el-form-item prop="searchKeyData" label="关键词：">
+                    <el-form-item prop="" label="关键词：">
                       <el-tag
                         style="margin-right:10px"
-                        v-for="(item,index) in form.searchKeyData" :key="index"
+                        v-for="(item,index) in form.keyWord" :key="index"
                         :closable="isEdit"
                         @close="keyDataClose(item)"
                         type="info">
@@ -160,13 +179,14 @@
                     <el-input
                         type="textarea"
                         :rows="7"
-                        placeholder="此处为不通过原因"
+                        maxlength="50"
+                        placeholder="此处请输入不通过原因(50字以内)"
                         v-model="turnDownForm.opinion">
                     </el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <button @click="confirmTurnDown" style="background:rgba(251,251,251,1);border-radius:3px;padding:5px 20px;color:#828282;margin-right:30px;cursor:pointer">确定</button>
+                <button @click="examineReject" style="background:rgba(251,251,251,1);border-radius:3px;padding:5px 20px;color:#828282;margin-right:30px;cursor:pointer">确定</button>
                 <button @click="cancelTurnDown" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;padding:5px 20px;color:white;cursor:pointer">取消</button>
             </span>
         </el-dialog>
@@ -175,8 +195,8 @@
 
 <script>
     import  uploadUrl  from '@/request/uploadUrl'
-    import { toolbarOptions , proTemplate } from "../../util/commonData";
-    import {   getProvinceAllCity , rejectProById , updateProDetail , approvalProDetail,reqNeedClass,reqTecField } from "./api";
+    import { toolbarOptions  } from "../../util/commonData";
+    import {   getProvinceAllCity , rejectProById , updateProDetail , approvalProDetail,reqNeedClass,reqTecField ,reqNeedDetails,reqExamineNeed ,reqUpdateNeed} from "./api";
 
     export default {
         data() {
@@ -251,120 +271,23 @@
                 },
                 // optionsArea:provinceAndCityData,
                 form:{
-                    approvalState:'',
-                    approvalUser:'',
-                    approvalTime:'',
-                    approvalOpinion:'',
-                    projectName:'',
-                    useArea:'',
-                    skillArea:'',
-                    valuation:'',
-                    negotiable:false,
-                    fruitType:'',
-                    detail:'',
-                    processType:'',
-                    financingType:'',
-                    cooperateType:[],
-                    yourWant:[],
-                    yourWantContent:'',
-                    companyName:'',
-                    contactName:'',
-                    phoneNumber:'',
-                    email:'',
-                    searchKeyData:[],
-                    projectId:'',
-                    startVideo:[],
-                    endVideo:[],
-                    // isTrue:false,
-                    // position:[416,6],
-                    // checkList:[],
-                    photos:[],
-                    proveUrl:[],
-                    // province:'',
-                    provinceId:'',
-                    cityId:'',
-                    createId:'',
-                    // city:'',
+                  title:'',
+                  typeLabel:'',
+                  technicalFieldDesc:[],
+                  endDate:'',
+                  note:'',
+                  keyWord:[],
+                  isCheacked:false,
+                  budget:''
                 },
                 rules:{
-                    projectName : [
-                        { required: true, message: '项目名称必须输入！', trigger: 'blur' },
-                        { min: 1, max: 30, message: '项目名称30字以内', trigger: 'blur' }
-                    ],
-
-                    useArea :[
-                        { required: true, message: '请选择应用领域',trigger: 'change' },
-                    ],
-                    skillArea : [
-                        { required: true, message: '请选择技术领域',trigger: 'change' },
-                    ],
-                    fruitType : [
-                        { required: true, message: '请选择成果类型',trigger: 'change' },
-                    ],
-                    processType : [
-                        { required: true, message: '请选择当前阶段',trigger: 'change' },
-                    ],
-                    financingType : [
-                        { required: true, message: '请选择融资阶段',trigger: 'change' },
-                    ],
-                    cooperateType : [
-                        { type: 'array', required: true, message: '请至少选择一个归属方性质', trigger: 'change' }
-                    ],
-                    yourWant : [
-                        { type: 'array', required: true, message: '请至少选择一个诉求', trigger: 'change' }
-                    ],
-                    yourWantContent : [
-                        { required: true, message: '诉求描述必须输入', trigger: 'blur' },
-                        { min: 1, max: 150, message: '名称150字以内', trigger: 'blur' }
-                    ],
-                    companyName : [
-                        { required: true, message: '项目方单位名称必须输入!' , trigger: 'blur' },
-                    ],
-                    contactName : [
-                        { required: true, message: '联系人姓名必须输入!' , trigger: 'blur' },
-                    ],
-                    phoneNumber : [
-                        { required: true, message: '手机号必须输入!' , trigger: 'blur' },
-                        {
-                            validator (rule, value, callback) {
-                                let reg=/^((13[0-9])|(14[5,7,9])|(15[^4])|(16[0-9])|(18[0-9])|(17[0,1,3,5,6,7,8]))[0-9]{8}$/;
-                                if (reg.test(value)) {
-                                    callback()
-                                } else {
-                                    callback(new Error('请输入正确的手机号'))
-                                }
-                            },
-                            trigger: 'blur'
-                        }
-                    ],
-                    email : [
-                        { required: true, message: '邮箱必须输入!' , trigger: 'blur' },
-                        {type: 'email', message: '请输入正确的邮箱地址!'}
-                    ],
-                    position : [
-                        { required: true, message: '请选择所在地区',trigger: 'change' },
-                    ],
-                    provinceId : [
-                        { required: true, message: '请选择所在地区',trigger: 'change' },
-                    ],
-                    cityId : [
-                        { required: true, message: '请选择所在地区',trigger: 'change' },
-                    ],
-                    photos : [
-                        { type: 'array', required: true, message: '请上传图片' }
-                    ],
-                    searchKeyData : [
-                        { type: 'array', required: true, message: '请填入关键词' }
-                    ],
-                    // searchKeyData : [
-                    //     { type: 'array', required: true, message: '请至少选择一个归属方性质' }
-                    // ],
-                    // valuation : [
-                    //     { required:this.negotiable?false:true, message: '请输入估值', trigger: 'blur' },
-                    // ],
-                    valuationType:[{ validator: validateValuation, trigger: 'blur' }],
-                    // negotiable:[{ validator: validateValuation, type: 'array', trigger: 'change' }],
-                    // negotiable:[{ validator: validateNegotable, trigger: 'blur' }],
+                  title:[{ required: true, message: '需求名称必须输入！', trigger: 'blur' },
+                         { min: 1, max: 20, message: '需求名称20字以内', trigger: 'blur' }],
+                  typeLabel:[{ required: true, message: '需求分类必须选择！', trigger: 'blur' }],
+                  technicalFieldDesc:[{ required: true, message: '技术领域必须选择！', trigger: 'blur' }],
+                  endDate:[{ required: true, message: '截止时间必须选择！', trigger: 'blur' }],
+                  note:[{ required: true, message: '需求描述必须输入！', trigger: 'blur' }],
+                  keyWord:[{ required: true, message: '关键词必须输入！', trigger: 'blur' }]
                 },
                 negotiable:true,
                 OwnershipData : ['企业', '高校', '科研院所','个人团队','其他'],
@@ -395,6 +318,7 @@
                 dialogPicImageUrl:'',
                 dialogVisible: false,
                 dialogPicVisible:false,
+                needDetails:{}
             }
         },
         methods: {
@@ -417,14 +341,21 @@
                }
              })
            },
+          handleAreaChange(){
+             console.log(this.form.skillArea)
+          },
             //估值输入框值改变
             valuInputChange(value){
-                console.log(value)
+                if (value){
+                  this.form.isCheacked = false
+                }
             },
             //复选框事件
-            checkBoxChange(){
-                // console.log("checkbox");
-                this.form.valuation='';
+            checkBoxChange(val){
+               if (val){
+                 this.form.budget = '';
+
+               }
             },
             //返回上一页
             goBack(){
@@ -601,8 +532,16 @@
 
             //新增关键词
             addSearchKey(){
-                if( this.form.searchKeyData.length<5 && this.form.searchKeyData.indexOf(this.form.searchKeyInput)==-1){
-                    this.form.searchKeyData.push(this.searchKeyInput);
+                if (this.searchKeyInput===''){
+                  this.$message({
+                    message: '请输入关键词检索内容!',
+                    type: 'warning'
+                  });
+                  return
+                }
+
+                if( this.form.keyWord.length<5 && this.form.keyWord.indexOf(this.form.searchKeyInput)==-1){
+                    this.form.keyWord.push(this.searchKeyInput);
                     // this.searchKeyInput='';
 
                 }else{
@@ -613,7 +552,7 @@
             },
             //删除关键词
             keyDataClose(item){
-                this.form.searchKeyData.splice(this.form.searchKeyData.indexOf(item), 1);
+                this.form.keyWord.splice(this.form.keyWord.indexOf(item), 1);
             },
             //点击省切换
             handleProvinceChange(val){
@@ -656,59 +595,53 @@
             clearTemplate(){
                 this.form.detail='';
             },
-            //保存或者审核，根据flag判断，1代表审核，2代表保存
-            saveDetail(flag){
+            saveDetail(){
                 // this.form.negotiable
                 this.$refs["form"].validate((valid) => {
                     if (valid) {
-                        // console.log(this.form);
-                        let funcUrl=flag==1?approvalProDetail:updateProDetail;
-                        let str=flag==1?"审核":"保存";
-                        let postData={};
-                        for(let key in this.form){
-                            // console.log(key);
-                            // console.log(this.form[key]);
-                            // console.log(Object.prototype.toString(this.form[key]));
-                            if(Object.prototype.toString.call(this.form[key]) === "[object Object]"||Object.prototype.toString.call(this.form[key]) === "[object Array]"){
-                                postData[key] = JSON.parse(JSON.stringify(this.form[key]));
-                            }else{
-                                postData[key] = this.form[key];
-                            }
+                      console.log(this.form)
+                      let formParams = {};
+                      // reqUpdateNeed()
+                      let {title,typeLabel,technicalFieldDesc,isCheacked,budget,endDate,note,keyWord} = this.form;
+                      let type = '';
+                      this.UserAreaData.map((item,key)=>{
+
+                        if (item.desc === typeLabel ){
+                             type = Number(item.id)
                         }
-                        postData.fruitType = [this.form.fruitType];
-                        postData.processType = [this.form.processType];
-                        postData.financingType = [this.form.financingType];
-                        postData.words = this.form.searchKeyData;
-                        for(let i=0;i<postData.photos.length;i++){
-                            postData.photos.splice(i,1,postData.photos[i].url)
-                        }
-                        if(postData.proveUrl){
-                            for(let i=0;i<postData.proveUrl.length;i++){
-                                postData.proveUrl.splice(i,1,postData.proveUrl[i].url)
-                            }
-                        }
-                        postData.startVideo=postData.startVideo[0]?postData.startVideo[0].url:'';
-                        postData.endVideo=postData.endVideo[0]?postData.endVideo[0].url:'';
-                        postData.valuationType = postData.negotiable ? '1' : '2';
-                        delete postData.approvalUser;
-                        delete postData.approvalTime;
-                        funcUrl(postData).then(res=>{
-                            // console.log("数据保存了",res);
-                            this.$message({
-                                type:res.data.ret?'success':'error',
-                                showClose: true,
-                                message:res.data.ret?`${str}成功`:`${str}失败`,
-                            })
-                            if(res.data.ret){
-                                this.fetch(this.rowId);
-                                this.isEdit=false;
-                            }
+                      })
+                        let technicalFieldId = [];
+                      technicalFieldDesc.map((item,key)=>{
+
+                        this.SkillAreaData.map((i,k)=>{
+                          if (item==i.desc){
+                            console.log(i)
+                            technicalFieldId.push(i.id)
+                          }
                         })
-                        // console.log(postData);
-                        // alert('submit!');
-                    } else {
-                        // console.log('error submit!!');
-                        return false;
+                      })
+                      console.log('keyWord',keyWord)
+                      isCheacked?budget = -1:''
+                      technicalFieldId= technicalFieldId?technicalFieldId.join(','):'';
+                      keyWord= keyWord?keyWord.join(','):'';
+                      technicalFieldDesc= technicalFieldDesc?technicalFieldDesc.join(','):'';
+                      let id = this.$route.query.id;
+                      formParams = {title ,type ,technicalFieldId ,budget ,technicalFieldDesc,endDate ,note ,keyWord ,id};
+                      reqUpdateNeed(formParams).then(res=>{
+                        console.log(res)
+                        if (res.data.errcode===0){
+                          this.$message({
+                            message: res.data.data,
+                            type: 'success'
+                          });
+                          this.isEdit = false;
+                          this.getNeedDetails();
+                        }else {
+                          this.$message.error(res.data.data);
+                        }
+                      })
+                      console.log('formParams',formParams)
+
                     }
                 });
             },
@@ -749,12 +682,77 @@
             cancelTurnDown(){
                 this.dialogTurnDownVisible=false;
             },
+            //需求详情
+            getNeedDetails(){
+              let id = this.$route.query.id;
+              let params = {id};
+              reqNeedDetails(params).then(res=>{
+                console.log('xxx',res)
+                if (res.data.errcode===0){
+                    this.form.title = res.data.data.title;
+                    this.form.typeLabel = res.data.data.typeLabel;
+                   this.form.technicalFieldDesc = res.data.data.technicalFieldDesc?res.data.data.technicalFieldDesc.split(','):'';
+                   this.form.endDate = res.data.data.endDate;
+                   this.form.note  = res.data.data.note;
+                   this.form.keyWord = res.data.data.keyWord?res.data.data.keyWord.split(','):'';
 
+
+                    this.needDetails = res.data.data;
+
+                  if (this.needDetails.budget==-1){
+                    this.form.budget = '';
+                    this.form.isCheacked = true;
+                  }else {
+                    this.form.budget = this.needDetails.budget;
+                    this.form.isCheacked = false;
+                  }
+                }
+              })
+            },
+           //审核通过
+          examinePass(){
+              if (this.isEdit){
+                this.$message({
+                  message: '请先保存内容!',
+                  type: 'warning'
+                });
+                return false
+              }
+              let id = this.$route.query.id;
+              let params = {id,state:1};
+               reqExamineNeed(params).then(res=>{
+                 console.log(res)
+                 if (res.data.errcode==0){
+                   this.$message({
+                     message: res.data.data,
+                     type: 'success'
+                   });
+                   this.getNeedDetails();
+                 }
+               })
+          },
+          //审核驳回
+          examineReject(){
+            let id = this.$route.query.id;
+            let params = {id,state:2,remarks:this.turnDownForm.opinion};
+            reqExamineNeed(params).then(res=>{
+              console.log(res)
+              if (res.data.errcode==0){
+                this.$message({
+                  message: '驳回成功!',
+                  type: 'success'
+                });
+                this.dialogTurnDownVisible=false;
+                this.getNeedDetails();
+              }
+            })
+          }
         },
         created () {
             this.myHeaders.token=sessionStorage.token;
             this.getNeedClass();
             this.getTecField();
+            this.getNeedDetails();
         },
     }
 </script>
@@ -805,4 +803,13 @@
 display: none;
 
 }
+  .auditNeedSelf {
+    .redIcon {
+      .el-form-item__label:before {
+        content: '*';
+        color: #F56C6C;
+        margin-right: 4px;
+      }
+    }
+  }
 </style>

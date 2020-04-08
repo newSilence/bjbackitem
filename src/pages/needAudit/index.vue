@@ -5,11 +5,11 @@
                 <div>
                     <span @click="statusClick(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=manageAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in manageAuditType" :key="key">
                         {{item.label}}
-                        <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
+                        <span v-show="item.value==='0'&&item.num" :class="item.count==1?'activeOne':''" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
                     </span>
                 </div>
                 <div style="font-size: 0">
-                    <input v-model="formInline.keyWord" placeholder="请输入需求主题或发布人" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
+                    <input v-model="needParams.searchKey" @keydown.enter="searchTableList" placeholder="请输入需求主题或发布人" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px;outline: none" type="text">
                     <span @click="searchTableList" style="cursor:pointer;font-size:14px;font-weight:500;color:white;padding:9.5px 22px;background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);">
                         <i class="el-icon-search"></i>
                         搜索
@@ -17,30 +17,23 @@
                 </div>
             </div>
             <el-form :inline="true" :model="formInline" style="margin-top:20px" class="demo-form-inline">
-                <el-form-item prop="skillArea" label="">
-                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.skillArea" placeholder="技术领域">
-                        <el-option-group
-                            v-for="group in SkillAreaData"
-                            :key="group.id"
-                            :label="group.desc">
-                            <el-option
-                                v-for="item in group.list"
-                                :key="item.id"
-                                :label="item.desc"
-                                :value="item.id">
-                            </el-option>
-                        </el-option-group>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="">
-                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.fruitType" placeholder="成果类型">
-                        <el-option v-for="item in FruitTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
+                <el-form-item label="" style="margin-right: 21px">
+                <el-select @change="handleTypeSelect" clearable style="width:100%" v-model="needParams.type" placeholder="需求类型">
+                  <el-option v-for="item in needTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
+                </el-select>
+              </el-form-item>
+                <el-form-item prop="skillArea" label="" style="margin-right: 21px">
+                    <el-select @change="handleFiledSelect" clearable style="width:100%" v-model="needParams.technicalFieldId" placeholder="技术领域">
+                      <el-option v-for="item in TecFieldData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
                   <el-date-picker
-                    v-model="value1"
+                    @change="handleTimeChange"
+                    v-model="timeRange"
                     type="daterange"
+                    format="yyyy/MM/dd"
+                    value-format="yyyy/MM/dd"
                     range-separator="-"
                     start-placeholder="需求开始时间"
                     end-placeholder="需求截止时间">
@@ -62,53 +55,38 @@
                     width="45">
                 </el-table-column>
                 <el-table-column
-                    prop="projectName"
+                    prop="title"
                     label="需求主题"
-                    width="">
-                    <template slot-scope="scope">
-                        <div style="display:flex;flex-wrap:wrap">
-                            <span>{{scope.row.projectName}}</span>
-                            <span v-if="scope.row.approvalState==1&&scope.row.isRecommend" style="border:1px solid rgba(43,177,232,1);color:#01A2E4;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">推荐</span>
-                            <span v-if="scope.row.approvalState==4&&scope.row.isRecommend" style="border:1px solid #A7A7A7;color:color:#A7A7A7;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">推荐</span>
-                            <!-- {{scope.row.projectName+'/'+scope.row.cityName}} -->
-                        </div>
-                    </template>
+                    min-width="130">
                 </el-table-column>
                 <el-table-column
-                    prop="yourWant"
+                    prop="userName"
+                    min-width=""
                     label="发布人">
-                    <template slot-scope="scope">
-                        <div>
-                            {{scope.row.yourWant && scope.row.yourWant.length>0?scope.row.yourWant.join():''}}
-                            <!-- {{scope.row.provinceName+'/'+scope.row.cityName}} -->
-                        </div>
-                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="companyName"
-                    label="需求截止时间"
-                    width="">
-                </el-table-column>
-                <el-table-column
-                    prop="createTime"
+                    prop="endDate"
                     width="120"
+                    label="需求截止时间"
+                    >
+                </el-table-column>
+                <el-table-column
+                    prop="createDate"
+                    min-width="100"
                     label="发布时间">
                 </el-table-column>
                 <el-table-column
-                    prop="processType"
-                    width="100"
+                    prop="stateLabel"
+                    min-width="70"
                     label="审核状态">
-                    <template slot-scope="scope">
-                        <div>
-                            <span style="color:#A7A7A7" v-if="scope.row.approvalState==4">已下线</span>
-                            <span style="color:#333333" v-else-if="scope.row.approvalState==0">待审核</span>
-                            <span style="color:#F3A157" v-else-if="scope.row.approvalState==1">已通过</span>
-                            <span style="color:#FD2044" v-else-if="scope.row.approvalState==2">未通过</span>
-                            <span v-else></span>
-                            <!-- {{scope.row.approvalState==4?'已下线':scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}} -->
-                            <!-- {{scope.row.processTypeStr && scope.row.processTypeStr.length>0?scope.row.processTypeStr.join():''}} -->
-                        </div>
-                    </template>
+                  <template slot-scope="scope">
+                    <div>
+                      <span v-if="scope.row.state==0" style="color: #FAA800">{{scope.row.stateLabel}}</span>
+                      <span v-else-if="scope.row.state==2" style="color: #FD2044">{{scope.row.stateLabel}}</span>
+                      <span v-else-if="scope.row.state==1" style="color: #52C41A">{{scope.row.stateLabel}}</span>
+                      <span v-else-if="scope.row.state==3" style="color: #cccccc">{{scope.row.stateLabel}}</span>
+                    </div>
+                  </template>
                 </el-table-column>
                 <el-table-column
                     label="操作"
@@ -121,14 +99,14 @@
                         </el-button>
                         <!-- <div> -->
                         <el-dropdown style="display:inline-block;margin-left:10px" placement="right">
-                            <span style="color:#2BB1E8;font-size:14px" class="el-dropdown-link">
+                            <span style="color:#2BB1E8;font-size:14px;cursor: pointer" class="el-dropdown-link">
                                 更多<i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <!-- <el-dropdown-item>{{scope.row.name}}</el-dropdown-item> -->
-                                <el-dropdown-item @click.native="deleteRow(scope.row)">删除</el-dropdown-item>
-                                <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.approvalState==4?'已下线':'下线'}}</el-dropdown-item>
-                                <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.isRecommend==1?'取消推荐':'设为推荐'}}</el-dropdown-item>
+                                <el-dropdown-item @click.native="deleteNeed(scope.row)">删除</el-dropdown-item>
+                                <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.state==1?false:true">{{scope.row.state==3?'已下线':'下线'}}</el-dropdown-item>
+<!--                                <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.isRecommend==1?'取消推荐':'设为推荐'}}</el-dropdown-item>-->
                             </el-dropdown-menu>
                         </el-dropdown>
                         <!-- </div> -->
@@ -142,16 +120,16 @@
                         <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
                     </span>
                     <button style="margin-left:10px" :disabled="isAllowedButtonClick.batchDeleteButton" @click="batchPro(1)" class="bottom_table_button">删除</button>
-                    <button v-show="!(formInline.approvalState==='0'||formInline.approvalState==='2'||formInline.approvalState==='4')" @click="batchPro(2)" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为推荐</button>
-                    <button @click="batchPro(3)" :disabled="isAllowedButtonClick.batchTrunOther" class="bottom_table_button">转经纪人</button>
+                    <button @click="setRecommend" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为推荐</button>
+<!--                    <button @click="batchPro(3)" :disabled="isAllowedButtonClick.batchTrunOther" class="bottom_table_button">转经纪人</button>-->
                 </div>
                 <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page="formInline.pageIndex"
+                    :current-page="needParams.pageNum"
                     :pager-count="5"
                     :page-sizes="[10, 20, 40, 100]"
-                    :page-size="formInline.pageSize"
+                    :page-size="needParams.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
                     :total="totalAll">
                 </el-pagination>
@@ -161,10 +139,11 @@
 </template>
 
 <script>
-import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType , getProjectList , offLineFun , deleteProFun , recommendProFun , batchDeleteProFun , batchRecommendProFun } from "./api";
+import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType , reqDeleteNeed , offLineFun , deleteProFun , recommendProFun ,reqNeedList,reqTecField ,reqNeedInfoList ,reqOfflineNeed} from "./api";
     export default {
         data() {
             return {
+                timeRange:'',
                 key: "value",
                 isAllowedButtonClick:{
                     batchRecommendButton:false,
@@ -203,10 +182,10 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 statusClickIndex:0,
                 manageAuditType:[
                     {label:'全部',value:''},
-                    {label:'待审核',value:'0',num:0},
+                    {label:'待审核',value:'0',num:0,count:0},
                     {label:'未通过',value:'2'},
-                    {label:'已通过',value:'1'},
-                    {label:'已下线',value:'4'},
+                    {label:'发布中',value:'1'},
+                    {label:'已下线',value:'3'},
                 ],
                 optionsArea:[],
                 formInline:{
@@ -226,26 +205,29 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 },
                 isAllChecked:false,
                 checkboxSelected:[],
-                tableData:[
-                    // {
-                    //     date: '2016-05-02',
-                    //     name: '王小虎',
-                    //     address: '上海市普陀区金沙江路 1518 弄'
-                    // },
-                    // {
-                    //     date: '2016-05-02',
-                    //     name: '王小虎',
-                    //     address: '上海市普陀区金沙江路 1518 弄'
-                    // },
-                    // {
-                    //     date: '2016-05-02',
-                    //     name: '王小虎',
-                    //     address: '上海市普陀区金沙江路 1518 弄'
-                    // }
-                ]
+                tableData:[],
+                needTypeData:[],//需求类型数据
+                TecFieldData:[],//技术领域数据
+                needParams:{
+                  state:'',
+                  type:'',
+                  technicalFieldId:'',
+                  searchKey:'',
+                  endDateS:'',
+                  endDateE:'',
+                  pageNum:1,
+                  pageSize:10
+                }
             }
         },
         methods: {
+             //设为推荐
+             setRecommend(){
+               this.$message({
+                 message: '功能暂未开发',
+                 type: 'warning'
+               });
+             },
             //设置表格样式
             cellStyleFunc(row,column,roeIndex){
                 // #A7A7A7
@@ -259,32 +241,41 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             theadRowCellStyle(){
                 return 'background:rgba(250,250,252,1);'
             },
-            handleSelect(){
-                this.fetch();
+            //需求类型
+            handleTypeSelect(){
+              this.reqNeedInfoList();
+            },
+            //技术领域
+            handleFiledSelect(){
+              this.reqNeedInfoList();
+            },
+            //时间改变
+            handleTimeChange(val){
+              console.log(val)
+               if (val){
+                 this.needParams.endDateS = val[0];
+                 this.needParams.endDateE = val[1];
+                 this.reqNeedInfoList();
+               }else {
+                 this.needParams.endDateS = '';
+                 this.needParams.endDateE = '';
+               }
             },
             statusClick(item,key){
                 if(this.statusClickIndex!=key){
                     this.statusClickIndex=key;
-                    // if(item.value==3){
-                    //     this.formInline.state=1;
-                    //     this.formInline.approvalState='';
-                    // }else{
-                    //     this.formInline.state='';
-                    //     this.formInline.approvalState=item.value;
-                    // }
-                    this.formInline.approvalState=item.value;
-                    this.formInline.pageIndex=1;
-                    this.fetch();
+                    this.needParams.state=item.value;
+                    this.needParams.pageNum=1;
+                    this.reqNeedInfoList();
                 }
             },
             handleSizeChange(val) {
-                this.formInline.pageSize=val;
-                this.formInline.pageIndex=1;
-                this.fetch();
+              this.needParams.pageSize = val;
+              this.reqNeedInfoList();
             },
             handleCurrentChange(val) {
-                this.formInline.pageIndex=val;
-                this.fetch();
+              this.needParams.pageNum = val;
+              this.reqNeedInfoList();
             },
             // 复选框全选事件
             checkChoose(){
@@ -303,7 +294,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 this.fetch();
             },
             seen(row){
-                this.$router.push({path:'/index/needAudit/AuditRelease',query:{id:row.projectId}})
+                this.$router.push({path:'/index/needAudit/AuditRelease',query:{id:row.id}})
             },
             //获取所有的省
             getAllPrivinceData(){
@@ -349,15 +340,15 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             //下线
             offlineRow(row){
                 let param={};
-                param.id=row.projectId;
-                offLineFun(param).then(res=>{
+                param.id=row.id;
+              reqOfflineNeed(param).then(res=>{
                     this.$message({
                         type:res.data.ret?'success':'error',
                         showClose: true,
                         message:res.data.ret?'下线成功':'下线失败',
                     })
                     if(res.data.ret){
-                        this.fetch();
+                        this.reqNeedInfoList();
                     }
                 })
             },
@@ -396,120 +387,154 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             //批量操作功能
             batchPro(flag){
                 //根据标志判断是哪个批量操作功能
-                let optionFunc=flag==1?batchDeleteProFun:flag==2?batchRecommendProFun:'';
-                let str = flag==1?'批量删除':flag==2?'批量设为推荐':'';
-                if(flag==1){
-                    this.isAllowedButtonClick.batchDeleteButton=true;
-                }
-                if(flag==2){
-                    this.isAllowedButtonClick.batchRecommendButton=true;
-                }
-                if(flag==3){
-                    this.isAllowedButtonClick.batchTrunOther=true;
-                }
-                if(optionFunc==''){
-                    this.$message({
-                        type:'warning',
-                        showClose: true,
-                        message:'功能待开发',
-                        onClose:()=>{
-                            if(flag==1){
-                                this.isAllowedButtonClick.batchDeleteButton=false;
-                            }
-                            if(flag==2){
-                                this.isAllowedButtonClick.batchRecommendButton=false;
-                            }
-                            if(flag==3){
-                                this.isAllowedButtonClick.batchTrunOther=false;
-                            }
-                        }
-                    })
-                    return false;
-                }
+                // let optionFunc=flag==1?batchDeleteProFun:flag==2?batchRecommendProFun:'';
+                // let str = flag==1?'批量删除':flag==2?'批量设为推荐':'';
+                // if(flag==1){
+                //     this.isAllowedButtonClick.batchDeleteButton=true;
+                // }
+                // if(flag==2){
+                //     this.isAllowedButtonClick.batchRecommendButton=true;
+                // }
+                // if(flag==3){
+                //     this.isAllowedButtonClick.batchTrunOther=true;
+                // }
+                // if(optionFunc==''){
+                //     this.$message({
+                //         type:'warning',
+                //         showClose: true,
+                //         message:'功能待开发',
+                //         onClose:()=>{
+                //             if(flag==1){
+                //                 this.isAllowedButtonClick.batchDeleteButton=false;
+                //             }
+                //             if(flag==2){
+                //                 this.isAllowedButtonClick.batchRecommendButton=false;
+                //             }
+                //             if(flag==3){
+                //                 this.isAllowedButtonClick.batchTrunOther=false;
+                //             }
+                //         }
+                //     })
+                //     return false;
+                // }
                 //判断是否选择复选框
-                if(this.checkboxSelected.length==0){
-                    this.$message({
-                        type:'warning',
-                        showClose: true,
-                        message:'请选择要操作的数据',
-                        onClose:()=>{
-                            if(flag==1){
-                                this.isAllowedButtonClick.batchDeleteButton=false;
-                            }
-                            if(flag==2){
-                                this.isAllowedButtonClick.batchRecommendButton=false;
-                            }
-                            if(flag==3){
-                                this.isAllowedButtonClick.batchTrunOther=false;
-                            }
-                        }
-                    })
-                    return false;
-                }
+                // if(this.checkboxSelected.length==0){
+                //     this.$message({
+                //         type:'warning',
+                //         showClose: true,
+                //         message:'请选择要操作的数据',
+                //         onClose:()=>{
+                //             if(flag==1){
+                //                 this.isAllowedButtonClick.batchDeleteButton=false;
+                //             }
+                //             if(flag==2){
+                //                 this.isAllowedButtonClick.batchRecommendButton=false;
+                //             }
+                //             if(flag==3){
+                //                 this.isAllowedButtonClick.batchTrunOther=false;
+                //             }
+                //         }
+                //     })
+                //     return false;
+                // }
                 let ids=[];
                 for(let i=0;i<this.checkboxSelected.length;i++){
-                    ids.push(this.checkboxSelected[i].projectId);
+                    ids.push(this.checkboxSelected[i].id);
                 }
                 let param={};
-                param.ids=ids.join();
+                param.id=ids.join();
 
-                optionFunc(param).then(res=>{
-                    this.$message({
-                        type:res.data.ret?'success':'error',
-                        showClose: true,
-                        message:res.data.ret?`${str}成功`:`${str}失败`,
-                        onClose:()=>{
-                            if(flag==1){
-                                this.isAllowedButtonClick.batchDeleteButton=false;
-                            }
-                            if(flag==2){
-                                this.isAllowedButtonClick.batchRecommendButton=false;
-                            }
-                            if(flag==3){
-                                this.isAllowedButtonClick.batchTrunOther=false;
-                            }
-                        }
-                    })
-                    if(res.data.ret){
-                        this.fetch();
-                    }
-                })
-            },
-            //获取列表数据
-            fetch(){
-                this.formInline.provinceId=this.formInline.selectedOptions[0];
-                this.formInline.cityId=this.formInline.selectedOptions[1];
-                let searchForm=JSON.parse(JSON.stringify(this.formInline));
-                for(let key in searchForm){
-                    if(searchForm[key]===''){
-                        delete searchForm[key];
-                    }
+              reqDeleteNeed(param).then(res=>{
+                console.log(res)
+                if (res.data.errcode===0){
+                  this.$message({
+                    message: '批量删除成功',
+                    type: 'success'
+                  });
+                  this.reqNeedInfoList();
+                }else {
+                  this.$message({
+                    message: res.data.data,
+                    type: 'warning'
+                  });
                 }
-                delete searchForm.selectedOptions;
-                getProjectList(searchForm).then(res=>{
-                    if(res.data && res.data.data){
-                        this.tableData = res.data.data.data.list;
-                        this.totalAll=res.data.data.data.total-0;
-                        this.manageAuditType[1].num = res.data.data.count;
-                    }
                 })
             },
+
             //搜索事件
             searchTableList(){
-                this.formInline.pageIndex=1;
-                this.fetch();
+               this.reqNeedInfoList();
             },
+          //获取需求类型
+          reqNeedList(){
+            reqNeedList().then(res=>{
+              console.log('需求类型',res)
+              if(res.data.errcode===0){
+                 this.needTypeData =  res.data.data;
+              }
+            })
+          },
+          //获取技术领域
+          reqTecField(){
+            reqTecField().then(res=>{
+              console.log('技术领域',res)
+              if(res.data.errcode===0){
+                this.TecFieldData =  res.data.data;
+                console.log('TecFieldData',this.TecFieldData)
+              }
+            })
+          },
+          //获取需求审核列表
+          reqNeedInfoList(){
+              let params = this.needParams;
+            reqNeedInfoList(params).then(res=>{
+              console.log('reqNeedInfoList',res.data)
+              if (res.data.errcode===0){
+                 this.tableData = res.data.data.data.list;
+                 this.totalAll = res.data.data.data.total;
+                 this.manageAuditType[1].num =  res.data.data.count;
+                this.manageAuditType[1].count = res.data.data.count? res.data.data.count.toString().length:'';
+                 console.log('res.data.data.count.toString()',res.data.data.count.toString().length)
+              }
+            })
+          },
+          //删除需求
+          deleteNeed(row){
+            console.log(row.id)
+            let id = row.id;
+            let params = {id}
+            reqDeleteNeed(params).then(res=>{
+              console.log(res)
+              if (res.data.errcode===0){
+                this.$message({
+                  message: res.data.data,
+                  type: 'success'
+                });
+                this.reqNeedInfoList();
+              }else {
+                this.$message({
+                  message: res.data.data,
+                  type: 'warning'
+                });
+              }
+            })
+          }
         },
         created () {
             this.getAllPrivinceData();
-            this.getAllSelectData();
-            this.fetch();
+            this.reqNeedInfoList()
+            this.reqNeedList();
+            this.reqTecField();
         },
     }
 </script>
 
 <style lang="less">
 .auditMainList{
+     .activeOne {
+       padding-left: 5px!important;
+       padding-right: 5px!important;
+     }
     .search_input .el-input__inner{
         border:1px solid #01A2E4;
         border-top-left-radius:4px;

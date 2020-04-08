@@ -1,42 +1,45 @@
 <template>
-    <div style="padding:15px 40px">
-      <div style="margin:6px 20px 12px 20px;padding-top:26px;">
-        <div>
-                <span @click="changePersonType(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==personClickIndex?'#2BB1E8':'#333333',borderRight:(key!=personType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in personType" :key="key">
-                    {{item.label}}
-                </span>
-        </div>
-      </div>
+    <div style="padding:15px 40px" class="member-review-self">
+      <div style="display: flex;justify-content: space-between;margin-bottom: 5px">
         <div style="margin:6px 20px 12px 20px;padding-top:26px;">
-            <div>
-                <span @click="changeTypeMem(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountAuditType" :key="key">
-                    {{item.label}}
-                    <span v-show="item.value==='0'&&item.num" style="position:absolute;top:-10px;border-radius:50%;width:22px;height:22px;text-align:center;font-size:10px;line-height:22px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num>99?'99+':item.num:''}}</span>
-                </span>
-            </div>
+          <div>
+            <el-badge :value="item.num" @click.native="changePersonType(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==personClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountData.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountData" :key="key">
+              {{item.label}}
+            </el-badge>
+          </div>
         </div>
         <!-- 会员账号管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
-            <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
-                <el-form-item label="账号性质：">
-                    <el-select @change="selectChange" v-model="formInline.type" placeholder="请选择">
-                        <el-option
-                        v-for="item in accountTypeData"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
-                <el-form-item label="">
-                    <el-input class="search_input" placeholder="请输入会员名称或账号"  v-model="formInline.keyWord">
-                        <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;border:1px solid #01A2E4;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
-                    </el-input>
-                </el-form-item>
-            </el-form>
+          <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <!--                <el-form-item label="账号性质：">-->
+            <!--                    <el-select @change="selectChange" v-model="formInline.type" placeholder="请选择">-->
+            <!--                        <el-option-->
+            <!--                        v-for="item in accountTypeData"-->
+            <!--                        :key="item.value"-->
+            <!--                        :label="item.label"-->
+            <!--                        :value="item.value">-->
+            <!--                        </el-option>-->
+            <!--                    </el-select>-->
+            <!--                </el-form-item>-->
+          </el-form>
+          <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form-item label="">
+              <el-input class="search_input" placeholder="请输入会员名称或账号"  v-model="formInline.keyWord">
+                <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;border:1px solid #01A2E4;color:white" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
+              </el-input>
+            </el-form-item>
+          </el-form>
         </div>
+      </div>
+
+<!--        <div style="margin:6px 20px 12px 20px;padding-top:26px;">-->
+<!--            <div>-->
+<!--                <span @click="changeTypeMem(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountAuditType" :key="key">-->
+<!--                    {{item.label}}-->
+<!--                    <span v-show="item.value==='0'&&item.num" style="position:absolute;top:-10px;border-radius:50%;width:22px;height:22px;text-align:center;font-size:10px;line-height:22px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num>99?'99+':item.num:''}}</span>-->
+<!--                </span>-->
+<!--            </div>-->
+<!--        </div>-->
         <div>
             <el-table
                 @selection-change="chooseTr"
@@ -64,19 +67,19 @@
                 label="会员账号"
                 width="">
                 </el-table-column>
-                <el-table-column
-                label="账号性质"
-                width="80px"
-                show-overflow-tooltip>
-                    <template slot-scope="scope">{{
-                        scope.row.type==1?'个人'
-                        :scope.row.type==2?'机构':''}}</template>
-                </el-table-column>
-                <el-table-column
-                prop="nickname"
-                label="申请权限"
-                width="100px">
-                </el-table-column>
+<!--                <el-table-column-->
+<!--                label="账号性质"-->
+<!--                width="80px"-->
+<!--                show-overflow-tooltip>-->
+<!--                    <template slot-scope="scope">{{-->
+<!--                        scope.row.type==1?'个人'-->
+<!--                        :scope.row.type==2?'机构':''}}</template>-->
+<!--                </el-table-column>-->
+<!--                <el-table-column-->
+<!--                prop="nickname"-->
+<!--                label="申请权限"-->
+<!--                width="100px">-->
+<!--                </el-table-column>-->
                 <el-table-column
                 prop="provinceName"
                 label="所在地区"
@@ -94,8 +97,8 @@
                 label="认证状态"
                 width="">
                     <template slot-scope="scope">
-                        <span v-if="scope.row.auditStatus===1" style="color:#F3A157">已通过</span>
-                        <span v-else-if="scope.row.auditStatus===0" style="color:#4B4B4B">待审核</span>
+                        <span v-if="scope.row.auditStatus===1" style="color:#52C41A">已通过</span>
+                        <span v-else-if="scope.row.auditStatus===0" style="color:#FAA800">待审核</span>
                         <span v-else-if="scope.row.auditStatus===2" style="color:#FD2044">未通过</span>
                         <span v-else></span>
                         <!-- {{ scope.row.auditStatus===0?'待审核':scope.row.auditStatus===1?'已通过':scope.row.auditStatus===2?'未通过':''}} -->
@@ -405,17 +408,16 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     //{value:'4',label:'服务商'},
                     // {value:'其他自定义',label:'其他自定义'},
                 ],
-                personType:[
-                  {label:'专家',value:''},
-                  {label:'机构',value:'0'},
-                  {label:'服务商',value:'2'},
-                  {label:'经纪人',value:'1'},
-                ],
                 accountAuditType:[
                     {label:'全部',value:''},
                     {label:'待审核',value:'0',num:0},
                     {label:'未通过',value:'2'},
                     {label:'已通过',value:'1'},
+                ],
+                accountData:[
+                  {label:'专家审核',value:1,num:0},
+                  {label:'机构审核',value:2,num:0},
+                  {label:'经纪人审核',value:3,num:0},
                 ],
                 //专家详情弹框
                 dialogExpertFormVisible:false,
@@ -482,7 +484,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 total:0,
                 formInline: {
                     keyWord:'',
-                    type:'',
+                    approvalType:1,
                     auditStatus:'',
                     pageNumber:1,
                     pageSize:10,
@@ -549,13 +551,15 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 if(this.statusClickIndex!=key){
                     this.statusClickIndex=key;
                     this.formInline.auditStatus=item.value;
-                    this.formInline.pageIndex=1;
                     this.fetchData();
                 }
             },
             changePersonType(item,key){
-                if (this.personClickIndex != key){
+                if (this.personClickIndex != key) {
                   this.personClickIndex = key;
+                  console.log(item)
+                  this.formInline.approvalType = item.value;
+                  this.fetchData();
                 }
             },
             //切换账号性质
@@ -565,12 +569,14 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //点击表格行
             seenDeatil(row){
-                if(row.nickname=='专家'){
+              console.log(row);
+              if(row.nickname=='专家'){
                     this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:1}})
-                }
-                if(row.nickname=='机构'){
+                }else if(row.nickname=='机构'){
                     this.$router.push({path:'/index/authority/angencyReview',query:{id:row.userId,approvalType:2}})
-                }
+                }else if (row.nickname=='经纪人'){
+                this.$router.push({path:'/index/authority/agentReview',query:{id:row.userId,approvalType:3}})
+              }
             },
             //权限设置
             setPermit(row){
@@ -756,7 +762,11 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     if(res.data.ret){
                         this.tableData=res.data.data.data.list;
                         this.total=res.data.data.data.total;
-                        this.accountAuditType[1].num=res.data.data.count;
+                        this.accountAuditType[1].num = res.data.data.count;
+                        this.accountData[0].num = res.data.data.countExpert;
+                        this.accountData[1].num = res.data.data.countCompany;
+                        this.accountData[2].num = res.data.data.countAgent;
+                        console.log('res.data',res.data)
                     }
                 })
             },
@@ -785,31 +795,38 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
-    .el-table tbody tr:hover>td {
+    .member-review-self {
+      .el-badge__content.is-fixed {
+        right: 32px;
+      }
+      .el-table tbody tr:hover>td {
         background-color:#E6F7FF!important
-    }
-    .search_input .el-input__inner{
+      }
+      .search_input .el-input__inner{
         border:1px solid #01A2E4;
+        border-right: none;
         width: 293px;
         border-top-left-radius:4px;
         border-bottom-left-radius:4px;
-    }
-    .no_select .vue-treeselect__value-container{
+      }
+      .no_select .vue-treeselect__value-container{
         display:none;
-    }
-    .no_select .vue-treeselect__x-container{
+      }
+      .no_select .vue-treeselect__x-container{
         display:none;
-    }
-    .no_select .vue-treeselect__menu-container{
+      }
+      .no_select .vue-treeselect__menu-container{
         position: relative;
-    }
-    .no_select .vue-treeselect__control{
+      }
+      .no_select .vue-treeselect__control{
         display: none!important;
-    }
-    .point_class{
+      }
+      .point_class{
         cursor: pointer;
         font-size:16px;
         font-family:PingFangSC-Medium,PingFang SC;
         font-weight:500;
+      }
     }
+
 </style>

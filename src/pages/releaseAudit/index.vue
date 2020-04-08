@@ -5,11 +5,11 @@
                 <div>
                     <span @click="statusClick(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=manageAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in manageAuditType" :key="key">
                         {{item.label}}
-                        <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
+                        <span v-show="item.value==='0'&&item.num" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
                     </span>
                 </div>
                 <div style="font-size: 0">
-                    <input v-model="formInline.keyWord" placeholder="请输入项目名称或发布单位" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
+                    <input v-model="formInline.keyWord" placeholder="请输入项目名称或发布单位" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px;outline: none" type="text">
                     <span @click="searchTableList" style="cursor:pointer;font-size:14px;font-weight:500;color:white;padding:9.5px 22px;background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);">
                         <i class="el-icon-search"></i>
                         搜索
@@ -158,10 +158,10 @@
                     label="当前进度">
                     <template slot-scope="scope">
                         <div>
-                            <span style="color:#A7A7A7" v-if="scope.row.approvalState==4">已下线</span>
-                            <span style="color:#333333" v-else-if="scope.row.approvalState==0">待审核</span>
-                            <span style="color:#F3A157" v-else-if="scope.row.approvalState==1">发布中</span>
-                            <span style="color:#FD2044" v-else-if="scope.row.approvalState==2">未通过</span>
+                            <span style="color: #cccccc" v-if="scope.row.approvalState==4">{{scope.row.approvalStateLabel}}</span>
+                            <span style="color: #FAA800" v-else-if="scope.row.approvalState==0">{{scope.row.approvalStateLabel}}</span>
+                            <span style="color: #52C41A" v-else-if="scope.row.approvalState==1">{{scope.row.approvalStateLabel}}</span>
+                            <span style="color: #FD2044" v-else-if="scope.row.approvalState==2">{{scope.row.approvalStateLabel}}</span>
                             <span v-else></span>
                             <!-- {{scope.row.approvalState==4?'已下线':scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}} -->
                             <!-- {{scope.row.processTypeStr && scope.row.processTypeStr.length>0?scope.row.processTypeStr.join():''}} -->
@@ -373,7 +373,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                             this.optionsArea[i].value=this.optionsArea[i].regionId;
                         }
                     }
-                    
+
                 });
             },
             //获取技术领域
@@ -434,7 +434,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     }
                 })
             },
-            //推荐 
+            //推荐
             recommendRow(row){
                 let param={};
                 param.id=row.projectId;
@@ -510,7 +510,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 }
                 let param={};
                 param.ids=ids.join();
-                
+
                 optionFunc(param).then(res=>{
                     this.$message({
                         type:res.data.ret?'success':'error',

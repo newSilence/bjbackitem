@@ -5,11 +5,11 @@
                 <div>
                     <span @click="statusClick(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==statusClickIndex?'#2BB1E8':'#333333',borderRight:(key!=manageAuditType.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in manageAuditType" :key="key">
                         {{item.label}}
-                        <span v-show="item.value==='0'" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
+                        <span v-show="item.value==='0'&&item.num" style="position:absolute;top:-10px;border-radius:50%;font-size:12px;padding:2.5px;background:#FD2044;color:white;margin-left:-3px">{{item.num?item.num:''}}</span>
                     </span>
                 </div>
                 <div style="font-size: 0">
-                    <input v-model="activeParams.keyword" @keyup.enter="searchTableList" placeholder="请输入活动名称、主办单位" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px" type="text">
+                    <input v-model="activeParams.keyword" @keyup.enter="searchTableList" placeholder="请输入活动名称、主办单位" style="width:280px;height:34px;border:1px solid #01A2E4;border-radius:4px 0px 0px 4px;padding-left:10px;outline: none" type="text">
                     <span @click="searchTableList" style="cursor:pointer;font-size:14px;font-weight:500;color:white;padding:9.5px 22px;background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);">
                         <i class="el-icon-search"></i>
                         搜索
@@ -17,17 +17,17 @@
                 </div>
             </div>
             <el-form :inline="true" :model="formInline" style="margin-top:20px" class="demo-form-inline">
-                <el-form-item label="">
+                <el-form-item label="" style="margin-right: 21px">
                     <el-select @change="handleActiveType" clearable style="width:100%" v-model="formInline.processType" placeholder="活动类型">
                         <el-option v-for="item in ActiveTypeData" :key="item.id" :label="item.value" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="">
+                <el-form-item label="" style="margin-right: 21px">
                     <el-select @change="handleFildType" clearable style="width:100%" v-model="formInline.financingType" placeholder="活动领域">
                         <el-option v-for="item in ActiveFildData" :key="item.id" :label="item.value" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
-              <el-form-item label="">
+              <el-form-item label="" style="margin-right: 21px">
                 <el-cascader
                   clearable
                   v-model="formInline.selectedOptions"
@@ -36,8 +36,8 @@
                   @change="handleAreaChange"
                   :props="cascaderProps"
                 ></el-cascader>
-              </el-form-item>
-                <el-form-item label="">
+              </el-form-item >
+                <el-form-item label="" style="margin-right: 21px" v-show="isPass">
                     <el-select @change="handleStateChange" clearable v-model="formInline.yourWant" placeholder="报名状态">
                         <el-option v-for="item in AppealData" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
@@ -70,7 +70,7 @@
                 </el-table-column>
               <el-table-column
                 prop="activitiesTopic"
-                width=""
+                min-width="150"
                 label="活动名称">
               </el-table-column>
               <el-table-column
@@ -80,7 +80,7 @@
                 <template slot-scope="scope">
                   <div>
                     <span v-if="scope.row.isFee ==0">免费</span>
-                    <span v-if="scope.row.isFee ==1">{{scope.row.regFee}}</span>
+                    <span v-if="scope.row.isFee ==1">{{scope.row.regFee + '元/人'}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -88,28 +88,34 @@
                     prop="regNumber"
                     label="活动名额"
                     width="">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.regNumber + '人'}}</span>
+                  </template>
                 </el-table-column>
 
               <el-table-column
                 prop="endTime"
-                width=""
+                width="150"
                 label="报名截止时间">
               </el-table-column>
                 <el-table-column
                     prop="createTime"
                     width=""
                     label="提交时间">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.createTime?scope.row.createTime.substring(0,10):''}}</span>
+                  </template>
                 </el-table-column>
                 <el-table-column
                     prop="status"
-                    width="100"
+                    width=""
                     label="审核状态">
                     <template slot-scope="scope">
                         <div>
-                            <span style="color:#A7A7A7" v-if="scope.row.approvalStatus==4">已下线</span>
-                            <span style="color:#333333" v-else-if="scope.row.approvalStatus==0">待审核</span>
-                            <span style="color:#F3A157" v-else-if="scope.row.approvalStatus==1">已通过</span>
-                            <span style="color:#FD2044" v-else-if="scope.row.approvalStatus==2">未通过</span>
+                            <span style="color:#cccccc" v-if="scope.row.approvalStatus==4">{{scope.row.approvalStateLabel}}</span>
+                            <span style="color:#FAA800" v-else-if="scope.row.approvalStatus==0">{{scope.row.approvalStateLabel}}</span>
+                            <span style="color:#52C41A" v-else-if="scope.row.approvalStatus==1">{{scope.row.approvalStateLabel}}</span>
+                            <span style="color:#FD2044" v-else-if="scope.row.approvalStatus==2">{{scope.row.approvalStateLabel}}</span>
                         </div>
                     </template>
                 </el-table-column>
@@ -210,7 +216,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     {label:'全部',value:''},
                     {label:'待审核',value:'0',num:0},
                     {label:'未通过',value:'2'},
-                    {label:'已通过',value:'1'},
+                    {label:'发布中',value:'1'},
                     {label:'已下线',value:'4'},
                 ],
                 optionsArea:[],
@@ -239,7 +245,8 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                   pageSize:10,
                   keyword:''
                 },
-               ActiveFildData:[] //活动领域
+               ActiveFildData:[], //活动领域
+               isPass:false
             }
         },
         methods: {
@@ -298,8 +305,11 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             },
             statusClick(item,key){
                 if(this.statusClickIndex!=key){
+                    this.activeParams.status = '';
+                    this.formInline.yourWant = '';
                     this.statusClickIndex=key;
-                    console.log('item',item)
+                    console.log('item',item);
+                    item.value==1?this.isPass=true:this.isPass=false;
                     this.activeParams.approvalStatus=item.value;
                     this.activeParams.pageNum=1;
                     this.getActiveList();
@@ -541,7 +551,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
           },
           //删除活动
           delActiveItem(){
-
             delActiveItem()
           },
           //设为推荐

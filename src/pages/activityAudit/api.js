@@ -214,4 +214,12 @@ export function reqDeleateActive(data){
     method:'get'
   })
 }
+//修改活动
+export function reqmodifyActive(data){
+  return request({
+    url:'/manager/innovationActivities/updateById',
+    data,
+    method:'post'
+  })
+}
 

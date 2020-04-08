@@ -12,6 +12,7 @@ import DetailSelf from '@/pages/authority/DetailSelf'
 import DetailAngency from '@/pages/authority/DetailAngency'
 import DetailExpert from '@/pages/authority/DetailExpert'
 import ExpertReview from '@/pages/authority/expertReview'
+import AgentReview from '@/pages/authority/agentReview'
 import ServiceReview from '@/pages/authority/serviceReview'
 import AngencyReview from '@/pages/authority/angencyReview'
 //审核模块
@@ -103,7 +104,13 @@ const routerAll=new Router({
           path: 'authority/angencyReview',//
           name: 'angencyReview',
           component: AngencyReview
-        },{
+        },
+        {
+          path: 'authority/agentReview',//经纪人审核
+          name: 'agentReview',
+          component: AgentReview
+        },
+        {
           path: 'webauthority/webmenu',
           name: 'WebMenu',
           component: WebMenu

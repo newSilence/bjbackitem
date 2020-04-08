@@ -160,7 +160,6 @@ export function reqNeedClass(data){
   })
 }
 //技术领域
-
 export function reqTecField(data){
   return request({
     url:'/needInfo/queryTechnicalField',
@@ -168,3 +167,61 @@ export function reqTecField(data){
     method:'get'
   })
 }
+//需求类型
+export function reqNeedList(data){
+  return request({
+    url:'/needInfo/queryNeedType',
+    params:data,
+    method:'get'
+  })
+}
+//需求列表
+export function reqNeedInfoList(data){
+  return request({
+    url:'/manager/needInfo/selectAll',
+    params:data,
+    method:'get'
+  })
+}
+//删除需求
+export function reqDeleteNeed(data){
+  return request({
+    url:'/manager/needInfo/deleteNeedInfo',
+    params:data,
+    method:'get'
+  })
+}
+//需求详情
+export function reqNeedDetails(data){
+  return request({
+    url:'/manager/needInfo/selectNeedInfoDetail',
+    params:data,
+    method:'get'
+  })
+}
+//审核需求
+export function reqExamineNeed(data){
+  return request({
+    url:'/manager/needInfo/checkNeedInfo',
+    params:data,
+    method:'get'
+  })
+}
+//需求下线
+export function reqOfflineNeed(data){
+  return request({
+    url:'/manager/needInfo/offlineNeedInfo',
+    params:data,
+    method:'get'
+  })
+}
+//需求更新
+export function reqUpdateNeed(data){
+  return request({
+    url:'/manager/needInfo/updateNeedInfo',
+    data,
+    method:'post'
+  })
+}
+
+

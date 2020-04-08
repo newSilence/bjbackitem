@@ -1,5 +1,5 @@
 <template>
-    <div style="padding:28px 35px;background:white;height:100%">
+    <div style="padding:28px 35px;background:white;height:100%" class="auditActiveSelf">
         <div style="display:flex;justify-content:space-between;font-size:16px;color:#333">
             <span>活动审核</span>
             <span @click="goBack" style="cursor:pointer">
@@ -18,8 +18,8 @@
 <!--                <button @click="saveDetail(1)" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>-->
               <button @click="handlePass" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
               <button @click="handleCloseActive" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">驳回</button>
-<!--                <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>-->
-<!--                <button v-show="isEdit" @click="saveDetail(2)" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>-->
+                <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>
+                <button v-show="isEdit" @click="saveDetail()" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
             </div>
         </div>
         <!-- 未通过 -->
@@ -31,7 +31,7 @@
                 </div>
                 <div>
 <!--                    <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>-->
-                    <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
+<!--                    <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>-->
                 </div>
             </div>
             <div style="font-size:16px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(94,94,94,1);">
@@ -54,8 +54,8 @@
                     <span style="color:#F3A157">已通过</span>
                 </div>
                 <div>
-<!--                    <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>-->
-                    <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
+                  <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>
+                  <button v-show="isEdit" @click="saveDetail()" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
                 </div>
             </div>
             <div style="font-size:16px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(94,94,94,1);">
@@ -70,10 +70,10 @@
             <span>当前进度：</span>
             <span style="color:#F3A157">已下线</span>
           </div>
-          <div>
-            <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>
-            <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>
-          </div>
+<!--          <div>-->
+<!--            <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>-->
+<!--            <button v-show="isEdit" @click="saveDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">保存</button>-->
+<!--          </div>-->
         </div>
         <div style="font-size:16px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(94,94,94,1);">
           <span style="padding-right:70px">审核人员：{{activeDetails.approvalUser}}</span>
@@ -81,7 +81,7 @@
         </div>
       </div>
 
-      <el-form ref="form" :model="form" :rules="isEdit?rules:null" style="overflow:hidden" label-width="130px">
+      <el-form ref="form" :model="activeDetails" :rules="isEdit?rules:null" style="overflow:hidden" label-width="130px">
         <!-- 活动描述 -->
         <div>
             <div style="border-bottom:1px solid #E9E9E9;padding-bottom:7px;margin-top:26px;font-size:16px;color:#333333;margin-bottom:35px">
@@ -90,58 +90,102 @@
             <!-- <el-form ref="form" :model="form" :rules="isEdit?rules:''" style="overflow:hidden" label-width="110px"> -->
           <el-col :span="24">
             <el-col :span="12">
-                <el-form-item prop="projectName" label="活动名称：">
-                    <el-input :readonly="!isEdit" v-model="activeDetails.activitiesTopic"></el-input>
+                <el-form-item prop="activitiesTopic" label="活动名称：">
+                    <el-input :readonly="!isEdit" placeholder="请输入活动名称，不超过30字" v-model="activeDetails.activitiesTopic"></el-input>
                 </el-form-item>
             </el-col>
           </el-col>
-                <el-col :span="24">
+         <el-col :span="24">
                     <el-col :span="12">
-                        <el-form-item prop="skillArea" label="活动地区：">
-<!--                          <el-cascader-->
-<!--                            clearable-->
-<!--                            :readonly="!isEdit"-->
-<!--                            v-model="areaData"-->
-<!--                            placeholder="活动地区"-->
-<!--                            :options="optionsArea"-->
-<!--                            @change="handleAreaChange"-->
-<!--                            :props="cascaderProps"-->
-<!--                          ></el-cascader>-->
-                            <el-input :readonly="!isEdit" v-model="areaDatas"></el-input>
-                        </el-form-item>
+                      <el-form-item prop="" :class="isEdit?'redIcon':''" label="所在省份：">
+                        <el-select :disabled="!isEdit" clearable @clear="clearProvince" @change="provinceChange" v-model="form.provinceId">
+                          <el-option
+                            v-for="(item,index) in prinvinceData"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.regionId"
+                          ></el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item prop="" :class="isEdit?'redIcon':''" label="所在城市：">
+                        <el-select :disabled="!isEdit" clearable v-model="form.cityId" @change="cityChange">
+                          <el-option
+                            v-for="(item,index) in cityData"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.regionId"
+                          ></el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item prop="" :class="isEdit?'redIcon':''" label="所在地区：">
+                        <el-select :disabled="!isEdit" clearable v-model="form.areaId">
+                          <el-option
+                            v-for="(item,index) in areaData"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.regionId"
+                          ></el-option>
+                        </el-select>
+                        <!-- <el-cascader
+                            clearable
+                            v-model="form.position"
+                            placeholder="请选择所在地区"
+                            :options="optionsArea"
+                            :props="cascaderProps"
+                        ></el-cascader> -->
+                      </el-form-item>
                     </el-col>
                 </el-col>
           <el-col :span="24">
             <el-col :span="12">
-              <el-form-item prop="useArea" label="详细地址：">
-                <el-input :readonly="!isEdit" v-model="activeDetails.address"></el-input>
+              <el-form-item :class="isEdit?'redIcon':''" style="margin-right: 21px" prop="" label="活动领域：">
+                <el-select multiple :multiple-limit="3" @change="handleActivitiesIndustry" :disabled="!isEdit"  clearable style="width:100%" v-model="form.activitiesIndustry"  placeholder="请选择活动领域">
+                  <el-option v-for="item in ActiveFildData" :key="item.id" :label="item.value" :value="item.code"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-col>
+          <el-col :span="24">
+            <el-col :span="12">
+              <el-form-item :class="isEdit?'redIcon':''" style="margin-right: 21px" prop="" label="活动方式：">
+                <el-select :disabled="!isEdit"  clearable style="width:100%" v-model="form.activitiesMode"  placeholder="请选择活动方式">
+                  <el-option  :disabled="item.disabled" v-for="item in ActiveMethodsData" :key="item.label" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-col>
+          <el-col :span="24">
+            <el-col :span="12">
+              <el-form-item prop="address" label="详细地址：">
+                <el-input placeholder="请输入详细地址，不超过30字" :readonly="!isEdit" v-model="activeDetails.address"></el-input>
               </el-form-item>
             </el-col>
           </el-col>
           <el-col :span="24">
           <el-col :span="12" style="display:flex;">
-            <el-form-item prop="valuationType" label="报名费：">
+            <el-form-item :class="isEdit?'redIcon':''" prop="" label="报名费：">
               <el-col :span="10" style="min-width:100px">
-                <el-input style="width: 100%" required @change="valuInputChange" :readonly="!isEdit " v-model="activeDetails.regFee"></el-input>
+                <el-input style="width: 100%" @input="valuInputChange"   :readonly="true " :disabled="true" v-model="activeDetails.regFee"></el-input>
               </el-col>
               <span style="padding-left:10px">元</span>
-              <el-checkbox :disabled="!isEdit" style="padding-left:15px" @change="checkBoxChange" v-model="activeDetails.isFee" :checked="activeDetails.isFee==0?true:false" label="0">免费</el-checkbox>
+              <el-checkbox :disabled="true" :readonly="true " style="padding-left:15px" @change="checkBoxChange" v-model="form.isChecked"   :checked="form.isChecked" label="0">免费</el-checkbox>
             </el-form-item>
           </el-col>
           </el-col>
                 <el-col :span="24">
                     <el-col :span="12">
-                      <el-form-item prop="useArea" label="人数：">
-                        <el-input :readonly="!isEdit" v-model="activeDetails.regNumber"></el-input>
+                      <el-form-item prop="regNumber" label="人数：">
+                        <el-input :readonly="true" :disabled="true" v-model="activeDetails.regNumber"></el-input>
                       </el-form-item>
                     </el-col>
 
                 </el-col>
                 <el-col :span="24">
                     <el-col :span="12">
-                        <el-form-item prop="financingType" label="活动起止时间：">
+                        <el-form-item :class="isEdit?'redIcon':''" prop="" label="活动起止时间：">
                           <el-date-picker
-                            v-model="startEndTime"
+                            :readonly="!isEdit"
+                            v-model="form.startEndTime"
                             type="datetimerange"
                             @change="handleTimeChange"
                             format="yyyy/MM/dd HH:mm"
@@ -155,8 +199,8 @@
                 </el-col>
                 <el-col :span="24">
                   <el-col :span="12">
-                    <el-form-item prop="yourWant" label="活动类型：">
-                      <el-select v-model="activeDetails.activitiesType" @change="handleActiveType" style="width: 100%" placeholder="请选择活动类型">
+                    <el-form-item prop="activitiesTypeName" label="活动类型：">
+                      <el-select :disabled="!isEdit" v-model="activeDetails.activitiesTypeName" @change="handleActiveType" style="width: 100%" placeholder="请选择活动类型">
                         <el-option
                           v-for="item in ActiveTypeData"
                           :key="item.value"
@@ -169,8 +213,9 @@
                 </el-col>
                 <el-col :span="24">
                   <el-col :span="12">
-                    <el-form-item prop="yourWantContent" label="报名截止时间：">
+                    <el-form-item prop="regEndTime" label="报名截止时间：">
                       <el-date-picker
+                        :disabled="true"
                         style="width: 100%"
                         format="yyyy/MM/dd HH:mm"
                         value-format="yyyy/MM/dd HH:mm"
@@ -193,18 +238,18 @@
                     <el-col :span="12">
                       <el-form-item label="主办单位：">
                         <el-col :span="10" style="min-width:378px">
-                          <el-input :readonly="!isEdit" v-model="searchKeyInput" placeholder="最多5个标签"></el-input>
+                          <el-input :readonly="!isEdit" v-model="searchKeyInput1" placeholder="可增加主办方,最多10个"></el-input>
                         </el-col>
-                        <button :disabled="!isEdit" @click="addSearchKey" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
+                        <button type="button" :disabled="!isEdit" @click="addSearchKey" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
                           <i class="el-icon-plus"></i>
                         </button>
                       </el-form-item>
-                      <el-form-item prop="searchKeyData" label="关键词：" v-if="activeDetails">
+                      <el-form-item prop="organizers" label="单位：" >
                         <el-tag
                           style="margin-right:10px"
-                          v-for="(item,index) in activeDetails.organizers>0?activeDetails.organizers.split(','):''" :key="index"
+                          v-for="(item,index) in activeDetails.organizers" :key="index"
                           :closable="isEdit"
-                          @close="keyDataClose(item)"
+                          @close="keyDataClose1(item)"
                           type="info">
                           {{item}}
                         </el-tag>
@@ -213,18 +258,18 @@
                   <el-col :span="12">
                     <el-form-item label="协办方：">
                       <el-col :span="10" style="min-width:378px">
-                        <el-input :readonly="!isEdit" v-model="searchKeyInput" placeholder="最多5个标签"></el-input>
+                        <el-input :readonly="!isEdit" v-model="searchKeyInput2" placeholder="可增加协办方，最多10个(每个不超过20字)"></el-input>
                       </el-col>
-                      <button :disabled="!isEdit" @click="addSearchKey" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
+                      <button  type="button" :disabled="!isEdit" @click="addSearchKey1" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
                         <i class="el-icon-plus"></i>
                       </button>
                     </el-form-item>
-                    <el-form-item prop="searchKeyData" label="关键词：" v-if="activeDetails">
+                    <el-form-item prop="" label="单位：" v-if="activeDetails">
                       <el-tag
                         style="margin-right:10px"
-                        v-for="(item,index) in activeDetails.coOrganizers?activeDetails.coOrganizers.split(','):''" :key="index"
+                        v-for="(item,index) in activeDetails.coOrganizers" :key="index"
                         :closable="isEdit"
-                        @close="keyDataClose(item)"
+                        @close="keyDataClose2(item)"
                         type="info">
                         {{item}}
                       </el-tag>
@@ -233,7 +278,7 @@
                 </el-col>
                 <el-col :span="24">
                   <el-col :span="12">
-                    <el-form-item prop="contactName" label="联系人：">
+                    <el-form-item prop="contact" label="联系人：">
                       <el-input :readonly="!isEdit" v-model="activeDetails.contact"></el-input>
                     </el-form-item>
                   </el-col>
@@ -249,28 +294,28 @@
             <div style="border-bottom:1px solid #E9E9E9;padding-bottom:7px;margin-top:26px;font-size:16px;color:#333333;margin-bottom:35px">
                 <span style="border-bottom:2px solid #2BB1E8;padding-bottom:4px">活动内容</span>
             </div>
-                <el-form-item prop="photos" label="活动宣传图：">
-                    <el-upload
-                        :disabled="!isEdit"
-                        :headers="myHeaders"
-                        :action="baseUrl+'/upLoading'"
-                        list-type="picture-card"
-                        accept="image/*"
-                        :limit='3'
-                        :data="{model:'publish'}"
-                        :file-list="activeDetails.imgAddrs"
-                        :on-preview="handlePictureCardPreview"
-                        :before-upload="beforeAvatarUpload"
-                        :on-error="imgUploadError"
-                        :on-success="handleAvatarSuccess"
-                        :on-remove="handleRemove">
-                        <i v-if="form.photos.length<2" class="el-icon-plus"></i>
-                        <div slot="tip" class="el-upload__tip">建议尺寸为285*200px不能超过2M</div>
-                    </el-upload>
-                    <el-dialog :visible.sync="dialogPicVisible">
-                        <img width="100%" :src="dialogPicImageUrl" alt="">
-                    </el-dialog>
-                </el-form-item>
+               <el-form-item prop="photos" label="活动宣传图：">
+            <el-upload
+              :disabled="!isEdit"
+              :headers="myHeaders"
+              :action="baseUrl+'/upLoading'"
+              list-type="picture-card"
+              accept="image/*"
+              :limit='1'
+              :data="{model:'publish'}"
+              :file-list="form.photos"
+              :on-preview="handlePictureCardPreview"
+              :before-upload="beforeAvatarUpload"
+              :on-error="imgUploadError"
+              :on-success="handleAvatarSuccess"
+              :on-remove="handleRemove">
+              <i v-if="form.photos.length<1" class="el-icon-plus"></i>
+              <div slot="tip" class="el-upload__tip">建议尺寸为285*200px不能超过2M</div>
+            </el-upload>
+            <el-dialog :visible.sync="dialogPicVisible">
+              <img width="100%" :src="dialogPicImageUrl" alt="">
+            </el-dialog>
+          </el-form-item>
                 <el-form-item  class="edit_container news" label="活动详情：">
                     <quill-editor
                         :disabled="!isEdit"
@@ -281,18 +326,18 @@
                 </el-form-item>
                 <el-form-item label="关键词搜索：">
                     <el-col :span="10" style="min-width:378px">
-                        <el-input :readonly="!isEdit" v-model="searchKeyInput" placeholder="最多5个标签"></el-input>
+                        <el-input :readonly="!isEdit" v-model="searchKeyInput3" placeholder="最多5个标签"></el-input>
                     </el-col>
-                    <button :disabled="!isEdit" @click="addSearchKey" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
+                    <button type="button" :disabled="!isEdit" @click="addSearchKey2" style="cursor:pointer;padding:11px 10px;font-size:14px;background:rgba(252,252,252,1);border-radius:0px 2px 2px 0px;border:1px solid rgba(237,237,237,1);">
                         <i class="el-icon-plus"></i>
                     </button>
                 </el-form-item>
-                <el-form-item prop="searchKeyData" label="关键词：">
+                <el-form-item prop="" label="关键词：">
                     <el-tag
                         style="margin-right:10px"
                         v-for="(item,index) in activeDetails.words" :key="index"
                         :closable="isEdit"
-                        @close="keyDataClose(item)"
+                        @close="keyDataClose3(item)"
                         type="info">
                         {{item}}
                     </el-tag>
@@ -319,7 +364,7 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <button @click="confirmTurnDown" style="background:rgba(251,251,251,1);border-radius:3px;padding:5px 20px;color:#828282;margin-right:30px;cursor:pointer">确定</button>
+                <button @click="confirmTurnDown" :disabled="isDisabled" style="background:rgba(251,251,251,1);border-radius:3px;padding:5px 20px;color:#828282;margin-right:30px;cursor:pointer">确定</button>
                 <button @click="cancelTurnDown" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;padding:5px 20px;color:white;cursor:pointer">取消</button>
             </span>
         </el-dialog>
@@ -338,12 +383,11 @@
       getListFruitType,
       getAllFinancingType,
       getProDetailById,
-      updateProDetail,
-      approvalProDetail,
+      getActiveType,
       reqActiveDetails,
       reqActivePass,
       reqActiveReject,
-      getActiveType
+      reqmodifyActive
     } from "./api";
     export default {
         data() {
@@ -367,6 +411,19 @@
                 }
             };
             return {
+              isAddMoney:false,
+              ActiveMethodsData:[{
+                  value: 0,
+                  label: '线上活动'
+                }, {
+                  value: 1,
+                  label: '线下活动',
+                  disabled: true
+                },],
+                searchKeyInput3:'',
+                searchKeyInput2:'',
+                searchKeyInput1:'',
+                isDisabled:false,
                 key: "value",
                 myHeaders:{},
                 baseUrl:uploadUrl.uploadUrl,//图片上传地址，方便测试
@@ -415,6 +472,10 @@
                 },
                 // optionsArea:provinceAndCityData,
                 form:{
+                    startEndTime:[],
+                    isChecked:false,
+                    activitiesIndustry:[],
+                    activitiesMode:'',
                     approvalState:'',
                     approvalUser:'',
                     approvalTime:'',
@@ -444,78 +505,31 @@
                     provinceId:'',
                     cityId:'',
                     createId:'',
+                    areaId:''
                 },
                 rules:{
-                    projectName : [
-                        { required: true, message: '项目名称必须输入！', trigger: 'blur' },
-                        { min: 1, max: 30, message: '项目名称30字以内', trigger: 'blur' }
+                  provinceId : [{ required: true, message: '省份必须选择！', trigger: 'blur' },],
+                  cityId: [{ required: true, message: '城市必须选择！', trigger: 'blur' },],
+                  areaId: [{ required: true, message: '地区必须选择！', trigger: 'blur' },],
+                  activitiesTopic : [
+                        { required: true, message: '活动名称必须输入！', trigger: 'blur' },
+                        { min: 1, max: 30, message: '活动名称30字以内', trigger: 'blur' }
                     ],
-
-                    useArea :[
-                        { required: true, message: '请选择应用领域',trigger: 'change' },
+                  address:[{ required: true, message: '详细地址必须输入!' , trigger: 'blur' },
+                         { min: 1, max: 30, message: '详细地址30字以内', trigger: 'blur' }
+                   ],
+                  regNumber:[{required: true, message: '人数必须输入!' , trigger: 'blur' }],
+                  startEndTime:[{required: true, message: '活动起止时间必须选择!' , trigger: 'blur' }],
+                  activitiesTypeName:[{required: true, message: '活动类型必须选择!' , trigger: 'blur' }],
+                  regEndTime:[{required: true, message: '报名截止时间必须选择!' , trigger: 'blur' }],
+                  contact:[{required: true, message: '联系人必须输入!' , trigger: 'blur' }],
+                  phoneNumber: [
+                        { required: true, message: '联系电话必须输入!' , trigger: 'blur' },
                     ],
-                    skillArea : [
-                        { required: true, message: '请选择技术领域',trigger: 'change' },
+                   organizers : [
+                        { type: 'array', required: true, message: '请填入主办单位' }
                     ],
-                    fruitType : [
-                        { required: true, message: '请选择成果类型',trigger: 'change' },
-                    ],
-                    processType : [
-                        { required: true, message: '请选择当前阶段',trigger: 'change' },
-                    ],
-                    financingType : [
-                        { required: true, message: '请选择融资阶段',trigger: 'change' },
-                    ],
-                    cooperateType : [
-                        { type: 'array', required: true, message: '请至少选择一个归属方性质', trigger: 'change' }
-                    ],
-                    yourWant : [
-                        { type: 'array', required: true, message: '请至少选择一个诉求', trigger: 'change' }
-                    ],
-                    yourWantContent : [
-                        { required: true, message: '诉求描述必须输入', trigger: 'blur' },
-                        { min: 1, max: 150, message: '名称150字以内', trigger: 'blur' }
-                    ],
-                    companyName : [
-                        { required: true, message: '项目方单位名称必须输入!' , trigger: 'blur' },
-                    ],
-                    contactName : [
-                        { required: true, message: '联系人姓名必须输入!' , trigger: 'blur' },
-                    ],
-                    phoneNumber : [
-                        { required: true, message: '手机号必须输入!' , trigger: 'blur' },
-                        {
-                            validator (rule, value, callback) {
-                                let reg=/^((13[0-9])|(14[5,7,9])|(15[^4])|(16[0-9])|(18[0-9])|(17[0,1,3,5,6,7,8]))[0-9]{8}$/;
-                                if (reg.test(value)) {
-                                    callback()
-                                } else {
-                                    callback(new Error('请输入正确的手机号'))
-                                }
-                            },
-                            trigger: 'blur'
-                        }
-                    ],
-                    email : [
-                        { required: true, message: '邮箱必须输入!' , trigger: 'blur' },
-                        {type: 'email', message: '请输入正确的邮箱地址!'}
-                    ],
-                    position : [
-                        { required: true, message: '请选择所在地区',trigger: 'change' },
-                    ],
-                    provinceId : [
-                        { required: true, message: '请选择所在地区',trigger: 'change' },
-                    ],
-                    cityId : [
-                        { required: true, message: '请选择所在地区',trigger: 'change' },
-                    ],
-                    photos : [
-                        { type: 'array', required: true, message: '请上传图片' }
-                    ],
-                    searchKeyData : [
-                        { type: 'array', required: true, message: '请填入关键词' }
-                    ],
-                    valuationType:[{ validator: validateValuation, trigger: 'blur' }],
+                  activitiesIndustry : [{ required: true, message: '请选择活动领域' }]
                 },
                 negotiable:true,
                 OwnershipData : ['企业', '高校', '科研院所','个人团队','其他'],
@@ -547,18 +561,47 @@
                 dialogVisible: false,
                 dialogPicVisible:false,
                 activeDetails:{
-                  activitiesTopic:''
+                  activitiesTopic:'',//活动名称
+                  startEndTime:[],
                 },
-               startEndTime:[],
                ActiveTypeData:[],
                areaData:[],
-               areaDatas:''
+               areaDatas:'',
+              ActiveFildData:[], //活动领域
             }
         },
         watch:{
 
         },
         methods: {
+          //活动领域改变
+          handleActivitiesIndustry(){
+            console.log(this.form.activitiesIndustry)
+          },
+          //获取活动类型
+          getActivityType(){
+            let params = {
+              type:'activities_type'
+            }
+            getActiveType(params).then(res=>{
+              if (res.data.errcode===0){
+                this.ActiveTypeData = res.data.data.children;
+                console.log('活动类型',this.ActiveTypeData)
+              }
+            })
+          },
+          //获取活动领域
+          getActivityFilds(){
+            let params = {
+              type:'activities_industry'
+            }
+            getActiveType(params).then(res=>{
+              if (res.data.errcode===0){
+                this.ActiveFildData = res.data.data.children;
+                console.log('活动领域',this.ActiveFildData)
+              }
+            })
+          },
           //时间格式化函数
           renderTime(date){
             var dateee = new Date(date).toJSON();
@@ -566,7 +609,7 @@
           },
           //城市改变
           handleAreaChange(val){
-            console.log(val)
+            console.log(this.activeDetails.selectedOptions)
           },
             //活动类型
            handleActiveType(val){
@@ -580,41 +623,51 @@
                 console.log('活动详情',res.data.data)
                 if (res.data.errcode===0){
                      this.activeDetails = res.data.data;
-                     this.startEndTime = [res.data.data.startTime,res.data.data.endTime];
+                     this.form.startEndTime = [res.data.data.startTime,res.data.data.endTime];
                      let arr = [];
                      // this.activeDetails.imgAddrs=this.activeDetails.imgAddrs.split(',');
-                     this.activeDetails.imgAddrs.split(',').forEach((item,key)=>{
-                       arr.push({
-                         name:item.split('/')[item.split('/').length-1],
-                         url:item
-                       })
-                     })
+                     let imgAddrs = this.activeDetails.imgAddrs;
+                     imgAddrs?this.form.photos=[{uid:imgAddrs,url:imgAddrs}]:''
+
+                     this.activeDetails.selectedOptions = [this.activeDetails.provinceId,this.activeDetails.cityId,this.activeDetails.districtId]
+                     this.activeDetails.coOrganizers = this.activeDetails.coOrganizers?this.activeDetails.coOrganizers.split(','):[];
+                     this.activeDetails.organizers = this.activeDetails.organizers?this.activeDetails.organizers.split(','):[]
                      this.activeDetails.imgAddrs = arr
-                     this.areaDatas = this.activeDetails.provinceName + '/' + this.activeDetails.cityName + '/' + this.activeDetails.districtName
+                     this.activeDetails.areaId = this.activeDetails.districtId;
+                     this.getAllCityData(this.activeDetails.provinceId,true);
+                     this.getAllAreaData(this.activeDetails.cityId,true);
+                     this.$nextTick(()=>{
+                       this.form.provinceId = this.activeDetails.provinceId;
+                       // console.log('-------------------',this.activeDetails.activitiesIndustry)
+                       this.form.activitiesIndustry = this.activeDetails.activitiesIndustry?this.activeDetails.activitiesIndustry.split(','):'';
+                       // console.log('...............',this.form.activitiesIndustry)
+                       this.activeDetails.isFee===1?this.form.isChecked=false:this.form.isChecked=true;
+                       console.log('this.form.isChecked',this.form.isChecked)
+                     })
+                      this.form.activitiesMode  =   this.activeDetails.activitiesMode;
+
+
+
 
                 }
               })
             },
-          //获取活动类型
-          getActivityType(){
-            let params = {
-              type:'activities_type'
-            }
-            getActiveType(params).then(res=>{
-              if (res.data.errcode===0){
-                this.ActiveTypeData = res.data.data.children;
-                console.log('活动类型',this.ActiveTypeData)
-              }
-            })
-          },
             //估值输入框值改变
             valuInputChange(value){
-                console.log(value)
+                if (value){
+                  this.form.isChecked = false;
+                }
             },
             //复选框事件
-            checkBoxChange(){
-                // console.log("checkbox");
-                this.form.valuation='';
+            checkBoxChange(val){
+                // console.log(val)
+                if (val){
+                  this.isAddMoney=true;
+                  this.activeDetails.regFee='';
+                }else {
+                  this.isAddMoney=false;
+                }
+
             },
             //返回上一页
             goBack(){
@@ -791,20 +844,66 @@
 
             //新增关键词
             addSearchKey(){
-                if( this.form.searchKeyData.length<5 && this.form.searchKeyData.indexOf(this.form.searchKeyInput)==-1){
-                    this.form.searchKeyData.push(this.searchKeyInput);
-                    // this.searchKeyInput='';
-
+                 console.log('this.searchKeyInput1',this.searchKeyInput1)
+                 if (this.searchKeyInput1==''){
+                   this.$message({
+                     message: '请输入主办单位内容!',
+                     type: 'warning'
+                   });
+                   return
+                 }
+                if( this.activeDetails.organizers.length<10 && this.activeDetails.organizers.indexOf(this.activeDetails.organizers)==-1){
+                    this.activeDetails.organizers.push(this.searchKeyInput1);
                 }else{
 
                 }
-                this.searchKeyInput='';
+                this.searchKeyInput1='';
 
             },
+          addSearchKey1(){
+            console.log('this.searchKeyInput1',this.searchKeyInput2)
+            if (this.searchKeyInput2==''){
+              this.$message({
+                message: '请输入协办单位内容!',
+                type: 'warning'
+              });
+              return
+            }
+            if( this.activeDetails.coOrganizers.length<10 && this.activeDetails.coOrganizers.indexOf(this.activeDetails.coOrganizers)==-1){
+              this.activeDetails.coOrganizers.push(this.searchKeyInput2);
+            }else{
+
+            }
+            this.searchKeyInput2='';
+          },
+          addSearchKey2(){
+            console.log('this.searchKeyInput1',this.searchKeyInput3)
+            if (this.searchKeyInput3==''){
+              this.$message({
+                message: '请输入关键词!',
+                type: 'warning'
+              });
+              return
+            }
+            if( this.activeDetails.words.length<5 && this.activeDetails.words.indexOf(this.activeDetails.words)==-1){
+              this.activeDetails.words.push(this.searchKeyInput3);
+            }else{
+
+            }
+            this.searchKeyInput3='';
+          },
             //删除关键词
-            keyDataClose(item){
-                this.form.searchKeyData.splice(this.form.searchKeyData.indexOf(item), 1);
+            keyDataClose1(item){
+              this.activeDetails.organizers.splice(this.activeDetails.organizers.indexOf(item), 1);
             },
+          //删除关键词
+          keyDataClose2(item){
+            this.activeDetails.coOrganizers.splice(this.activeDetails.coOrganizers.indexOf(item), 1);
+          },
+          //删除关键词
+          keyDataClose3(item){
+            this.activeDetails.words.splice(this.activeDetails.words.indexOf(item), 1);
+          },
             //点击省切换
             handleProvinceChange(val){
                 // this.$set(this.optionsArea[index], 'child', res.data.data)
@@ -827,6 +926,14 @@
                 this.form.city='';
                 this.cityData=[];
             },
+            //获取所有区
+           cityChange(item){
+             if(item){
+               this.form.areaId='';
+               this.areaData=[];
+               this.getAllAreaData(item);
+             }
+           },
             //获取所有的省
             getAllPrivinceData(){
                 getAllProvince().then(res=>{
@@ -845,7 +952,7 @@
                 });
             },
             //获取省下的市
-            getAllCityData(item){
+            getAllCityData(item,isFirst){
                 let data={
                     provinceId:item
                 }
@@ -853,9 +960,32 @@
                     // console.log('resfshgfhsgh',res);
                     if(res.data.data){
                         this.cityData=res.data.data
+                        if(isFirst){
+                          this.$nextTick(()=>{
+                            this.form.cityId = this.activeDetails.cityId;
+                          })
+                        }
                     }
                 });
             },
+          //获取市下的区
+          getAllAreaData(item,isFirst){
+            let data={
+              provinceId:item
+            }
+            getProvinceAllCity(data).then(res=>{
+              // console.log('resfshgfhsgh',res);
+              if(res.data.data){
+                this.areaData=res.data.data
+                console.log(res.data.data)
+                if(isFirst){
+                  this.$nextTick(()=>{
+                    this.form.areaId = this.activeDetails.districtId;
+                  })
+                }
+              }
+            });
+          },
             //获取技术领域
             getAllSelectData(){
                 getListSkillArea().then(res=>{
@@ -900,61 +1030,111 @@
             clearTemplate(){
                 this.form.detail='';
             },
-            //保存或者审核，根据flag判断，1代表审核，2代表保存
-            saveDetail(flag){
-                // this.form.negotiable
+            //保存
+            saveDetail(){
                 this.$refs["form"].validate((valid) => {
-                    if (valid) {
-                        // console.log(this.form);
-                        let funcUrl=flag==1?approvalProDetail:updateProDetail;
-                        let str=flag==1?"审核":"保存";
-                        let postData={};
-                        for(let key in this.form){
-                            // console.log(key);
-                            // console.log(this.form[key]);
-                            // console.log(Object.prototype.toString(this.form[key]));
-                            if(Object.prototype.toString.call(this.form[key]) === "[object Object]"||Object.prototype.toString.call(this.form[key]) === "[object Array]"){
-                                postData[key] = JSON.parse(JSON.stringify(this.form[key]));
-                            }else{
-                                postData[key] = this.form[key];
-                            }
-                        }
-                        postData.fruitType = [this.form.fruitType];
-                        postData.processType = [this.form.processType];
-                        postData.financingType = [this.form.financingType];
-                        postData.words = this.form.searchKeyData;
-                        for(let i=0;i<postData.photos.length;i++){
-                            postData.photos.splice(i,1,postData.photos[i].url)
-                        }
-                        if(postData.proveUrl){
-                            for(let i=0;i<postData.proveUrl.length;i++){
-                                postData.proveUrl.splice(i,1,postData.proveUrl[i].url)
-                            }
-                        }
-                        postData.startVideo=postData.startVideo[0]?postData.startVideo[0].url:'';
-                        postData.endVideo=postData.endVideo[0]?postData.endVideo[0].url:'';
-                        postData.valuationType = postData.negotiable ? '1' : '2';
-                        delete postData.approvalUser;
-                        delete postData.approvalTime;
-                        funcUrl(postData).then(res=>{
-                            // console.log("数据保存了",res);
-                            this.$message({
-                                type:res.data.ret?'success':'error',
-                                showClose: true,
-                                message:res.data.ret?`${str}成功`:`${str}失败`,
-                            })
-                            if(res.data.ret){
-                                this.fetch(this.rowId);
-                                this.isEdit=false;
-                            }
-                        })
-                        // console.log(postData);
-                        // alert('submit!');
-                    } else {
-                        // console.log('error submit!!');
-                        return false;
+                  if (valid) {
+                      if (this.form.provinceId===''){
+                        this.$message({
+                          message: '请选择所在省份',
+                          type: 'warning'
+                        });
+                        return
+                      }
+                    if (this.form.cityId===''){
+                      this.$message({
+                        message: '请选择所在城市',
+                        type: 'warning'
+                      });
+                      return
                     }
-                });
+                    if (this.form.areaId===''){
+                      this.$message({
+                        message: '请选择所在地区',
+                        type: 'warning'
+                      });
+                      return
+                    }
+                    if (this.form.activitiesIndustry===''){
+                      this.$message({
+                        message: '请选择活动领域',
+                        type: 'warning'
+                      });
+                      return
+                    }
+
+                    if (this.form.activitiesMode===''){
+                      this.$message({
+                        message: '请选择活动方式',
+                        type: 'warning'
+                      });
+                      return
+                    }
+                    if (this.activeDetails.regFee===''&&!this.form.isChecked){
+                      this.$message({
+                        message: '请选择或输入报名费',
+                        type: 'warning'
+                      });
+                      return
+                    }
+                    if (this.form.activitiesMode===''){
+                      this.$message({
+                        message: '请选择活动方式',
+                        type: 'warning'
+                      });
+                      return
+                    }
+                    if (this.form.startEndTime===''){
+                      this.$message({
+                        message: '请选择活动起止时间',
+                        type: 'warning'
+                      });
+                      return
+                    }
+                      let paramsForm = {};
+                      let {activitiesTopic,address,regFee,regNumber,regEndTime,organizers,coOrganizers,words,activitiesContent,contact,phoneNumber,activitiesTypeName}  = this.activeDetails
+                      let {provinceId,cityId,areaId,activitiesIndustry,activitiesMode,isChecked,startEndTime,photos} = this.form;
+                      // console.log('startEndTime',startEndTime)
+                      let id = this.$route.query.id;
+                      let startTime = startEndTime[0];
+                      let endTime = startEndTime[1];
+                      let isFee = 0;
+                      isChecked?isFee = 0:isFee = 1;
+                      activitiesIndustry= activitiesIndustry?activitiesIndustry.join(','):'';
+                      // console.log('photos',photos[0].url)
+                      let imgAddrs = photos.length>0?photos[0].url:'';
+                      console.log('activitiesTypeName',activitiesTypeName)
+                      var activitiesType = '';
+                      this.ActiveTypeData.forEach((item,key)=>{
+                        console.log(item)
+                        if (item.value===activitiesTypeName){
+                          activitiesType = item.code
+                        }
+                      })
+                      organizers = organizers?organizers.join(','):'';
+                      coOrganizers = coOrganizers?coOrganizers.join(','):'';
+                      words = words?words.join(','):'';
+                      paramsForm = {activitiesTopic,provinceId,cityId,
+                        districtId:areaId,activitiesIndustry,activitiesMode,
+                        address,isFee,regFee,regNumber,startTime,
+                        endTime,regEndTime,organizers,coOrganizers,words,activitiesContent,contact,phoneNumber,imgAddrs,id,activitiesType};
+                      console.log('paramsForm',paramsForm)
+                    reqmodifyActive(paramsForm).then(res=>{
+                    console.log('xiugai',res)
+                      if (res.data.errcode===0){
+                        this.$message({
+                          message: res.data.data,
+                          type: 'success'
+                        });
+                        this.reqActiveDetails();
+                        this.isEdit = false;
+                      }else {
+                        this.$message.error(res.data.data)
+                      }
+                 })
+                  }
+
+                })
             },
             //编辑
             editDetail(){
@@ -963,13 +1143,22 @@
             openTurnDown(){
                 this.turnDownForm.opinion='';
             },
+            //防抖
+            antiShake(){
+              this.isDisabled = true;
+              setTimeout(()=>{
+                this.isDisabled = false;
+              },2000)
+            },
             //确认驳回
             confirmTurnDown(){
+                this.antiShake();
                 this.$refs["turn_down_form"].validate((valid) => {
                     if (valid) {
                       let id = this.$route.query.id;
                       console.log(this.$route.query.id)
                       let params = {id}
+
                       params.approvalOpinion = this.turnDownForm.opinion;
                       reqActiveReject(params).then(res=>{
                            console.log('驳回活动',res)
@@ -980,6 +1169,8 @@
                           })
                          this.dialogTurnDownVisible = false;
                           this.reqActiveDetails();
+                        }else {
+                          this.$message.error('驳回成功');
                         }
                       })
                     } else {
@@ -1053,6 +1244,13 @@
             },
           //通过活动
             handlePass(){
+              if (this.isEdit){
+                this.$message({
+                  message: '请先保存内容!',
+                  type: 'warning'
+                });
+                return false
+              }
               let id = this.$route.query.id;
               console.log(this.$route.query.id)
               let params = {id}
@@ -1062,7 +1260,7 @@
                     message: '审核成功',
                     type: 'success'
                   });
-                  this.$router.go(-1)
+                  this.reqActiveDetails();
                 }
                 console.log(res.data.errcode)
               })
@@ -1077,7 +1275,9 @@
           }
         },
         created () {
+            this.myHeaders.token=sessionStorage.token;
             this.getAllPrivinceData();
+            this.getActivityFilds();
             this.reqActiveDetails();
             this.getActivityType();
         },
@@ -1130,4 +1330,13 @@
 display: none;
 
 }
+  .auditActiveSelf {
+    .redIcon {
+      .el-form-item__label:before {
+        content: '*';
+        color: #F56C6C;
+        margin-right: 4px;
+      }
+    }
+  }
 </style>

@@ -42,9 +42,9 @@
                     <span>审核时间：{{form.approvalTime}}</span>
                 </div>
             </div>
-            
+
         </div>
-        
+
         <!-- 已通过 -->
         <div v-if="form.approvalState==1" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
             <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
@@ -62,7 +62,7 @@
                 <span>审核时间：{{form.approvalTime}}</span>
             </div>
         </div>
-        
+
         <el-form ref="form" :model="form" :rules="isEdit?rules:null" style="overflow:hidden" label-width="110px">
         <!-- 项目描述 -->
         <div>
@@ -147,7 +147,7 @@
                 <el-col :span="24">
                     <el-form-item prop="yourWant" label="项目诉求：">
                         <el-checkbox-group :disabled="!isEdit" v-model="form.yourWant">
-                            <el-checkbox v-for="(item,index) in AppealData" :key='index' :label="item"></el-checkbox>                            
+                            <el-checkbox v-for="(item,index) in AppealData" :key='index' :label="item"></el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                 </el-col>
@@ -256,7 +256,7 @@
                     <label slot="label">宣传视频<br>(开头)：</label>
                     <el-upload
                         :class="{disabled:form.startVideo.length>0}"
-                        :disabled="!isEdit"  
+                        :disabled="!isEdit"
                         :action="baseUrl+'/upLoading'"
                         :headers="myHeaders"
                         list-type="picture-card"
@@ -292,15 +292,15 @@
                         style="height:0px"
                         :headers="myHeaders"
                         :action="baseUrl+'/upLoading'"
-                        :data="{model:'publish'}"                      
+                        :data="{model:'publish'}"
                         :show-file-list="false"
                         :on-success="quillImgSuccess"
                         >
                     </el-upload>
-                    <quill-editor 
+                    <quill-editor
                         :disabled="!isEdit"
-                        v-model="form.detail" 
-                        ref="myQuillEditor" 
+                        v-model="form.detail"
+                        ref="myQuillEditor"
                         :options="editorOption">
                     </quill-editor>
                 </el-form-item>
@@ -335,7 +335,7 @@
                         <video  oncontextmenu="return false;" controls="controls" controlsList="nodownload"  :src="dialogImageUrl">您的浏览器不支持视频播放</video>
                     </el-dialog>
                 </el-form-item>
-                
+
                 <!-- :on-change="handleChange" -->
                 <!-- action="http://139.196.236.125:8088/upLoading" -->
                 <el-form-item label="上传材料：">
@@ -347,7 +347,7 @@
                         :on-success="handleMaterialSuccess"
                         :limit="5"
                         accept=".jpg , .doc , .pdf , .rar, .zip , .docx, .pdf, .png"
-                        :data="{model:'publish'}"   
+                        :data="{model:'publish'}"
                         :file-list="form.proveUrl">
                         <button style="background:rgba(255,255,255,1);border-radius:2px;border:1px solid rgba(237,237,237,1);cursor:pointer;padding:6px 9px;font-size:14px;color:#5A5A5A">
                             <i class="el-icon-upload"></i>
@@ -418,7 +418,7 @@
                     // console.log("inputtttttttttttt");
                     callback()
                 }else if(this.form.valuation!='' && !this.form.negotiable){
-                    
+
                     let reg= /^\d+(?=\.{0,1}\d+$|$)/;
                     if(reg.test(this.form.valuation)&&this.form.valuation<99999999999){
                         callback()
@@ -426,7 +426,7 @@
                     if(!reg.test(this.form.valuation)){
                         callback(new Error('请输入大于0的数字'))
                     }
-                    
+
                 }
             };
             return {
@@ -526,7 +526,7 @@
                         { required: true, message: '项目名称必须输入！', trigger: 'blur' },
                         { min: 1, max: 30, message: '项目名称30字以内', trigger: 'blur' }
                     ],
-                    
+
                     useArea :[
                         { required: true, message: '请选择应用领域',trigger: 'change' },
                     ],
@@ -560,7 +560,7 @@
                     ],
                     phoneNumber : [
                         { required: true, message: '手机号必须输入!' , trigger: 'blur' },
-                        { 
+                        {
                             validator (rule, value, callback) {
                                 let reg=/^((13[0-9])|(14[5,7,9])|(15[^4])|(16[0-9])|(18[0-9])|(17[0,1,3,5,6,7,8]))[0-9]{8}$/;
                                 if (reg.test(value)) {
@@ -694,7 +694,7 @@
                     obj.name=res.data;
                     // obj.url='http://139.196.236.125:8088/'+res.data;
                     obj.url=this.baseUrl+res.data;
-                    
+
                     this.form.photos.push(obj);
                 }else{
                     // this.form.photos.pop();
@@ -717,7 +717,7 @@
                     obj.name=res.data;
                     // obj.url='http://139.196.236.125:8088/'+res.data;
                     obj.url=this.baseUrl+res.data;
-                    
+
                     this.form.proveUrl.push(obj);
                 }else{
                     // this.form.photos.pop();
@@ -756,7 +756,7 @@
                     let obj={};
                     // obj.url=`http://139.196.236.125:8088/${res.data}`;
                     obj.url=this.baseUrl+res.data;
-                    
+
                     obj.uid=res.data;
                     this.form.startVideo.push(obj);
                     // this.form.startVideo = res.data;
@@ -820,9 +820,9 @@
                 if( this.form.searchKeyData.length<5 && this.form.searchKeyData.indexOf(this.form.searchKeyInput)==-1){
                     this.form.searchKeyData.push(this.searchKeyInput);
                     // this.searchKeyInput='';
-                    
+
                 }else{
-                    
+
                 }
                 this.searchKeyInput='';
 
@@ -846,7 +846,7 @@
                     this.cityData=[];
                     this.getAllCityData(item);
                 }
-                
+
             },
             //省下拉框情况
             clearProvince(){
@@ -867,7 +867,7 @@
                         }
                         // console.log("this.optionsArea",this.optionsArea)
                     }
-                    
+
                 });
             },
             //获取省下的市
@@ -1037,7 +1037,7 @@
                         this.form.negotiable=formData.valuationType==1?true:false;
                         // if(startVideo)
                         this.form.startVideo=this.form.startVideo?[this.form.startVideo]:[];
-                        
+
                         this.form.endVideo=this.form.endVideo?[this.form.endVideo]:[];
                         for(let i=0;i<this.form.startVideo.length;i++){
                             let obj={};
@@ -1063,6 +1063,7 @@
                             obj.url=this.form.photos[i];
                             this.form.photos.splice(i,1,obj);
                         }
+                        console.log('...................',this.form.photos)
                         if(this.form.proveUrl){
                             for(let i=0;i<this.form.proveUrl.length;i++){
                                 let obj={};
@@ -1073,7 +1074,7 @@
                         }else{
                             this.form.proveUrl=[];
                         }
-                        
+
                         this.getAllCityData(this.form.provinceId);
                         // this.form.fruitType='';
                     }
