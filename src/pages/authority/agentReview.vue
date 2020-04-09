@@ -151,7 +151,7 @@ color:rgba(51,51,51,1);">待审核</span>
         <el-col :span="24">
           <el-col :span="12">
             <el-form-item label="营业执照：">
-              <img style="width:102px" v-if="userDetailsData.userInfoCompany.businessLicense" :src="userDetailsData.userInfoCompany.businessLicense" alt="营业执照">
+              <img style="width:170px" v-if="userDetailsData.userInfoCompany.businessLicense" :src="userDetailsData.userInfoCompany.businessLicense" alt="营业执照">
             </el-form-item>
           </el-col>
         </el-col>
@@ -171,7 +171,7 @@ color:rgba(51,51,51,1);">待审核</span>
         <el-col :span="24">
           <el-col :span="12">
             <el-form-item label="关注行业：">
-              <el-tag style="margin-right: 10px" v-for="(item,key) in userDetailsData.researchAreaLabel" :key="key">{{item}}</el-tag>
+              <el-tag type="info" style="margin-right: 10px" v-for="(item,key) in userDetailsData.researchAreaLabel" :key="key">{{item}}</el-tag>
             </el-form-item>
           </el-col>
 
@@ -179,14 +179,14 @@ color:rgba(51,51,51,1);">待审核</span>
         <el-col :span="24">
         <el-col :span="12">
           <el-form-item label="技术领域：">
-            <el-tag style="margin-right: 10px" v-for="(item,key) in userDetailsData.skillAreaLabel" :key="key">{{item}}</el-tag>
+            <el-tag type="info" style="margin-right: 10px" v-for="(item,key) in userDetailsData.skillAreaLabel" :key="key">{{item}}</el-tag>
           </el-form-item>
         </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
             <el-form-item prop="phoneNumber" label="上传形象照：">
-              <img style="width:102px" v-if="userDetailsData.imagePhoto" :src="userDetailsData.imagePhoto" alt="形象照">
+              <img style="width:125px" v-if="userDetailsData.imagePhoto" :src="userDetailsData.imagePhoto" alt="形象照">
               <span v-else>无</span>
             </el-form-item>
           </el-col>
@@ -194,8 +194,8 @@ color:rgba(51,51,51,1);">待审核</span>
         <el-col :span="24">
           <el-col :span="12">
             <el-form-item prop="phoneNumber" label="实名认证：">
-              <img style="width:102px" v-if="userDetailsData.autPhotoFront" :src="userDetailsData.autPhotoFront" alt="认证照正面">
-              <img style="width:102px" v-if="userDetailsData.autPhotoBack" :src="userDetailsData.autPhotoBack" alt="认证照反面">
+              <img style="width:200px" v-if="userDetailsData.autPhotoFront" :src="userDetailsData.autPhotoFront" alt="认证照正面">
+              <img style="width:200px" v-if="userDetailsData.autPhotoBack" :src="userDetailsData.autPhotoBack" alt="认证照反面">
             </el-form-item>
           </el-col>
         </el-col>
@@ -500,6 +500,7 @@ border:1px solid rgba(219,219,219,1);padding:5px 20px;color:#828282;cursor:point
 
 <style  lang="less">
   .agent-review-self{
+
     .dialog {
       box-shadow:0px 2px 21px 0px rgba(0,0,0,0.16);
       border-radius:3px;

@@ -3,7 +3,7 @@
       <div style="display: flex;justify-content: space-between;margin-bottom: 5px">
         <div style="margin:6px 20px 12px 20px;padding-top:26px;">
           <div>
-            <el-badge :value="item.num" @click.native="changePersonType(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==personClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountData.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountData" :key="key">
+            <el-badge :value="item.num?item.num:''" @click.native="changePersonType(item,key)" :style="{position:'relative',fontSize:'16px',cursor:'pointer',fontWeight:500,color:key==personClickIndex?'#2BB1E8':'#333333',borderRight:(key!=accountData.length-1)?'1px solid #D2D2D2':'',paddingRight:'32px',paddingLeft:(key!=0)?'32px':'0',}" v-for="(item,key) in accountData" :key="key">
               {{item.label}}
             </el-badge>
           </div>
@@ -95,12 +95,15 @@
                 <el-table-column
                 prop="auditStatus"
                 label="认证状态"
-                width="">
+                width="160">
                     <template slot-scope="scope">
-                        <span v-if="scope.row.auditStatus===1" style="color:#52C41A">已通过</span>
-                        <span v-else-if="scope.row.auditStatus===0" style="color:#FAA800">待审核</span>
-                        <span v-else-if="scope.row.auditStatus===2" style="color:#FD2044">未通过</span>
-                        <span v-else></span>
+                       <div style="box-sizing: border-box;padding-left: 10px">
+                         <span v-if="scope.row.auditStatus===1" class="circle-1" >已通过</span>
+                         <span v-else-if="scope.row.auditStatus===0" class="circle-2">待审核</span>
+                         <span v-else-if="scope.row.auditStatus===2" class="circle-3">未通过</span>
+                         <span v-else></span>
+                       </div>
+
                         <!-- {{ scope.row.auditStatus===0?'待审核':scope.row.auditStatus===1?'已通过':scope.row.auditStatus===2?'未通过':''}} -->
                     </template>
                 <!-- 0:待审核
@@ -569,12 +572,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //点击表格行
             seenDeatil(row){
-              console.log(row);
-              if(row.nickname=='专家'){
+              console.log(row.nickname);
+              if(row.nickname==='专家'){
                     this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:1}})
-                }else if(row.nickname=='机构'){
+                }else if(row.nickname==='机构'){
                     this.$router.push({path:'/index/authority/angencyReview',query:{id:row.userId,approvalType:2}})
-                }else if (row.nickname=='经纪人'){
+                }else if (row.nickname==='经纪人'){
                 this.$router.push({path:'/index/authority/agentReview',query:{id:row.userId,approvalType:3}})
               }
             },
@@ -796,6 +799,60 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 <style lang="less">
     .member-review-self {
+      .circle-1 {
+        font-size:14px;
+        font-weight:400;
+        color:rgba(101,101,101,1);
+        position: relative;
+      }
+      .circle-1:after {
+        content: '';
+        display: block;
+        position: absolute;
+        width:6px;
+        height:6px;
+        background:rgba(82,196,26,1);
+        border-radius: 50%;
+        left: -11px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .circle-2 {
+        font-size:14px;
+        font-weight:400;
+        color:rgba(101,101,101,1);
+        position: relative;
+      }
+      .circle-2:after {
+        content: '';
+        display: block;
+        position: absolute;
+        width:6px;
+        height:6px;
+        background:#FAA800;
+        border-radius: 50%;
+        left: -11px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .circle-3 {
+        font-size:14px;
+        font-weight:400;
+        color:rgba(101,101,101,1);
+        position: relative;
+      }
+      .circle-3:after {
+        content: '';
+        display: block;
+        position: absolute;
+        width:6px;
+        height:6px;
+        background:#FD2044;
+        border-radius: 50%;
+        left: -11px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
       .el-badge__content.is-fixed {
         right: 32px;
       }

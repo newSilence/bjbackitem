@@ -80,11 +80,11 @@
                     min-width="70"
                     label="审核状态">
                   <template slot-scope="scope">
-                    <div>
-                      <span v-if="scope.row.state==0" style="color: #FAA800">{{scope.row.stateLabel}}</span>
-                      <span v-else-if="scope.row.state==2" style="color: #FD2044">{{scope.row.stateLabel}}</span>
-                      <span v-else-if="scope.row.state==1" style="color: #52C41A">{{scope.row.stateLabel}}</span>
-                      <span v-else-if="scope.row.state==3" style="color: #cccccc">{{scope.row.stateLabel}}</span>
+                    <div style="box-sizing: border-box;padding-left: 10px">
+                      <span class="circle-2" v-if="scope.row.state==0" >{{scope.row.stateLabel}}</span>
+                      <span class="circle-3" v-else-if="scope.row.state==2" >{{scope.row.stateLabel}}</span>
+                      <span class="circle-1" v-else-if="scope.row.state==1" >{{scope.row.stateLabel}}</span>
+                      <span class="circle-3" v-else-if="scope.row.state==3" >{{scope.row.stateLabel}}</span>
                     </div>
                   </template>
                 </el-table-column>
@@ -531,6 +531,60 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
 
 <style lang="less">
 .auditMainList{
+  .circle-1 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-1:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:rgba(82,196,26,1);
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .circle-2 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-2:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:#FAA800;
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .circle-3 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-3:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:#FD2044;
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
      .activeOne {
        padding-left: 5px!important;
        padding-right: 5px!important;

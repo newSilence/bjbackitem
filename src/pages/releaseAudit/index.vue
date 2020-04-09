@@ -157,11 +157,11 @@
                     width="100"
                     label="当前进度">
                     <template slot-scope="scope">
-                        <div>
-                            <span style="color: #cccccc" v-if="scope.row.approvalState==4">{{scope.row.approvalStateLabel}}</span>
-                            <span style="color: #FAA800" v-else-if="scope.row.approvalState==0">{{scope.row.approvalStateLabel}}</span>
-                            <span style="color: #52C41A" v-else-if="scope.row.approvalState==1">{{scope.row.approvalStateLabel}}</span>
-                            <span style="color: #FD2044" v-else-if="scope.row.approvalState==2">{{scope.row.approvalStateLabel}}</span>
+                        <div style="box-sizing: border-box;padding-left: 10px">
+                            <span class="circle-3" v-if="scope.row.approvalState==4">{{scope.row.approvalStateLabel}}</span>
+                            <span class="circle-2" v-else-if="scope.row.approvalState==0">{{scope.row.approvalStateLabel}}</span>
+                            <span class="circle-1"  v-else-if="scope.row.approvalState==1">{{scope.row.approvalStateLabel}}</span>
+                            <span class="circle-3" v-else-if="scope.row.approvalState==2">{{scope.row.approvalStateLabel}}</span>
                             <span v-else></span>
                             <!-- {{scope.row.approvalState==4?'已下线':scope.row.approvalState==0?'待审核':scope.row.approvalState==1?'发布中':scope.row.approvalState==2?'未通过':''}} -->
                             <!-- {{scope.row.processTypeStr && scope.row.processTypeStr.length>0?scope.row.processTypeStr.join():''}} -->
@@ -568,6 +568,60 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
 
 <style lang="less">
 .auditMainList{
+  .circle-1 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-1:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:rgba(82,196,26,1);
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .circle-2 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-2:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:#FAA800;
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .circle-3 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-3:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:#FD2044;
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
     .search_input .el-input__inner{
         border:1px solid #01A2E4;
         border-top-left-radius:4px;
