@@ -57,7 +57,7 @@ color:rgba(51,51,51,1);">待审核</span>
       </div>
     </div>
 
-    <el-form ref="form" :model="form" v-if="userDetailsData" style="overflow:hidden" label-width="140px">
+    <el-form ref="form" :model="form" v-if="userDetailsData" style="overflow:hidden" label-width="160px">
       <!-- 个人信息 -->
       <div v-if="userDetailsData.userInfoCompany.type==1">
         <div style="padding-bottom:7px;margin-top:26px;font-size:16px;color:#333333;margin-bottom:35px;padding-left: 17px">
@@ -65,44 +65,44 @@ color:rgba(51,51,51,1);">待审核</span>
         </div>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="姓名：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.realName"></el-input>
+            <el-form-item label="姓名：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.realName"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="性别：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.sexLabel"></el-input>
+            <el-form-item label="性别：" >
+              <el-radio v-model="radio" label="1">{{userDetailsData.sexLabel}}</el-radio>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="邮箱：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.email"></el-input>
+            <el-form-item label="邮箱：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.email"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="出生年月：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.birthdate"></el-input>
+            <el-form-item label="出生年月：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.birthdate"></el-input>
             </el-form-item>
           </el-col>
 
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="城市：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.newCityName"></el-input>
+            <el-form-item label="城市：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.newCityName"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="工作单位：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.workUnit"></el-input>
+            <el-form-item label="工作单位：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.workUnit"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
@@ -115,50 +115,51 @@ color:rgba(51,51,51,1);">待审核</span>
         <el-col :span="24">
           <el-col :span="12">
             <el-form-item label="单位名称：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyName"></el-input>
+              <el-input required size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyName"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="统一社会信用代码：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyCode"></el-input>
+            <el-form-item label="统一社会信用代码：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyCode"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="单位性质：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyTypeLabel"></el-input>
+            <el-form-item label="单位性质：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyTypeLabel"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="所在地区：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.newCityName"></el-input>
+            <el-form-item label="所在地区：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.newCityName"></el-input>
             </el-form-item>
           </el-col>
 
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="联系邮箱：">
-              <el-input :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyEmail"></el-input>
+            <el-form-item label="联系邮箱：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit" v-model="userDetailsData.userInfoCompany.companyEmail"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="营业执照：">
+            <el-form-item label="营业执照：" required>
               <img style="width:170px" v-if="userDetailsData.userInfoCompany.businessLicense" :src="userDetailsData.userInfoCompany.businessLicense" alt="营业执照">
+              <span v-else>无</span>
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="公司简介：">
-              <el-input :readonly="!isEdit"   type="textarea" :rows="6" v-model="userDetailsData.userInfoCompany.companyProviders"></el-input>
+            <el-form-item label="公司简介：" required>
+              <el-input size="small" disabled="disabled" :readonly="!isEdit"   type="textarea" :rows="6" v-model="userDetailsData.userInfoCompany.companyProviders"></el-input>
             </el-form-item>
           </el-col>
         </el-col>
@@ -166,11 +167,11 @@ color:rgba(51,51,51,1);">待审核</span>
       <!-- 专家信息 -->
       <div >
         <div style="padding-bottom:7px;margin-top:26px;font-size:16px;color:#333333;margin-bottom:35px;padding-left: 17px">
-          <span class="active" style="padding-bottom:4px">经纪人信息</span>
+          <span class="active" style="padding-bottom:4px;display: inline-block;margin-top: 29px">经纪人信息</span>
         </div>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item label="关注行业：">
+            <el-form-item label="关注行业：" required>
               <el-tag type="info" style="margin-right: 10px" v-for="(item,key) in userDetailsData.researchAreaLabel" :key="key">{{item}}</el-tag>
             </el-form-item>
           </el-col>
@@ -178,14 +179,14 @@ color:rgba(51,51,51,1);">待审核</span>
         </el-col>
         <el-col :span="24">
         <el-col :span="12">
-          <el-form-item label="技术领域：">
+          <el-form-item label="技术领域：" required>
             <el-tag type="info" style="margin-right: 10px" v-for="(item,key) in userDetailsData.skillAreaLabel" :key="key">{{item}}</el-tag>
           </el-form-item>
         </el-col>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item prop="phoneNumber" label="上传形象照：">
+            <el-form-item prop="phoneNumber" label="上传形象照：" required>
               <img style="width:125px" v-if="userDetailsData.imagePhoto" :src="userDetailsData.imagePhoto" alt="形象照">
               <span v-else>无</span>
             </el-form-item>
@@ -193,20 +194,20 @@ color:rgba(51,51,51,1);">待审核</span>
         </el-col>
         <el-col :span="24">
           <el-col :span="12">
-            <el-form-item prop="phoneNumber" label="实名认证：">
+            <el-form-item prop="phoneNumber" label="实名认证：" required>
               <img style="width:200px" v-if="userDetailsData.autPhotoFront" :src="userDetailsData.autPhotoFront" alt="认证照正面">
               <img style="width:200px" v-if="userDetailsData.autPhotoBack" :src="userDetailsData.autPhotoBack" alt="认证照反面">
             </el-form-item>
           </el-col>
         </el-col>
         <el-col :span="24">
-          <el-form-item  label="申请描述：" class="angency_review">
+          <el-form-item  label="申请描述：" class="angency_review" required>
             <div class="ql-editor" v-html="userDetailsData.applyNote" style="min-height:60px;width:100%;border:1px solid #EDEDED;border-radius:2px"></div>
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item  label="是否官网公开：" class="angency_review">
-                  <span>{{userDetailsData.showPublic==1?'是':'否'}}</span>
+               <el-radio v-model="showPublicRadio" label="1">{{userDetailsData.showPublic==1?'是':'否'}}</el-radio>
           </el-form-item>
         </el-col>
       </div>
@@ -219,7 +220,7 @@ color:rgba(51,51,51,1);">待审核</span>
       :visible.sync="dialogTurnDownVisible"
       width="30%">
       <el-form ref="turn_down_form" :model="turnDownForm" :rules="turnDownFormRules">
-        <el-form-item label="不通过原因：" prop="opinion" label-width="140px">
+        <el-form-item label="不通过原因：" prop="opinion" label-width="160px">
           <el-input
             type="textarea"
             :rows="7"
@@ -246,6 +247,8 @@ border:1px solid rgba(219,219,219,1);padding:5px 20px;color:#828282;cursor:point
   export default {
     data() {
       return {
+        showPublicRadio:'1',
+        radio:'1',
         userDetailsData:'',
         key: "value",
         transferQuery:{},
@@ -500,7 +503,17 @@ border:1px solid rgba(219,219,219,1);padding:5px 20px;color:#828282;cursor:point
 
 <style  lang="less">
   .agent-review-self{
-
+    .el-form-item {
+      margin-bottom: 11px;
+    }
+    .el-radio__input.is-checked+.el-radio__label {
+      color: #333333;
+    }
+    .el-input.is-disabled .el-input__inner{
+      background:rgba(252,252,252,1);
+      border:1px solid rgba(217,217,217,1);
+      color: #333333;
+    }
     .dialog {
       box-shadow:0px 2px 21px 0px rgba(0,0,0,0.16);
       border-radius:3px;

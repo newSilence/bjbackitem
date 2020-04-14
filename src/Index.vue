@@ -18,7 +18,7 @@
             <div style="width:100%;background:white">
               <router-view/>
             </div>
-            
+
         </div>
       </div>
       </div>
@@ -60,7 +60,7 @@ export default {
   methods: {
     getMenuTitle(arr,url) {
       let deepArr=JSON.parse(JSON.stringify(arr));
-      
+
     }
   },
 }

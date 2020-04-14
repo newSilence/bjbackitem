@@ -18,12 +18,12 @@
             </div>
             <el-form :inline="true" :model="formInline" style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:20px" class="demo-form-inline">
                 <el-form-item label="">
-                    <el-select clearable style="width:100%" @change="handleSelect" v-model="formInline.useArea" placeholder="应用领域">
+                    <el-select size="small" clearable style="width:100%;" @change="handleSelect" v-model="formInline.useArea" placeholder="应用领域">
                         <el-option v-for="item in UserAreaData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item prop="skillArea" label="">
-                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.skillArea" placeholder="技术领域">
+                    <el-select size="small" @change="handleSelect" clearable style="width:100%" v-model="formInline.skillArea" placeholder="技术领域">
                         <el-option-group
                             v-for="group in SkillAreaData"
                             :key="group.id"
@@ -38,27 +38,28 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.fruitType" placeholder="成果类型">
+                    <el-select size="small" @change="handleSelect" clearable style="width:100%" v-model="formInline.fruitType" placeholder="成果类型">
                         <el-option v-for="item in FruitTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.processType" placeholder="当前阶段">
+                    <el-select size="small" @change="handleSelect" clearable style="width:100%" v-model="formInline.processType" placeholder="当前阶段">
                         <el-option v-for="item in ProcessTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select @change="handleSelect" clearable style="width:100%" v-model="formInline.financingType" placeholder="融资阶段">
+                    <el-select size="small" @change="handleSelect" clearable style="width:100%" v-model="formInline.financingType" placeholder="融资阶段">
                         <el-option v-for="item in FinancingTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select @change="handleSelect" clearable v-model="formInline.yourWant" placeholder="诉求">
+                    <el-select size="small" @change="handleSelect" clearable v-model="formInline.yourWant" placeholder="诉求">
                         <el-option v-for="item in AppealData" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
                     <el-cascader
+                        size="small"
                         clearable
                         v-model="formInline.selectedOptions"
                         placeholder="请选择所在地区"
@@ -76,18 +77,18 @@
                     </el-cascader> -->
                 </el-form-item>
                 <el-form-item label="">
-                    <el-select @change="handleSelect" clearable v-model="formInline.cooperateType" placeholder="归属方性质">
+                    <el-select size="small" @change="handleSelect" clearable v-model="formInline.cooperateType" placeholder="归属方性质">
                         <el-option v-for="item in OwnershipData" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item class="nomarginbottom" style="height:0;overflow:hidden" label="">
-                    <el-select v-model="formInline.region" placeholder="活动区域">
+                    <el-select size="small" v-model="formInline.region" placeholder="活动区域">
                     <el-option label="区域一" value="shanghai"></el-option>
                     <el-option label="区域二" value="beijing"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item class="nomarginbottom" style="height:0;overflow:hidden" label="">
-                    <el-select v-model="formInline.region" placeholder="活动区域">
+                    <el-select size="small" v-model="formInline.region" placeholder="活动区域">
                     <el-option label="区域一" value="shanghai"></el-option>
                     <el-option label="区域二" value="beijing"></el-option>
                     </el-select>
@@ -629,6 +630,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     }
     .el-form--inline .el-form-item{
         margin-right:0px;
+        margin-bottom: 12px;
         // margin-bottom:10px;
     }
     .nomarginbottom.el-form-item{

@@ -88,7 +88,7 @@
                 </el-table-column>
                 <el-table-column
                 prop="createTime"
-                label="创建时间"
+                label="提交时间"
                 width="200px"
                 show-overflow-tooltip>
                 </el-table-column>
@@ -562,6 +562,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                   this.personClickIndex = key;
                   console.log(item)
                   this.formInline.approvalType = item.value;
+                  this.formInline.pageNumber = 1;
                   this.fetchData();
                 }
             },
