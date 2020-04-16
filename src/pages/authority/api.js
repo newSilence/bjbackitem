@@ -253,6 +253,14 @@ export function updateCanOrUse(data){
         method:'post'
     })
 }
+//确认撤销身份
+export function turnOffCard(data){
+    return request({
+        url:'/manager/userManager/approvalRepeal',
+        data,
+        method:'post'
+    })
+}
 //
 // export function getAdminManageTable(data){
 //     return request({

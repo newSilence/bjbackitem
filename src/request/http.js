@@ -33,7 +33,9 @@ export function request(config){
         if(response.data.errcode=="500405"){
             Router.push('/login');
         }
+        // console.log(re)
         if(store.state.isShowMessage&&!response.data.ret){
+            console.log("response error");
             store.commit('setIsShowMessage',false);
             Message.error(
                 {

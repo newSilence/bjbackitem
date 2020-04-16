@@ -9,13 +9,16 @@ import  VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
-
+import moment from 'moment'
+// import Blob from '@/vendor/Blob'
+// import Export2Excel from '@/vendor/Export2Excel'
 import router from './router'
 import store from './vuex/store'
 // import {http} from './request/http'
 Vue.config.productionTip = false
 Vue.use(VueQuillEditor)
 Vue.use(ElementUI);
+Vue.prototype.$moment = moment;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

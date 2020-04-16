@@ -5,7 +5,7 @@
       <NavBar/>
       <div style="flex:1">
       <Header/>
-      <div style="flex:1;display:flex;flex-direction:column;background:rgba(242,247,250,1);padding-top:20px;padding-right:22px">
+      <div style="flex:1;display:flex;flex-direction:column;background:rgba(242,247,250,1);padding-top:20px;">
         <div style="margin-left:23px">
           <!-- border:1px solid rgba(220,220,220,1); -->
           <span  style="display:inline-block;font-size:16px;color:#616161;box-sizing:border-box;padding:16px;background:white;border-bottom:none">
@@ -13,8 +13,8 @@
             <i class="el-icon-close"></i>
           </span>
         </div>
-        <!-- border:'1px solid #DCDCDC', -->
-        <div v-bind:style="{minHeight:'85.5vh',overflow:'auto',marginLeft:'23px',paddingRight:'22px',background:'white'}">
+        <!-- border:'1px solid #DCDCDC', paddingRight:'22px',-->
+        <div v-bind:style="{minHeight:'85.5vh',overflow:'auto',marginLeft:'23px',background:'white'}">
             <div style="width:100%;background:white">
               <router-view/>
             </div>

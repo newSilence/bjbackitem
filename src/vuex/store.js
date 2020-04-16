@@ -12,6 +12,9 @@ const state={
   navbarData:[
     // {icon:'el-icon-phone',url:'/index',name:'首页'},
     {icon:'el-icon-user',url:'/index/authority/memberreview',name:'会员审核认证'},
+    {icon:'el-icon-user',url:'/index/finacing/',name:'财务管理',list:[
+      {icon:'el-icon-user',url: '/index/finacing/collectmana',name: '收款管理'},
+    ]},
     {icon:'el-icon-user',url:'/index/authoritys',name:'账号管理',list:[
       {icon:'el-icon-user',url: '/index/authority/menu',name: '会员账号管理'},
     ]},

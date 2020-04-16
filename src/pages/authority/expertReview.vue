@@ -2,9 +2,13 @@
     <div style="padding:28px 35px;background:white;height:100%">
         <div style="display:flex;justify-content:space-between;font-size:16px;color:#333">
             <span>审核详情</span>
-            <span @click="goBack" style="cursor:pointer">
-                <i class="el-icon-back"></i>
-            </span>
+            <div>
+                <span  v-if="form.auditStatus==1" @click="turnDownCard" style="padding:6px 10px;color:#2BB1E8;border:1px solid rgba(43,177,232,1);border-radius:4px;font-size:14px;cursor:pointer">撤回身份</span>
+                <span v-if="form.auditStatus==1" style="display:inline-block;width:10px"></span>
+                <span @click="goBack" style="cursor:pointer">
+                    <i class="el-icon-back"></i>
+                </span>
+            </div>
         </div>
         <!-- 待审核 -->
         <div v-if="form.auditStatus==0" style="display:flex;justify-content:space-between;height:51px;align-items:center;
@@ -47,6 +51,21 @@
                 <div>
                     <span>当前进度：</span>
                     <span style="color:#F3A157">已通过</span>
+                </div>
+                <div>
+                </div>
+            </div>
+            <div style="font-size:16px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(94,94,94,1);">
+                <span style="padding-right:70px">审核人员：{{form.auditUser}}</span>
+                <span>审核时间：{{form.auditTime}}</span>
+            </div>
+        </div>
+        <!-- 已撤回 -->
+        <div v-if="form.auditStatus==3" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
+            <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
+                <div>
+                    <span>当前进度：</span>
+                    <span style="color:#F3A157">已撤回</span>
                 </div>
                 <div>
                 </div>
@@ -204,6 +223,31 @@
                 <button @click="cancelTurnDown" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;padding:5px 20px;color:white;cursor:pointer">取消</button>
             </span>
         </el-dialog>
+
+        <el-dialog
+            title="撤销身份"
+            center
+            class="turn_down_card_dialog"
+            :visible.sync="dialogTurnCardVisible"
+            width="330px">
+            <div style="display:flex;">
+                <div style="flex-shrink:0;border-radius:50%;width:22px;height:22px;background:#FF4D4F;color:white;text-align:center;line-height:22px;font-weight:600;font-size:15px;margin-right:9px;margin-top:2px">
+                    <span>!</span>
+                </div>
+                <div style="font-size:14px;font-family:PingFangSC-Regular,PingFang SC;font-weight:400;color:rgba(51,51,51,1);line-height:20px;">
+                    身份一旦撤销，用户认证的信息都会清除，不可恢复，确定要撤销吗？
+                </div>
+            </div>
+            <div style="padding:11px 0px 16px 15px;background:#F3F7FF;font-size:14px;color:#858585;margin-top:38px;">
+                <div style="margin-bottom:10px">温馨提示：</div>
+                <div style="">撤销前，可将数据保存到本地</div>
+            </div>
+            <div style="margin-top:26px;margin-bottom:20px;border-bottom:1px solid #F5F5F5"></div>
+            <span slot="footer" class="dialog-footer">
+                <button @click="cancelTurnOff"  style="background:rgba(251,251,251,1);border-radius:3px;padding:5px 20px;color:#828282;margin-right:30px;cursor:pointer">取消</button>
+                <button @click="confirmTurnOff" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;padding:5px 20px;color:white;cursor:pointer">确定</button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -211,10 +255,11 @@
     import  uploadUrl  from '@/request/uploadUrl'
     import { toolbarOptions , proTemplate } from "../../util/commonData";
     // import { getMemAccountSelectAuthenticationData , getMemAccountDetailData , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType  , rejectProById , updateProDetail , approvalProDetail } from "./api";
-    import { getMemAccountSelectAuthenticationData , getMemAccountDetailData , accountReviewInter , rejectProById } from "./api";
+    import { getMemAccountSelectAuthenticationData , getMemAccountDetailData , accountReviewInter , rejectProById , turnOffCard} from "./api";
     export default {
         data() {
             return {
+                dialogTurnCardVisible:false,
                 key: "value",
                 transferQuery:{},
                 linkId:'',
@@ -288,6 +333,40 @@
             }
         },
         methods: {
+            //确认撤销身份
+            confirmTurnOff(){
+                let param={};
+                param={...this.transferQuery};
+                param.linkId=this.linkId;
+                console.log(param);
+                // return
+                turnOffCard(param).then(res=>{
+                    console.log("撤回身份",res);
+                    if(res.data.ret){
+                        this.$message({
+                            message:res.data.data,
+                            type:'success',
+                            showClose:true
+                        })
+                        this.fetch(this.transferQuery);
+                        this.dialogTurnCardVisible=false;
+                    }else{
+                        this.$message({
+                            message:'网络问题',
+                            type:'error',
+                            showClose:true
+                        })
+                    }
+                })
+            },
+            //取消撤销身份
+            cancelTurnOff(){
+                this.dialogTurnCardVisible=false;
+            },
+            //撤销身份
+            turnDownCard(){
+                this.dialogTurnCardVisible=true
+            },
             //自定义下载
             batchDownload(){
                 let batchArr=this.form.titleCertificate.split(',');
@@ -485,6 +564,19 @@
     text-align: center;
     background: rgba(243,247,250,1);
     height: 44px;
+}
+.turn_down_card_dialog .el-dialog__title{
+        color:white
+    }
+.turn_down_card_dialog .el-dialog__header{
+    text-align: center;
+    background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+    // height: 44px;
+    // line-height: 44px;
+    color:white;
+}
+.turn_down_card_dialog .el-dialog__body{
+    padding:41px 21px 0px 21px
 }
 .turn_down_dialog .el-dialog__headerbtn{
     top:15px;

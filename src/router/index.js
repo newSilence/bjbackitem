@@ -34,6 +34,9 @@ import Error from '@/pages/notFound/Error'
 import IntegralType from '@/pages/integral/integral-type'
 import IntegralRules from '@/pages/integral/integral-rules'
 
+// 财务管理
+import CollectMana from '@/pages/financialManage/collectMana'
+import CollecManaDetail from '@/pages/financialManage/collecManaDetail'
 
 Vue.use(Router)
 const routerAll=new Router({
@@ -53,6 +56,14 @@ const routerAll=new Router({
       children:[
         {path:'authority/',redirect:'authority/admin',},
         {
+          path: 'finacing/collectmana',
+          name: 'CollectMana',
+          component: CollectMana
+        },{
+          path: 'finacing/collecManaDetail',//收款管理详情
+          name: 'collecManaDetail',
+          component: CollecManaDetail
+        },{
           path: 'authority/admin',
           name: 'AuthorityAdmin',
           component: AuthorityAdmin

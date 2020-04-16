@@ -573,6 +573,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //点击表格行
             seenDeatil(row){
+              console.log(row);
               console.log(row.nickname);
               if(row.nickname==='专家'){
                     this.$router.push({path:'/index/authority/expertReview',query:{id:row.userId,approvalType:1}})
