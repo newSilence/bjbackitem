@@ -44,9 +44,20 @@
                 label="订单号">
                 </el-table-column>
                 <el-table-column
-                prop="title"
-                label="商品/服务"
+                prop="typeLable"
+                label="商品类型"
                 width="">
+                </el-table-column>
+                <el-table-column
+                prop="title"
+                label="商品名称"
+                width="">
+                </el-table-column>
+                <el-table-column
+                prop="actualPrice"
+                label="付款金额/元"
+                width=""
+                show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
                 prop="userInfoName"
@@ -54,16 +65,19 @@
                 show-overflow-tooltip>
                  </el-table-column>
                 <el-table-column
-                prop="actualPrice"
-                label="付款金额/元"
-                width="200px"
+                prop="userInfoPhone"
+                label="手机号"
+                width=""
                 show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
                 prop="payDate"
                 label="付款时间"
-                width="200px"
+                width=""
                 show-overflow-tooltip>
+                  <template slot-scope="scope">
+                      {{scope.row.actualPrice===0?scope.row.createDate:scope.row.payDate}}
+                  </template>
                 </el-table-column>
                  <el-table-column
                     label="操作"
@@ -81,7 +95,7 @@
                 style="text-align:right"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page="formInline.pageNumber"
+                :current-page="formInline.pageNum"
                 :page-sizes="[10, 40, 100, 200]"
                 :page-size="formInline.pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
@@ -119,7 +133,7 @@ import { getTableListData , exportList } from './api'
                 formInline: {
                     keyWord:'',
                     time:'',
-                    pageNumber:1,
+                    pageNum:1,
                     pageSize:10,
                 },
 
@@ -151,7 +165,7 @@ import { getTableListData , exportList } from './api'
               this.$router.push({path:'/index/finacing/collecManaDetail',query:{id:row.id}})
             },
             onSearch() {
-                this.formInline.pageNumber=1;
+                this.formInline.pageNum=1;
                 // console.log(this.formInline)
                 // return;
                 this.fetchData();
@@ -218,7 +232,7 @@ import { getTableListData , exportList } from './api'
                 this.fetchData();
             },
             handleCurrentChange(val){
-                this.formInline.pageNumber=val;
+                this.formInline.pageNum=val;
                 this.fetchData();
             }
         },
