@@ -32,10 +32,11 @@
                 <div style="display:flex;justify-content:space-between;padding:26px 130px 26px 30px">
                     <div style="display:flex">
                         <div style="width:138px;height:92px;margin-right:20px">
-                            <img :src="orderInfo.imgAddrs" alt="活动图片">
+                            <img style="width:138px;height:92px;" :src="mallInfo.img_addrs?mallInfo.img_addrs.split(',')[0]:''" alt="活动图片">
+                            <!-- {{mallInfo.imgAddrs}} -->
                         </div>
                         <div>
-                            <div style="font-size:16px;font-weight:600;line-height:22px">{{orderInfo.title}}</div>
+                            <div style="font-size:16px;font-weight:600;line-height:22px">{{mallInfo.activities_type_name}}</div>
                             <div style="font-size:14px;font-weight:400;line-height:20px;margin-top:10px;margin-bottom:17px">类型：{{orderInfo.typeLable}}</div>
                             <div style="font-size:12px;font-weight:400;line-height:17px">数量：× {{orderInfo.mallNum}}</div>
                         </div>

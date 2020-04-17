@@ -17,12 +17,32 @@ export const toolbarOptions = [
     ['link', 'image', 'video'],
     ['clean']                                         // remove formatting button
 ]
+// export const proTemplate = `
+// 		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/5.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+// 		<p>请输入您的背景描述</p>
+// 		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/6.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+// 		<p>请输入您的团队介绍</p>
+// 		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/7.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+// 		<p>请输入您的技术成果</p>
+// 		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/8.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
+//         <p>请输入您的前景展望</p>`;
 export const proTemplate = `
-		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/5.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
-		<p>请输入您的背景描述</p>
-		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/6.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
-		<p>请输入您的团队介绍</p>
-		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/7.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
-		<p>请输入您的技术成果</p>
-		<div style="text-align:left;"><img src="http://139.196.236.6:8090/img/publish/8.png" alt="" style="height: 30px;width: 106px;float: left;"></div>
-		<p>请输入您的前景展望</p>`;
+        <div>
+            <img src="http://139.196.236.6:8090/img/publish/5.png" alt="" width="106px" height="30px" style="width:106px;height:30px;">
+        </div>
+        <p>请输入您的背景描述</p>
+        <p></p>
+        <div>
+            <img src="http://139.196.236.6:8090/img/publish/5.png" height="30px" style="width:106px;height:30px">
+        </div>
+        <p>请输入您的团队介绍</p>
+        <p></p>
+        <div>
+            <img src="http://139.196.236.6:8090/img/publish/7.png" alt="" width="106px" height="30px" style="width:106px;height:30px">
+        </div>
+        <p>请输入您的技术成果</p>
+        <p></p>
+        <div>
+            <img src="http://139.196.236.6:8090/img/publish/8.png" alt="" width="106px" height="30px" style="width:106px;height:30px">
+        </div>
+        <p>请输入您的前景展望</p>`;
