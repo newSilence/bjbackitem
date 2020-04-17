@@ -193,6 +193,7 @@ import { getTableListData , exportList } from './api'
                       const data = this.formatJson(filterVal, list);
 
                       export_json_to_excel(tHeader, data, "订单收款明细excel");
+                      // this.$message.success('导出成功')
 
                   });
                 }
