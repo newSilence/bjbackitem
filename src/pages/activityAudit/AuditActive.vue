@@ -317,6 +317,16 @@
             </el-dialog>
           </el-form-item>
                 <el-form-item  class="edit_container news" label="活动详情：">
+                    <el-upload
+                        class="avatar-uploader quill-img"
+                        style="height:0px"
+                        :headers="myHeaders"
+                        :action="baseUrl+'/upLoading'"
+                        :data="{model:'publish'}"
+                        :show-file-list="false"
+                        :on-success="quillImgSuccess"
+                        >
+                    </el-upload>
                     <quill-editor
                         :disabled="!isEdit"
                         v-model="activeDetails.activitiesContent"
@@ -830,7 +840,7 @@
                 let quill = this.$refs.myQuillEditor.quill;
                 // console.log(res);
                 // 如果上传成功
-                if (res.code == '0') {
+                if (res.ret) {
                     // 获取光标所在位置
                     let length = quill.getSelection().index;
                     // 插入图片  res.data为服务器返回的图片地址

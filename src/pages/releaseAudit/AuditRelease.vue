@@ -707,7 +707,7 @@
             },
             imgUploadError(err, file, fileList){//图片上传失败调用
                 // console.log(err)
-                this.$message.error('上传图片失败!');
+                this.$message.error('上传图片失败2!');
             },
 
 
@@ -801,9 +801,9 @@
                 // res为图片服务器返回的数据
                 // 获取富文本组件实例
                 let quill = this.$refs.myQuillEditor.quill;
-                // console.log(res);
+                // console.log("图片上传",res);
                 // 如果上传成功
-                if (res.code == '0') {
+                if (res.ret) {
                     // 获取光标所在位置
                     let length = quill.getSelection().index;
                     // 插入图片  res.data为服务器返回的图片地址
