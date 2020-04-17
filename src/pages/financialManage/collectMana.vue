@@ -210,7 +210,8 @@ import { getTableListData , exportList } from './api'
     },
             //获取表格数据
             fetchData(){
-                if(this.formInline.time.length>0){
+              
+                if(this.formInline.time&&this.formInline.time.length>0){
                     this.formInline.sdate=this.formInline.time[0];
                     this.formInline.edate=this.formInline.time[1];
                 }else{
