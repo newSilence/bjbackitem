@@ -193,6 +193,7 @@ import { getTableListData , exportList } from './api'
                       const data = this.formatJson(filterVal, list);
 
                       export_json_to_excel(tHeader, data, "订单收款明细excel");
+                      // this.$message.success('导出成功')
 
                   });
                 }
@@ -210,7 +211,8 @@ import { getTableListData , exportList } from './api'
     },
             //获取表格数据
             fetchData(){
-                if(this.formInline.time.length>0){
+              
+                if(this.formInline.time&&this.formInline.time.length>0){
                     this.formInline.sdate=this.formInline.time[0];
                     this.formInline.edate=this.formInline.time[1];
                 }else{
