@@ -159,7 +159,7 @@
                     label="当前进度">
                     <template slot-scope="scope">
                         <div style="box-sizing: border-box;padding-left: 10px">
-                            <span class="circle-3" v-if="scope.row.approvalState==4">{{scope.row.approvalStateLabel}}</span>
+                            <span class="circle-4" v-if="scope.row.approvalState==4">{{scope.row.approvalStateLabel}}</span>
                             <span class="circle-2" v-else-if="scope.row.approvalState==0">{{scope.row.approvalStateLabel}}</span>
                             <span class="circle-1"  v-else-if="scope.row.approvalState==1">{{scope.row.approvalStateLabel}}</span>
                             <span class="circle-3" v-else-if="scope.row.approvalState==2">{{scope.row.approvalStateLabel}}</span>
@@ -567,7 +567,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 .auditMainList{
   .circle-1 {
     font-size:14px;
@@ -618,6 +618,24 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     width:6px;
     height:6px;
     background:#FD2044;
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .circle-4 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-4:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:#656565;
     border-radius: 50%;
     left: -11px;
     top: 50%;

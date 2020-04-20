@@ -12,7 +12,7 @@
             padding-left:20px;padding-right:17px">
             <div>
                 <span>当前进度：</span>
-                <span>待审核</span>
+                <span style="color: #FAA800">待审核</span>
             </div>
             <div>
                 <button @click="examinePass" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
@@ -50,7 +50,7 @@
             <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
                 <div>
                     <span>当前进度：</span>
-                    <span style="color:#F3A157">已通过</span>
+                    <span style="color:#52c41a">发布中</span>
                 </div>
                 <div>
                     <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>
@@ -67,7 +67,7 @@
         <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
           <div>
             <span>当前进度：</span>
-            <span style="color:#F3A157">已下线</span>
+            <span style="color:#656565">已下线</span>
           </div>
 <!--          <div>-->
 <!--            <button v-show="!isEdit" @click="editDetail" style="border-radius:4px;background:#FFFFFF;padding:7px 21px;font-size:14px;color:#989898;border:none;cursor:pointer;margin-left:10px">编辑</button>-->

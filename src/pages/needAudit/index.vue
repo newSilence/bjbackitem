@@ -84,7 +84,7 @@
                       <span class="circle-2" v-if="scope.row.state==0" >{{scope.row.stateLabel}}</span>
                       <span class="circle-3" v-else-if="scope.row.state==2" >{{scope.row.stateLabel}}</span>
                       <span class="circle-1" v-else-if="scope.row.state==1" >{{scope.row.stateLabel}}</span>
-                      <span class="circle-3" v-else-if="scope.row.state==3" >{{scope.row.stateLabel}}</span>
+                      <span class="circle-4" v-else-if="scope.row.state==3" >{{scope.row.stateLabel}}</span>
                     </div>
                   </template>
                 </el-table-column>
@@ -529,8 +529,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     }
 </script>
 
-<style lang="less">
-.auditMainList{
+<style scoped lang="less">
   .circle-1 {
     font-size:14px;
     font-weight:400;
@@ -585,6 +584,25 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     top: 50%;
     transform: translateY(-50%);
   }
+  .circle-4 {
+    font-size:14px;
+    font-weight:400;
+    color:rgba(101,101,101,1);
+    position: relative;
+  }
+  .circle-4:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width:6px;
+    height:6px;
+    background:#656565;
+    border-radius: 50%;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+.auditMainList{
      .activeOne {
        padding-left: 5px!important;
        padding-right: 5px!important;
