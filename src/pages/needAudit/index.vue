@@ -18,17 +18,18 @@
             </div>
             <el-form :inline="true" :model="formInline" style="margin-top:20px" class="demo-form-inline">
                 <el-form-item label="" style="margin-right: 21px">
-                <el-select @change="handleTypeSelect" clearable style="width:100%" v-model="needParams.type" placeholder="需求类型">
+                <el-select size="small" @change="handleTypeSelect" clearable style="width:100%" v-model="needParams.type" placeholder="需求类型">
                   <el-option v-for="item in needTypeData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
                 <el-form-item prop="skillArea" label="" style="margin-right: 21px">
-                    <el-select @change="handleFiledSelect" clearable style="width:100%" v-model="needParams.technicalFieldId" placeholder="技术领域">
+                    <el-select size="small" @change="handleFiledSelect" clearable style="width:100%" v-model="needParams.technicalFieldId" placeholder="技术领域">
                       <el-option v-for="item in TecFieldData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="">
                   <el-date-picker
+                    size="small"
                     @change="handleTimeChange"
                     v-model="timeRange"
                     type="daterange"
@@ -39,6 +40,11 @@
                     end-placeholder="需求截止时间">
                   </el-date-picker>
                 </el-form-item>
+               <el-form-item  label="" style="margin-right: 21px" >
+                 <el-select v-show="isPass"  size="small" @change="handleTopChange" clearable v-model="formInline.topState" placeholder="置顶状态">
+                   <el-option v-for="(item,key) in topData" :key="key" :label="item.label" :value="item.value"></el-option>
+                 </el-select>
+               </el-form-item>
             </el-form>
         </div>
         <div>
@@ -58,6 +64,15 @@
                     prop="title"
                     label="需求主题"
                     min-width="130">
+                  <template slot-scope="scope">
+                    <div style="display:flex;flex-wrap:wrap">
+                      <span>{{scope.row.title}}</span>
+                      <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0||scope.row.topState===1" type="success">置顶</el-tag>
+                      <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0">未开始</el-tag>
+                      <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===1">进行中</el-tag>
+                      <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===2">已结束</el-tag>
+                    </div>
+                  </template>
                 </el-table-column>
                 <el-table-column
                     prop="userName"
@@ -106,7 +121,7 @@
                                 <!-- <el-dropdown-item>{{scope.row.name}}</el-dropdown-item> -->
                                 <el-dropdown-item @click.native="deleteNeed(scope.row)">删除</el-dropdown-item>
                                 <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.state==1?false:true">{{scope.row.state==3?'已下线':'下线'}}</el-dropdown-item>
-<!--                                <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.isRecommend==1?'取消推荐':'设为推荐'}}</el-dropdown-item>-->
+                                <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.state==1?false:true">{{scope.row.topState===0||scope.row.topState===1?'取消置顶':'设为置顶'}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                         <!-- </div> -->
@@ -120,7 +135,7 @@
                         <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
                     </span>
                     <button style="margin-left:10px" :disabled="isAllowedButtonClick.batchDeleteButton" @click="batchPro(1)" class="bottom_table_button">删除</button>
-                    <button @click="setRecommend" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为推荐</button>
+                    <button @click="setRecommend" v-if="isPass" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为置顶</button>
 <!--                    <button @click="batchPro(3)" :disabled="isAllowedButtonClick.batchTrunOther" class="bottom_table_button">转经纪人</button>-->
                 </div>
                 <el-pagination
@@ -135,14 +150,64 @@
                 </el-pagination>
             </div>
         </div>
+      <el-dialog
+        title="置顶设置"
+        :visible.sync="dialogVisible"
+        width="584px"
+        class="need-dialag"
+        :before-close="handleClose">
+        <el-form ref="form" :model="form" :rules="rules"  label-width="120px">
+          <el-form-item label="置顶起止时间" prop="startEndTime">
+            <el-date-picker
+              v-model="form.startEndTime"
+              size="small"
+              style="width: 312px"
+              type="datetimerange"
+              value-format="yyyy/MM/dd hh:mm:ss"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions1"
+              :default-time="['12:00:00']">
+            </el-date-picker>
+          </el-form-item>
+          <div style="padding-top: 4px">
+            <i style="color: red;display: inline-block;" class="el-icon-warning"></i>
+            <span style="font-size:14px;font-weight:400;color:rgba(133,133,133,1);">注：设置后，内容将在首页及列表页置顶展示，置顶时间到期后取消置顶展示</span>
+          </div>
+
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+           <el-button @click="dialogVisible = false" style="color: #828282;height:28px;line-height:0px;background:rgba(251,251,251,1);border-radius:3px;border:1px solid rgba(219,219,219,1);">取 消</el-button>
+           <el-button type="primary" style="height:28px;line-height:0px;border:none;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;" @click="handleTopSetting">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
 </template>
 
 <script>
 import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType , reqDeleteNeed , offLineFun , deleteProFun , recommendProFun ,reqNeedList,reqTecField ,reqNeedInfoList ,reqOfflineNeed} from "./api";
+import {cancelTop, reqSetTop} from "../releaseAudit/api";
+import {reqBatchTopping} from "../activityAudit/api";
     export default {
         data() {
             return {
+                isPass:false,
+                topData:[
+                  {
+                    value:0,
+                    label:'置顶未开始'
+                  },
+                  {
+                    value:1,
+                    label:'置顶进行中'
+                  },
+                  {
+                    value:-1,
+                    label:'未置顶'
+                  },
+                ],
+                dialogVisible:false,
                 timeRange:'',
                 key: "value",
                 isAllowedButtonClick:{
@@ -189,6 +254,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 ],
                 optionsArea:[],
                 formInline:{
+                    topState:'',
                     keyWord:'',
                     pageSize:10,
                     pageIndex:1,
@@ -217,16 +283,92 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                   endDateE:'',
                   pageNum:1,
                   pageSize:10
+                },
+              selectRow: {},
+              form:{
+                startEndTime:'',
+              },
+              pickerOptions1: {
+                disabledDate(time) {
+                  return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的
                 }
+              },
+              rules:{
+                startEndTime:[
+                  { required: true, message: '请选择置顶起止时间', trigger: 'change' }
+                ],
+              },
             }
         },
         methods: {
+          //置顶改变
+          handleTopChange(val){
+            this.needParams.topState = val;
+            this.reqNeedInfoList();
+          },
+          //置顶确定
+          handleTopSetting(isPath=false){
+            this.checkboxSelected.length>0?isPath=true:isPath=false;
+            this.$refs['form'].validate((valid) => {
+              if (valid) {
+                if (isPath){
+                  let ids=[];
+                  console.log('this.checkboxSelected',this.checkboxSelected)
+                  for(let i=0;i<this.checkboxSelected.length;i++){
+                    ids.push({
+                      mainId:this.checkboxSelected[i].id,
+                      linkUserId:this.checkboxSelected[i].userInfoId,
+                    });
+                  }
+                  let params = [];
+                  ids.forEach((item,key)=>{
+                    let paramsItem = {};
+                    paramsItem.type = 'demand';
+                    paramsItem.mainId = item.mainId;
+                    paramsItem.linkUserId = item.linkUserId;
+                    paramsItem.startTime = this.form.startEndTime[0];
+                    paramsItem.endTime = this.form.startEndTime[1];
+                    params.push(paramsItem)
+                  })
+                  console.log(params)
+                  reqBatchTopping(params).then(res=>{
+                    console.log(res)
+                    if (res.data.errcode==0){
+                      this.$message.success('批量置顶成功');
+                      this.dialogVisible = false;
+                      this.reqNeedInfoList()
+                    }
+                  })
+                  //单个
+                }else {
+                  let params = {};
+                  params.startTime = this.form.startEndTime[0];
+                  params.endTime = this.form.startEndTime[1];
+                  params.type = 'demand';
+                  params.mainId = this.selectRow.id;
+                  params.linkUserId = this.selectRow.userInfoId;
+                  reqSetTop(params).then(res=>{
+                    console.log(res)
+                    if (res.data.errcode==0){
+                      this.$message.success('置顶成功');
+                      this.dialogVisible = false;
+                      this.reqNeedInfoList()
+                    }
+                  })
+                }
+              } else {
+                console.log('error submit!!');
+                return false;
+              }
+            });
+          },
+          //关闭弹窗
+          handleClose(done) {
+            this.dialogVisible = true;
+          },
              //设为推荐
              setRecommend(){
-               this.$message({
-                 message: '功能暂未开发',
-                 type: 'warning'
-               });
+               this.dialogVisible = true;
              },
             //设置表格样式
             cellStyleFunc(row,column,roeIndex){
@@ -265,6 +407,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 if(this.statusClickIndex!=key){
                     this.statusClickIndex=key;
                     this.needParams.state=item.value;
+                    item.value==1?this.isPass=true:this.isPass=false;
                     this.needParams.pageNum=1;
                     this.reqNeedInfoList();
                 }
@@ -367,23 +510,29 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     }
                 })
             },
-            //推荐
-            recommendRow(row){
-                let param={};
-                param.id=row.projectId;
-                param.state=row.isRecommend==1?0:1;
-                let str=row.isRecommend==1?'取消推荐':'设置推荐';
-                recommendProFun(param).then(res=>{
-                    this.$message({
-                        type:res.data.ret?'success':'error',
-                        showClose: true,
-                        message:res.data.ret?`${str}操作成功`:`${str}操作失败`,
-                    })
-                    if(res.data.ret){
-                        this.fetch();
-                    }
-                })
-            },
+          //推荐
+          recommendRow(row){
+            //取消置顶
+            if (row.topState===0||row.topState===1){
+              console.log('取消置顶',)
+              let params = {};
+              params.type = 'demand';
+              params.mainId = row.id;
+              cancelTop(params).then(res=>{
+                console.log(res)
+                if (res.data.errcode===0){
+                  this.$message.success('取消成功');
+                  this.dialogVisible = false;
+                  this.reqNeedInfoList();
+                }
+              })
+            }else {
+              //置顶
+              this.selectRow = row;
+              this.form.startEndTime = '';
+              this.dialogVisible = true;
+            }
+          },
             //批量操作功能
             batchPro(flag){
                 //根据标志判断是哪个批量操作功能
@@ -529,7 +678,36 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     }
 </script>
 
-<style scoped lang="less">
+<style  lang="less">
+
+.auditMainList{
+  .need-dialag {
+    .el-dialog__header {
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+      border-radius:3px 3px 0px 0px;
+      text-align: center;
+      padding: 10px 20px 10px;
+      .el-dialog__title{
+        font-size:18px;
+        font-weight:500;
+        color:rgba(255,255,255,1);
+      }
+      .el-dialog__headerbtn {
+        top: 12px;
+        .el-icon-close {
+          font-size: 22px;
+          color: #FFFFFF;
+        }
+      }
+    }
+    .el-dialog__footer {
+      text-align: center;
+      padding-bottom: 47px;
+    }
+    .el-dialog__body {
+      padding: 45px;
+    }
+  }
   .circle-1 {
     font-size:14px;
     font-weight:400;
@@ -602,7 +780,6 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     top: 50%;
     transform: translateY(-50%);
   }
-.auditMainList{
      .activeOne {
        padding-left: 5px!important;
        padding-right: 5px!important;

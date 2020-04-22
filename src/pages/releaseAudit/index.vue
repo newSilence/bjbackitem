@@ -16,7 +16,7 @@
                     </span>
                 </div>
             </div>
-            <el-form :inline="true" :model="formInline" style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:20px" class="demo-form-inline">
+            <el-form :inline="true" :model="formInline" style="display:flex;flex-wrap:wrap;justify-content:space-between;margin-top:20px" class="demo-form-inline">
                 <el-form-item label="">
                     <el-select size="small" clearable style="width:100%;" @change="handleSelect" v-model="formInline.useArea" placeholder="应用领域">
                         <el-option v-for="item in UserAreaData" :key="item.id" :label="item.desc" :value="item.id"></el-option>
@@ -64,23 +64,21 @@
                         v-model="formInline.selectedOptions"
                         placeholder="请选择所在地区"
                         :options="optionsArea"
+
                         @change="handleAreaChange"
                         :props="cascaderProps"
                     ></el-cascader>
-                    <!-- <el-cascader
-                        clearable
-                        size="large"
-                        placeholder="所在地区"
-                        :options="optionsArea"
-                        v-model="formInline.selectedOptions"
-                        @change="handleAreaChange">
-                    </el-cascader> -->
                 </el-form-item>
                 <el-form-item label="">
                     <el-select size="small" @change="handleSelect" clearable v-model="formInline.cooperateType" placeholder="归属方性质">
                         <el-option v-for="item in OwnershipData" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                 </el-form-item>
+              <el-form-item  label=""  >
+                <el-select v-show="isPass"  size="small" @change="handleTopChange" clearable v-model="formInline.topState" placeholder="置顶状态">
+                  <el-option v-for="(item,key) in topData" :key="key" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
                 <el-form-item class="nomarginbottom" style="height:0;overflow:hidden" label="">
                     <el-select size="small" v-model="formInline.region" placeholder="活动区域">
                     <el-option label="区域一" value="shanghai"></el-option>
@@ -105,6 +103,12 @@
                     <el-option label="区域二" value="beijing"></el-option>
                     </el-select>
                 </el-form-item>
+              <el-form-item class="nomarginbottom" style="height:0;overflow:hidden" label="">
+                <el-select v-model="formInline.region" placeholder="活动区域">
+                  <el-option label="区域一" value="shanghai"></el-option>
+                  <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+              </el-form-item>
             </el-form>
         </div>
         <div>
@@ -127,9 +131,12 @@
                     <template slot-scope="scope">
                         <div style="display:flex;flex-wrap:wrap">
                             <span>{{scope.row.projectName}}</span>
-                            <span v-if="scope.row.approvalState==1&&scope.row.isRecommend" style="border:1px solid rgba(43,177,232,1);color:#01A2E4;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">推荐</span>
-                            <span v-if="scope.row.approvalState==4&&scope.row.isRecommend" style="border:1px solid #A7A7A7;color:color:#A7A7A7;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">推荐</span>
+<!--                            <span v-if="scope.row.topState" style="border:1px solid rgba(43,177,232,1);color:#01A2E4;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">置顶</span>-->
+<!--                            <span v-if="scope.row.approvalState==4&&scope.row.isRecommend" style="border:1px solid #A7A7A7;color:color:#A7A7A7;padding:0px 3px;border-radius:4px;font-size:12px;box-shadow:0px 0px 4px 3px rgba(237,236,255,0.37);">置顶</span>-->
                             <!-- {{scope.row.projectName+'/'+scope.row.cityName}} -->
+                          <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0||scope.row.topState===1" type="success">置顶</el-tag>
+                          <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0">未开始</el-tag>
+                          <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===1">进行中</el-tag>
                         </div>
                     </template>
                 </el-table-column>
@@ -180,18 +187,15 @@
                         </el-button>
                         <!-- <div> -->
                         <el-dropdown style="display:inline-block;margin-left:10px" placement="right">
-                            <span style="color:#2BB1E8;font-size:14px" class="el-dropdown-link">
-                                更多<i class="el-icon-arrow-down el-icon--right"></i>
+                            <span style="color:#2BB1E8;font-size:14px;cursor: pointer" class="el-dropdown-link">
+                                更多<i  class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
-                                <!-- <el-dropdown-item>{{scope.row.name}}</el-dropdown-item> -->
                                 <el-dropdown-item @click.native="deleteRow(scope.row)">删除</el-dropdown-item>
                                 <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.approvalState==4?'已下线':'下线'}}</el-dropdown-item>
-                                <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.isRecommend==1?'取消推荐':'设为推荐'}}</el-dropdown-item>
+                                <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalState==1?false:true">{{scope.row.topState===0||scope.row.topState===1?'取消置顶':'设为置顶'}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <!-- </div> -->
-                        <!-- <el-button type="text" size="small">更多</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -201,7 +205,7 @@
                         <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
                     </span>
                     <button style="margin-left:10px" :disabled="isAllowedButtonClick.batchDeleteButton" @click="batchPro(1)" class="bottom_table_button">删除</button>
-                    <button v-show="!(formInline.approvalState==='0'||formInline.approvalState==='2'||formInline.approvalState==='4')" @click="batchPro(2)" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为推荐</button>
+                    <button v-show="formInline.approvalState==='1'" @click="setRecommend" :disabled="isAllowedButtonClick.batchRecommendButton" class="bottom_table_button">设为置顶</button>
                     <button @click="batchPro(3)" :disabled="isAllowedButtonClick.batchTrunOther" class="bottom_table_button">转经纪人</button>
                 </div>
                 <el-pagination
@@ -216,14 +220,78 @@
                 </el-pagination>
             </div>
         </div>
+      <el-dialog
+        title="置顶设置"
+        :visible.sync="dialogVisible"
+        width="584px"
+        class="release-dialag"
+        :before-close="handleClose">
+        <el-form ref="form" :model="form" :rules="rules"  label-width="120px">
+          <el-form-item label="置顶起止时间" prop="startEndTime">
+            <el-date-picker
+              size="small"
+              style="width: 312px"
+              v-model="form.startEndTime"
+              type="datetimerange"
+              value-format="yyyy/MM/dd hh:mm:ss"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions1"
+              :default-time="['12:00:00']">
+            </el-date-picker>
+          </el-form-item>
+          <div style="padding-top: 4px">
+            <i style="color: red;display: inline-block;" class="el-icon-warning"></i>
+            <span style="font-size:14px;font-weight:400;color:rgba(133,133,133,1);">注：设置后，内容将在首页及列表页置顶展示，置顶时间到期后取消置顶展示</span>
+          </div>
+
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+           <el-button @click="dialogVisible = false" style="color: #828282;height:28px;line-height:0px;background:rgba(251,251,251,1);border-radius:3px;border:1px solid rgba(219,219,219,1);">取 消</el-button>
+           <el-button type="primary" style="height:28px;line-height:0px;border:none;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;" @click="handleTopSetting">确 定</el-button>
+        </span>
+      </el-dialog>
+
     </div>
 </template>
 
 <script>
-import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType , getProjectList , offLineFun , deleteProFun , recommendProFun , batchDeleteProFun , batchRecommendProFun } from "./api";
+import { getAllProvince ,reqSetTop, getProvinceAllCity , getListSkillArea , getListUserArea , getListProcessType , getListFruitType , getAllFinancingType , getProjectList , offLineFun , deleteProFun , cancelTop , batchDeleteProFun , batchRecommendProFun } from "./api";
+import {reqBatchTopping} from "../activityAudit/api";
     export default {
         data() {
             return {
+              topData:[
+                {
+                  value:0,
+                  label:'置顶未开始'
+                },
+                {
+                  value:1,
+                  label:'置顶进行中'
+                },
+                {
+                  value:-1,
+                  label:'未置顶'
+                },
+              ],
+              isPass:false,
+               pickerOptions1: {
+                 disabledDate(time) {
+                   return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的
+                 }
+               },
+               selectRow: {},
+                form:{
+                  startEndTime:'',
+                },
+                rules:{
+                  startEndTime:[
+                    { required: true, message: '请选择置顶起止时间', trigger: 'change' }
+                    ],
+                },
+                dialogVisible:false,
                 key: "value",
                 isAllowedButtonClick:{
                     batchRecommendButton:false,
@@ -286,25 +354,80 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 isAllChecked:false,
                 checkboxSelected:[],
                 tableData:[
-                    // {
-                    //     date: '2016-05-02',
-                    //     name: '王小虎',
-                    //     address: '上海市普陀区金沙江路 1518 弄'
-                    // },
-                    // {
-                    //     date: '2016-05-02',
-                    //     name: '王小虎',
-                    //     address: '上海市普陀区金沙江路 1518 弄'
-                    // },
-                    // {
-                    //     date: '2016-05-02',
-                    //     name: '王小虎',
-                    //     address: '上海市普陀区金沙江路 1518 弄'
-                    // }
                 ]
             }
         },
         methods: {
+          //设为置顶
+          setRecommend(){
+            this.dialogVisible = true;
+          },
+          //置顶改变
+          handleTopChange(val){
+            this.formInline.topState = val;
+            this.fetch();
+          },
+           //置顶确定
+          handleTopSetting(isPath=false){
+            this.checkboxSelected.length>0?isPath=true:isPath=false;
+            this.$refs['form'].validate((valid) => {
+              if (valid) {
+                //批量置顶
+                if (isPath){
+                  let ids=[];
+                  console.log('this.checkboxSelected',this.checkboxSelected)
+                  for(let i=0;i<this.checkboxSelected.length;i++){
+                    ids.push({
+                      mainId:this.checkboxSelected[i].projectId,
+                      linkUserId:this.checkboxSelected[i].createId,
+                    });
+                  }
+                  let params = [];
+                  ids.forEach((item,key)=>{
+                    let paramsItem = {};
+                    paramsItem.type = 'project';
+                    paramsItem.mainId = item.mainId;
+                    paramsItem.linkUserId = item.linkUserId;
+                    paramsItem.startTime = this.form.startEndTime[0];
+                    paramsItem.endTime = this.form.startEndTime[1];
+                    params.push(paramsItem)
+                  })
+                  console.log(params)
+                  reqBatchTopping(params).then(res=>{
+                    console.log(res)
+                    if (res.data.errcode==0){
+                      this.$message.success('批量置顶成功');
+                      this.dialogVisible = false;
+                      this.fetch()
+                    }
+                  })
+                  //单个
+                }else {
+                  let params = {};
+                  params.startTime = this.form.startEndTime[0];
+                  params.endTime = this.form.startEndTime[1];
+                  params.type = 'project';
+                  params.mainId = this.selectRow.projectId;
+                  params.linkUserId = this.selectRow.createId;
+                  reqSetTop(params).then(res=>{
+                    console.log(res)
+                    if (res.data.errcode==0){
+                      this.$message.success('置顶成功');
+                      this.dialogVisible = false;
+                      this.fetch()
+                    }
+                  })
+                }
+              } else {
+                console.log('error submit!!');
+                return false;
+              }
+            });
+          },
+           //关闭弹窗
+            handleClose(done) {
+                this.dialogVisible = true;
+              },
             //设置表格样式
             cellStyleFunc(row,column,roeIndex){
                 // #A7A7A7
@@ -331,6 +454,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                     //     this.formInline.state='';
                     //     this.formInline.approvalState=item.value;
                     // }
+                    item.value==1?this.isPass=true:this.isPass=false;
                     this.formInline.approvalState=item.value;
                     this.formInline.pageIndex=1;
                     this.fetch();
@@ -437,26 +561,32 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
             },
             //推荐
             recommendRow(row){
-                let param={};
-                param.id=row.projectId;
-                param.state=row.isRecommend==1?0:1;
-                let str=row.isRecommend==1?'取消推荐':'设置推荐';
-                recommendProFun(param).then(res=>{
-                    this.$message({
-                        type:res.data.ret?'success':'error',
-                        showClose: true,
-                        message:res.data.ret?`${str}操作成功`:`${str}操作失败`,
-                    })
-                    if(res.data.ret){
-                        this.fetch();
-                    }
-                })
+               //取消置顶
+               if (row.topState===0||row.topState===1){
+                 console.log('取消置顶',)
+                 let params = {};
+                 params.type = 'project';
+                 params.mainId = row.projectId
+                 cancelTop(params).then(res=>{
+                   console.log(res)
+                   if (res.data.errcode===0){
+                     this.$message.success('取消成功');
+                     this.dialogVisible = false;
+                     this.fetch();
+                   }
+                 })
+               }else {
+                 //置顶
+                 this.selectRow = row;
+                 this.form.startEndTime = '';
+                 this.dialogVisible = true;
+               }
             },
             //批量操作功能
             batchPro(flag){
                 //根据标志判断是哪个批量操作功能
                 let optionFunc=flag==1?batchDeleteProFun:flag==2?batchRecommendProFun:'';
-                let str = flag==1?'批量删除':flag==2?'批量设为推荐':'';
+                let str = flag==1?'批量删除':flag==2?'批量设为置顶':'';
                 if(flag==1){
                     this.isAllowedButtonClick.batchDeleteButton=true;
                 }
@@ -567,8 +697,38 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
     }
 </script>
 
-<style scoped lang="less">
+<style   lang="less">
 .auditMainList{
+  .release-dialag {
+    .el-dialog__header {
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+      border-radius:3px 3px 0px 0px;
+      text-align: center;
+      padding: 10px 20px 10px;
+      .el-dialog__title{
+        font-size:18px;
+        font-weight:500;
+        color:rgba(255,255,255,1);
+      }
+      .el-dialog__headerbtn {
+        top: 12px;
+        .el-icon-close {
+          font-size: 22px;
+          color: #FFFFFF;
+        }
+      }
+    }
+    .el-dialog__footer {
+      text-align: center;
+      padding-bottom: 47px;
+    }
+    .el-dialog__body {
+      padding: 45px;
+    }
+  }
+  .demo-form-inline {
+
+  }
   .circle-1 {
     font-size:14px;
     font-weight:400;

@@ -151,3 +151,19 @@ export function approvalProDetail(data){
         method:'post'
     })
 }
+//取消置顶
+export function cancelTop(data){
+  return request({
+    url:'/manager/top/cancelTop',
+    data,
+    method:'post'
+  },false)
+}
+//设为置顶
+export function reqSetTop(data){
+  return request({
+    url:'/manager/top/save',
+    data,
+    method:'post'
+  },false)
+}

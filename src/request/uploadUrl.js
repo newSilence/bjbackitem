@@ -32,6 +32,7 @@ const uploadUrl="";
 // 测试
 // const uploadUrl="http://139.196.236.125:8080";
 // const uploadUrl="http://192.168.1.118:8080";
+// const uploadUrl="http://192.168.1.118:8001";
 
 export default {
     uploadUrl,toolbarOptions,treeData

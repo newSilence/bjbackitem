@@ -18,18 +18,19 @@
             </div>
             <el-form :inline="true" :model="formInline" style="margin-top:20px" class="demo-form-inline">
                 <el-form-item label="" style="margin-right: 21px">
-                    <el-select @change="handleActiveType" clearable style="width:100%" v-model="formInline.processType" placeholder="活动类型">
+                    <el-select size="small" @change="handleActiveType" clearable  v-model="formInline.processType" placeholder="活动类型">
                         <el-option v-for="item in ActiveTypeData" :key="item.id" :label="item.value" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="" style="margin-right: 21px">
-                    <el-select @change="handleFildType" clearable style="width:100%" v-model="formInline.financingType" placeholder="活动领域">
+                <el-form-item size="small" label="" style="margin-right: 21px;margin-top: 3px">
+                    <el-select @change="handleFildType" clearable  v-model="formInline.financingType" placeholder="活动领域">
                         <el-option v-for="item in ActiveFildData" :key="item.id" :label="item.value" :value="item.code"></el-option>
                     </el-select>
                 </el-form-item>
               <el-form-item label="" style="margin-right: 21px">
                 <el-cascader
                   clearable
+                  size="small"
                   v-model="formInline.selectedOptions"
                   placeholder="活动地区"
                   :options="optionsArea"
@@ -38,13 +39,14 @@
                 ></el-cascader>
               </el-form-item >
                 <el-form-item label="" style="margin-right: 21px" v-show="isPass">
-                    <el-select @change="handleStateChange" clearable v-model="formInline.yourWant" placeholder="报名状态">
+                    <el-select @change="handleStateChange" size="small" clearable v-model="formInline.yourWant" placeholder="报名状态">
                         <el-option v-for="item in AppealData" :key="item" :label="item" :value="item"></el-option>
                     </el-select>
                 </el-form-item>
 
-              <el-form-item label="">
+              <el-form-item label="" style="margin-right: 21px">
                 <el-date-picker
+                  size="small"
                   v-model="value1"
                   type="datetime"
                   @change="handleTimeChange"
@@ -52,6 +54,11 @@
                   value-format="yyyy/MM/dd HH:mm"
                   placeholder="活动截止报名时间">
                 </el-date-picker>
+              </el-form-item>
+              <el-form-item  label="" style="margin-right: 21px" >
+                <el-select v-show="isPass"  size="small" @change="handleTopChange" clearable v-model="formInline.topState" placeholder="置顶状态">
+                  <el-option v-for="(item,key) in topData" :key="key" :label="item.label" :value="item.value"></el-option>
+                </el-select>
               </el-form-item>
             </el-form>
         </div>
@@ -72,6 +79,15 @@
                 prop="activitiesTopic"
                 min-width="150"
                 label="活动名称">
+                <template slot-scope="scope">
+                <div style="display:flex;flex-wrap:wrap">
+                  <span>{{scope.row.activitiesTopic}}</span>
+                  <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0||scope.row.topState===1" type="success">置顶</el-tag>
+                  <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0">未开始</el-tag>
+                  <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===1">进行中</el-tag>
+                  <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===2">已结束</el-tag>
+                </div>
+                </template>
               </el-table-column>
               <el-table-column
                 prop="regFee"
@@ -137,7 +153,7 @@
                                 <!-- <el-dropdown-item>{{scope.row.name}}</el-dropdown-item> -->
                                 <el-dropdown-item @click.native="deleteRow(scope.row)" :disabled="scope.row.approvalStatus===1" >删除</el-dropdown-item>
                                 <el-dropdown-item @click.native="offlineRow(scope.row)" :disabled="scope.row.approvalStatus==1&&scope.row.status==1?false:true">{{scope.row.approvalStatus==4?'已下线':'下线'}}{{scope.row.approvalState,scope.row.status}}</el-dropdown-item>
-<!--                                <el-dropdown-item  :disabled="scope.row.approvalState==1?false:true">{{scope.row.isRecommend==1?'取消推荐':'设为推荐'}}</el-dropdown-item>-->
+                              <el-dropdown-item @click.native="recommendRow(scope.row)" :disabled="scope.row.approvalStatus==1?false:true">{{scope.row.topState===0||scope.row.topState===1?'取消置顶':'设为置顶'}}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                         <!-- </div> -->
@@ -151,7 +167,7 @@
                         <el-checkbox @change='checkChoose' v-model="isAllChecked">全选</el-checkbox>
                     </span>
                     <button style="margin-left:10px" :disabled="isAllowedButtonClick.batchDeleteButton" @click="batchPro(1)" class="bottom_table_button">删除</button>
-                    <button   @click="setRecommend" class="bottom_table_button">设为推荐</button>
+                    <button v-if="isPass"   @click="setRecommend" class="bottom_table_button">设为置顶</button>
                 </div>
                 <el-pagination
                     @size-change="handleSizeChange"
@@ -165,14 +181,61 @@
                 </el-pagination>
             </div>
         </div>
+      <el-dialog
+        title="置顶设置"
+        :visible.sync="dialogVisible"
+        width="584px"
+        class="active-dialag"
+        :before-close="handleClose">
+        <el-form ref="form" :model="form" :rules="rules"  label-width="120px">
+          <el-form-item label="置顶起止时间" prop="startEndTime">
+            <el-date-picker
+              size="small"
+              style="width: 312px"
+              v-model="form.startEndTime"
+              type="datetimerange"
+              value-format="yyyy/MM/dd hh:mm:ss"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions1"
+              :default-time="['12:00:00']">
+            </el-date-picker>
+          </el-form-item>
+             <div style="padding-top: 4px">
+               <i style="color: red;display: inline-block;" class="el-icon-warning"></i>
+               <span style="font-size:14px;font-weight:400;color:rgba(133,133,133,1);">注：设置后，内容将在首页及列表页置顶展示，置顶时间到期后取消置顶展示</span>
+             </div>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+           <el-button @click="dialogVisible = false" style="color: #828282;height:28px;line-height:0px;background:rgba(251,251,251,1);border-radius:3px;border:1px solid rgba(219,219,219,1);">取 消</el-button>
+           <el-button type="primary" @click="handleTopSetting" style="height:28px;line-height:0px;border:none;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
 </template>
 
 <script>
-import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserArea ,  getListFruitType , getAllFinancingType ,  reqCloseActive  , recommendProFun , batchDeleteProFun , batchRecommendProFun ,getActiveType , getActiveList,delActiveItem,reqDeleateActive} from "./api";
+import { getAllProvince , getProvinceAllCity ,reqBatchTopping, getListSkillArea , getListUserArea ,  getListFruitType , getAllFinancingType ,  reqCloseActive  , getActiveType , getActiveList,delActiveItem,reqDeleateActive} from "./api";
+import {cancelTop, reqSetTop} from "../releaseAudit/api";
     export default {
         data() {
             return {
+                topData:[
+                  {
+                  value:0,
+                  label:'置顶未开始'
+                 },
+                  {
+                    value:1,
+                    label:'置顶进行中'
+                  },
+                  {
+                    value:-1,
+                    label:'未置顶'
+                  },
+                ],
+                dialogVisible:false,
                 total:1,
                 value1:'',
                 key: "value",
@@ -189,28 +252,29 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 FruitTypeData:[],
                 FinancingTypeData:[],
                 totalAll:0,
-                cascaderProps:{
-                    lazy: true,
-                    lazyLoad: (node,resolve)=>{
-                        const { level } = node;
-                        console.log('触发了',node)
-                        let data={
-                            provinceId:node.value
-                        }
-                        !node.value?''
-                        :getProvinceAllCity(data).then(res=>{
-                            if(res.data.data){
-                                let data=res.data.data;
-                                const nodes=data.map(item => ({
-                                    value: item.regionId,
-                                    label: item.name,
-                                    leaf: level >=2
-                                }));
-                                resolve(nodes);
-                            }
-                        });
-                    }
-                },
+              cascaderProps:{
+                lazy: true,
+                lazyLoad: (node,resolve)=>{
+                  const { level } = node;
+                  console.log('触发了',node)
+                  let data={
+                    provinceId:node.value
+                  }
+                  !node.value?''
+                    :getProvinceAllCity(data).then(res=>{
+                      if(res.data.data){
+                        let data=res.data.data;
+                        const nodes=data.map(item => ({
+                          value: item.regionId,
+                          label: item.name,
+                          leaf: level >=2
+                        }));
+                        resolve(nodes);
+                      }
+                    });
+                }
+              },
+
                 statusClickIndex:0,
                 manageAuditType:[
                     {label:'全部',value:''},
@@ -221,6 +285,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 ],
                 optionsArea:[],
                 formInline:{
+                    topState:'',
                     keyWord:'',
                     pageSize:10,
                     pageIndex:1,
@@ -246,16 +311,95 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                   keyword:''
                 },
                ActiveFildData:[], //活动领域
-               isPass:false
-            }
+               isPass:false,
+               pickerOptions1: {
+                 disabledDate(time) {
+                   return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的
+                 }
+               },
+               selectRow: {},
+               form:{
+                 startEndTime:'',
+               },
+               rules:{
+                 startEndTime:[
+                   { required: true, message: '请选择置顶起止时间', trigger: 'change' }
+                 ],
+               },
+             }
         },
         methods: {
+          //置顶改变
+          handleTopChange(val){
+            this.activeParams.topState = val;
+            this.getActiveList();
+          },
+          //置顶确定
+          handleTopSetting(isPath=false){
+            this.checkboxSelected.length>0?isPath=true:isPath=false;
+            this.$refs['form'].validate((valid) => {
+              if (valid) {
+                  //批量
+                if (isPath){
+                  let ids=[];
+                  console.log('this.checkboxSelected',this.checkboxSelected)
+                  for(let i=0;i<this.checkboxSelected.length;i++){
+                    ids.push({
+                      mainId:this.checkboxSelected[i].id,
+                      linkUserId:this.checkboxSelected[i].createId,
+                    });
+                  }
+                  let params = [];
+                  ids.forEach((item,key)=>{
+                    let paramsItem = {};
+                    paramsItem.type = 'activities';
+                    paramsItem.mainId = item.mainId;
+                    paramsItem.linkUserId = item.linkUserId;
+                    paramsItem.startTime = this.form.startEndTime[0];
+                    paramsItem.endTime = this.form.startEndTime[1];
+                    params.push(paramsItem)
+                  })
+                  console.log(params)
+                  reqBatchTopping(params).then(res=>{
+                      console.log(res)
+                      if (res.data.errcode==0){
+                        this.$message.success('批量置顶成功');
+                        this.dialogVisible = false;
+                        this.getActiveList()
+                      }
+                  })
+                  //单个
+                }else {
+                  let params = {};
+                  params.startTime = this.form.startEndTime[0];
+                  params.endTime = this.form.startEndTime[1];
+                  params.type = 'activities';
+                  params.mainId = this.selectRow.id;
+                  params.linkUserId = this.selectRow.createId;
+                  reqSetTop(params).then(res=>{
+                    console.log(res)
+                    if (res.data.errcode==0){
+                      this.$message.success('置顶成功');
+                      this.dialogVisible = false;
+                      this.getActiveList()
+                    }
+                  })
+                }
+              } else {
+                console.log('error submit!!');
+                return false;
+              }
+            });
+          },
+           //关闭弹窗
+           handleClose(done) {
+             this.dialogVisible = true;
+           },
            //获取活动列表
             getActiveList(){
               let params = this.activeParams;
               getActiveList(params).then(res=>{
                 if (res.data.errcode===0){
-                  console.log('------------------',res.data.data)
                   this.tableData= res.data.data.data.list;
                   this.total = res.data.data.data.total;
                   this.manageAuditType[1].num = res.data.data.count
@@ -426,23 +570,29 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
 
                 })
             },
-            //推荐
-            recommendRow(row){
-                let param={};
-                param.id=row.projectId;
-                param.state=row.isRecommend==1?0:1;
-                let str=row.isRecommend==1?'取消推荐':'设置推荐';
-                recommendProFun(param).then(res=>{
-                    this.$message({
-                        type:res.data.ret?'success':'error',
-                        showClose: true,
-                        message:res.data.ret?`${str}操作成功`:`${str}操作失败`,
-                    })
-                    if(res.data.ret){
-
-                    }
-                })
-            },
+          //推荐
+          recommendRow(row){
+            //取消置顶
+            if (row.topState===0||row.topState===1){
+              console.log('取消置顶',)
+              let params = {};
+              params.type = 'activities';
+              params.mainId = row.id;
+              cancelTop(params).then(res=>{
+                console.log(res)
+                if (res.data.errcode===0){
+                  this.$message.success('取消成功');
+                  this.dialogVisible = false;
+                  this.getActiveList();
+                }
+              })
+            }else {
+              //置顶
+              this.selectRow = row;
+              this.form.startEndTime = '';
+              this.dialogVisible = true;
+            }
+          },
             //批量操作功能
             batchPro(flag){
                 //根据标志判断是哪个批量操作功能
@@ -497,6 +647,7 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
                 //     return false;
                 // }
                 let ids=[];
+                console.log('checkboxSelected',this.checkboxSelected)
                 for(let i=0;i<this.checkboxSelected.length;i++){
                     ids.push(this.checkboxSelected[i].id);
                 }
@@ -555,10 +706,9 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
           },
           //设为推荐
           setRecommend(){
-            this.$message({
-              message: '功能暂未开发',
-              type: 'warning'
-            });
+            this.dialogVisible = true;
+
+            // this.handleTopSetting(true)
           }
         },
         created () {
@@ -573,6 +723,33 @@ import { getAllProvince , getProvinceAllCity , getListSkillArea , getListUserAre
 
 <style  lang="less">
 .auditMainList{
+  .active-dialag {
+    .el-dialog__header {
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+      border-radius:3px 3px 0px 0px;
+      text-align: center;
+      padding: 10px 20px 10px;
+         .el-dialog__title{
+           font-size:18px;
+           font-weight:500;
+           color:rgba(255,255,255,1);
+         }
+        .el-dialog__headerbtn {
+          top: 12px;
+          .el-icon-close {
+            font-size: 22px;
+            color: #FFFFFF;
+          }
+        }
+    }
+    .el-dialog__footer {
+      text-align: center;
+      padding-bottom: 47px;
+    }
+    .el-dialog__body {
+      padding: 45px;
+    }
+  }
   .circle-1 {
     font-size:14px;
     font-weight:400;
