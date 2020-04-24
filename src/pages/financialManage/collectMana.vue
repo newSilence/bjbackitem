@@ -76,7 +76,8 @@
                 width=""
                 show-overflow-tooltip>
                   <template slot-scope="scope">
-                      {{scope.row.actualPrice===0?scope.row.createDate:scope.row.payDate}}
+                    {{scope.row.payDate}}
+                      <!-- {{scope.row.actualPrice===0?scope.row.createDate:scope.row.payDate}} -->
                   </template>
                 </el-table-column>
                  <el-table-column
