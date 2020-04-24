@@ -261,6 +261,14 @@ export function turnOffCard(data){
         method:'post'
     })
 }
+//获取省份下所有的市
+export function getProvinceAllCity(data){
+  return request({
+    url:'/region/queryCityByProvinceId.json',
+    params:data,
+    method:'get'
+  })
+}
 //
 // export function getAdminManageTable(data){
 //     return request({

@@ -19,7 +19,7 @@
       <div >
         <i class="el-icon-warning"></i>
         <span style="font-size:16px;font-weight:600;
-color:rgba(51,51,51,1);">待审核</span>
+color:#FAA800;">待审核</span>
       </div>
       <div>
         <button @click="saveDetail(1)" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
@@ -53,7 +53,7 @@ color:rgba(51,51,51,1);">待审核</span>
       <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
         <div>
           <span>当前进度：</span>
-          <span style="color:#F3A157">已通过</span>
+          <span style="color:#52c41a">已通过</span>
         </div>
         <div>
         </div>

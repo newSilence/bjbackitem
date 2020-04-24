@@ -5,7 +5,7 @@
           <el-form style="margin:0px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item>
                 <el-date-picker
-                style=";height:32px"
+                size="small"
                 v-model="formInline.time"
                 clearable
                 type="daterange"
@@ -22,7 +22,7 @@
                 <el-button class="self_btn" style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;color:white;height:32px"  @click="onSearch" icon="el-icon-search">搜索</el-button>
                 <el-button class="self_btn" style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:4px;color:white;height:32px"  @click="onExport">导出</el-button>
           </el-form>
-            
+
         </div>
       </div>
         <div>
@@ -198,11 +198,11 @@ import { getTableListData , exportList } from './api'
 
                   });
                 }
-                
+
               })
               return false;
               // console.log(this.tableData);
-              
+
 
     },
 
@@ -212,7 +212,7 @@ import { getTableListData , exportList } from './api'
     },
             //获取表格数据
             fetchData(){
-              
+
                 if(this.formInline.time&&this.formInline.time.length>0){
                     this.formInline.sdate=this.formInline.time[0];
                     this.formInline.edate=this.formInline.time[1];

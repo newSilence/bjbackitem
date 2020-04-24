@@ -4,15 +4,18 @@ import baseUrl from './uploadUrl'
 import store from '@/vuex/store'
 import Router from '@/router/index'
 import { Message } from 'element-ui';
-export function request(config){
+export function request(config,isForm=true){
     // console.log("baseUrl",baseUrl.uploadUrl);
-    const instance = axios.create({
+    const instance =isForm ? axios.create({
         baseURL:baseUrl.uploadUrl,
         timeout:5000,
         transformRequest: [function (data) {
-            // 对 data 进行任意转换处理
-            return Qs.stringify(data)
-        }],
+        // 对 data 进行任意转换处理
+        return Qs.stringify(data)
+      }],
+    }): axios.create({
+       baseURL:baseUrl.uploadUrl,
+       timeout:5000,
     })
     instance.interceptors.request.use((config)=>{
         // console.log("config",config);
@@ -27,7 +30,7 @@ export function request(config){
     },function(error){})
     // console.log('dddd',store.state.isShowMessage)
     instance.interceptors.response.use((response)=>{
-        
+
         // console.log("response",response)
         // console.log('dddd',store.state.isShowMessage)
         if(response.data.errcode=="500405"){

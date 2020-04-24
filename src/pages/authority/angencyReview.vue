@@ -12,7 +12,7 @@
             padding-left:20px;padding-right:17px">
             <div>
                 <span>当前进度：</span>
-                <span>待审核</span>
+                <span style="color: #FAA800">待审核</span>
             </div>
             <div>
                 <button @click="saveDetail(1)" style="border-radius:4px;background:#2BB1E8;padding:7px;font-size:14px;color:#FFFFFF;border:none;cursor:pointer">审核通过</button>
@@ -38,15 +38,15 @@
                     <span>审核时间：{{form.auditTime}}</span>
                 </div>
             </div>
-            
+
         </div>
-        
+
         <!-- 已通过 -->
         <div v-if="form.auditStatus==1" style="background:rgba(242,247,250,1);border:1px solid #F3F3F3;margin-top:21px;padding-left:20px;padding-right:17px;padding-bottom:17px">
             <div style="display:flex;justify-content:space-between;height:51px;align-items:center;">
                 <div>
                     <span>当前进度：</span>
-                    <span style="color:#F3A157">已通过</span>
+                    <span style="color:#52c41a">已通过</span>
                 </div>
                 <div>
                 </div>
@@ -56,7 +56,7 @@
                 <span>审核时间：{{form.auditTime}}</span>
             </div>
         </div>
-        
+
         <el-form ref="form" :model="form" style="overflow:hidden" label-width="140px">
         <!-- 服务商信息 -->
         <div>

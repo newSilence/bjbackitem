@@ -1,10 +1,10 @@
 <template>
-    <div style="padding:22px 40px">
+    <div style="padding:22px 40px" class="memberSelf">
         <!-- 会员账号管理页面 -->
         <div style="display:flex;justify-content:space-between;align-items:center">
             <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="账号性质：">
-                    <el-select v-model="formInline.identity" placeholder="请选择">
+                    <el-select @change="handleTypeChange" size="small" v-model="formInline.type" placeholder="请选择">
                         <el-option
                         v-for="item in accountTypeData"
                         :key="item.value"
@@ -13,8 +13,41 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+              <el-form-item label="活动地区：">
+                <el-cascader
+                  @change="handleCityChange"
+                  clearable
+                  size="small"
+                  v-model="cityData"
+                  placeholder="活动地区"
+                  :options="optionsArea"
+                  :props="cascaderProps"
+                ></el-cascader>
+              </el-form-item>
+              <el-form-item label="会员身份：">
+                <el-select @change="handleIdentityChange" size="small" v-model="formInline.identity" placeholder="请选择">
+                  <el-option
+
+                    v-for="item in MemberShipData"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="会员状态：">
+                <el-select size="small" @change="handleStatusChange" v-model="formInline.state" placeholder="请选择">
+                  <el-option
+                    v-for="item in MemberStatusData"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
             </el-form>
-            <el-form style="margin:20px 20px 2px 20px" :inline="true" :model="formInline" class="demo-form-inline">
+            <el-form  :inline="true" :model="formInline" class="demo-form-inline">
                 <el-form-item label="">
                     <el-input class="search_input" style="" placeholder="请输入关键词"  v-model="formInline.keyWord">
                         <el-button style="background:linear-gradient(126deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:0px 4px 4px 0px;color:white;border:1px solid #01A2E4;" slot="append"  @click="onSearch" icon="el-icon-search">搜索</el-button>
@@ -38,11 +71,16 @@
                 </el-table-column>
                 <el-table-column
                 label="会员名称"
-                
+
                 width="">
                  <!-- @click="seenDeatil(scope.row)" -->
                 <template slot-scope="scope">
-                    <p @click="seenDeatil(scope.row)" :style="{cursor:'pointer',height:23+'px',color:scope.row.state==2?'red':''}" >{{ scope.row.realName }}</p>
+                  <span @click="seenDeatil(scope.row)" :style="{cursor:'pointer',height:23+'px'}" >{{ scope.row.realName }}</span>
+
+                    <el-tag size="mini" type="info" v-if="scope.row.state==2">已禁用</el-tag>
+                    <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0||scope.row.topState===1" type="success">置顶</el-tag>
+                    <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===0">未开始</el-tag>
+                    <el-tag style="margin: 0 3px" size="mini" v-if="scope.row.topState===1">进行中</el-tag>
                 </template>
                 </el-table-column>
                 <el-table-column
@@ -54,7 +92,7 @@
                 label="账号性质"
                 width="120"
                 show-overflow-tooltip>
-                    <template slot-scope="scope">{{ 
+                    <template slot-scope="scope">{{
                         scope.row.type==1?'个人'
                         :scope.row.type==2?'机构':''}}
                     </template>
@@ -77,11 +115,12 @@
                 </el-table-column>
                  <el-table-column
                     label="操作"
-                    width="150">
+                    width="220">
                     <template slot-scope="scope">
                         <!-- @click="seenDeatil(scope.row)" -->
                         <el-button @click="seenDeatil(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">查看</el-button>
                         <el-button @click="setPermit(scope.row)" type="text" style="color:#2BB1E8;font-size:14px" size="small">权限设置</el-button>
+                        <el-button v-if="isExpert" @click="recommendRow(scope.row)" type="text" :style="{'color':scope.row.topState===0||scope.row.topState===1 ? '#67c23a':'#2BB1E8'}" size="small">{{scope.row.topState===0||scope.row.topState===1?'取消置顶':'设为置顶'}}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -135,8 +174,8 @@
                             @select="deptSelected"
                             v-model="value"
                             :multiple="true"
-                            :flat="false" 
-                            :default-expand-level="Infinity" 
+                            :flat="false"
+                            :default-expand-level="Infinity"
                             :options="deptSelectOptions" />
                          </div>
                     </el-col>
@@ -208,7 +247,7 @@
                             <el-input readonly v-model="baseform.getTime"></el-input>
                         </el-form-item>
                     </el-form>
-                    
+
                     <el-form-item label="百科人物：">
                         <el-input readonly v-model="baseform.expertLink"></el-input>
                     </el-form-item>
@@ -225,7 +264,7 @@
                                 <el-radio :label="1">否</el-radio>
                             </el-radio-group>
                         </el-form-item>
-                        
+
                     </el-form>
                     <el-form-item label="宣传照：">
                         <img :src="baseform.headPortrait" alt="">
@@ -233,7 +272,7 @@
                     <el-form label-width="100px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="个人简介：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
                                 <div  v-html="baseform.individual"></div>
@@ -270,8 +309,8 @@
                         <el-form-item label="单位名称：">
                             <el-input readonly v-model="factoBaseForm.companyName"></el-input>
                         </el-form-item>
-                        
-                        
+
+
                     </el-form>
                     <el-form-item label="统一社会信用代码：">
                         <el-input readonly v-model="factoBaseForm.companyCode"></el-input>
@@ -291,7 +330,7 @@
                     <el-form label-width="150px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="公司介绍：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
                                 <div  v-html="factoBaseForm.serviceProviders"></div>
@@ -310,7 +349,7 @@
                     <el-form label-width="150px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="描述：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%;min-width:200px" class="detail-content content ql-editor" >
                                 <div  v-html="factoBaseForm.applicationDescription"></div>
@@ -322,7 +361,7 @@
                     <el-form label-width="150px" :inline="true" class="demo-form-inline">
                         <div style="display:flex">
                             <el-form-item label="主营业务介绍：">
-                                
+
                             </el-form-item>
                             <div style="border:1px solid #EDEDED;width:100%" class="detail-content content ql-editor" >
                                 <div  v-html="factoBaseForm.description"></div>
@@ -365,21 +404,65 @@
                 <el-button type="primary" style="background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border:none" @click="confirmSetAccountRolePer">确 定</el-button>
             </div>
         </el-dialog>
+       <el-dialog
+        title="置顶设置"
+        :visible.sync="dialogVisible"
+        width="584px"
+        class="authorityTopDialog"
+        >
+        <el-form ref="topForm" :model="topForm" :rules="topRules"  label-width="120px">
+          <el-form-item label="置顶起止时间" prop="startEndTime">
+            <el-date-picker
+              v-model="topForm.startEndTime"
+              type="datetimerange"
+              size="small"
+              style="width: 312px"
+              value-format="yyyy/MM/dd hh:mm:ss"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions1"
+              :default-time="['12:00:00']">
+            </el-date-picker>
+          </el-form-item>
+          <div style="padding-top: 4px">
+            <i style="color: red;display: inline-block;" class="el-icon-warning"></i>
+            <span style="font-size:14px;font-weight:400;color:rgba(133,133,133,1);">注：设置后，内容将在首页及列表页置顶展示，置顶时间到期后取消置顶展示</span>
+          </div>
+
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+           <el-button style="color: #828282;height:28px;line-height:0px;background:rgba(251,251,251,1);border-radius:3px;border:1px solid rgba(219,219,219,1);" @click="dialogVisible = false">取 消</el-button>
+           <el-button style="height:28px;line-height:0px;border:none;background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);border-radius:3px;" type="primary" @click="handleTopSetting">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
 </template>
 
 <script>
 import { getAdminManageTable  , getAllDepartData , saveAdminUser , updateAdminUser , getUserDetailInfo , getAllFuncPerm , updateRoleData , saveRoleData , getRoleDetailInfo } from './api'
-import { getAllMemAccountData , getMemAccountDetailData , getAccountMemPermWebrole , setAccountRolePerUrl , getAccountPermWebrole , getMemAccountSelectAuthenticationData , updateCanOrUse } from './api'
+import { getAllMemAccountData ,getProvinceAllCity, getMemAccountDetailData , getAccountMemPermWebrole , setAccountRolePerUrl , getAccountPermWebrole , getMemAccountSelectAuthenticationData , updateCanOrUse } from './api'
 
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import {getAllProvince, reqBatchTopping} from "../activityAudit/api";
+import {cancelTop, reqSetTop} from "../releaseAudit/api";
     export default {
-       
+
         data() {
             return {
+              topRules:{
+                startEndTime:[
+                  { required: true, message: '请选择置顶起止时间', trigger: 'change' }
+                ],
+              },
+              topForm:{
+                startEndTime:''
+                },
                 //复选框选择的数据
                 isAllChecked:false,
+                dialogVisible:false,
+                cityData:[],
                 chooseUseData:[],
                 optionName:'',
                 accountTypeData:[//账号性质
@@ -391,6 +474,39 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     //{value:'4',label:'服务商'},
                     // {value:'其他自定义',label:'其他自定义'},
                 ],
+              MemberStatusData:[
+                  {value:'',label:'全部'},
+                  {value:0,label:'可用'},
+                  {value:2,label:'禁用'}
+                ],
+              MemberShipData:[
+                {value:'',label:'全部'},
+                {value:'专家',label:'专家'},
+                {value:'经纪人',label:'经纪人'},
+                {value:'服务商',label:'服务商'},
+              ],
+              cascaderProps:{
+                lazy: true,
+                lazyLoad: (node,resolve)=>{
+                  const { level } = node;
+                  let data={
+                    provinceId:node.value
+                  }
+                  !node.value?''
+                    :getProvinceAllCity(data).then(res=>{
+                      if(res.data.data){
+                        let data=res.data.data;
+                        const nodes=data.map(item => ({
+                          value: item.regionId,
+                          label: item.name,
+                          leaf: level >=1
+                        }));
+                        resolve(nodes);
+                      }
+                    });
+                }
+              },
+              optionsArea:[],
                 //专家详情弹框
                 dialogExpertFormVisible:false,
                 dialogFactoraFormVisible:false,
@@ -433,7 +549,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 },
                 factoBaseForm:{
                   companyName:'',
-                  companyCode:'',  
+                  companyCode:'',
                   companyType:'',
                   cityName:'',
                   email:'',
@@ -459,12 +575,15 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 total:0,
                 formInline: {
                     keyWord:'',
-                    identity:'',
+                    type:'',
                     auditStatus:'',
+                    province:'',
+                    city:'',
                     pageNumber:1,
                     pageSize:10,
+
                 },
-                
+                selectRow:{},
                 form:{
                     roleName:'',
                     deptName:'',
@@ -474,6 +593,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     deptIdList:[],
                 },
                 rules:{
+                   startEndTime:[
+                     { required: true, message: '请选择置顶起止时间', trigger: 'change' }
+                   ],
                     roleName:[
                         { required: true, message: '请输入角色名称', trigger: 'blur' },
                         { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
@@ -507,10 +629,110 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 ],//角色复选框
                 dialogFormVisible:false,
                 dialogFormVisibleTitle:'新建角色',
+                isExpert:false, //是否是专家
+                pickerOptions1: {
+                  disabledDate(time) {
+                    return time.getTime() < Date.now() - 8.64e7;//如果没有后面的-8.64e7就是不可以选择今天的
+                  }
+                },
             }
         },
         components: { Treeselect },
         methods: {
+          //关闭弹窗
+          handleClose(done) {
+            this.dialogVisible = true;
+          },
+          //置顶确定
+          handleTopSetting(){
+            this.$refs['topForm'].validate((valid) => {
+              if (valid) {
+                  let params = {};
+                  console.log('selectRow',this.selectRow)
+                  params.startTime = this.topForm.startEndTime[0];
+                  params.endTime = this.topForm.startEndTime[1];
+                  params.type = 'talent';
+                  params.mainId = this.selectRow.userId;
+                  params.linkUserId = this.selectRow.userId;
+                  reqSetTop(params).then(res=>{
+                    console.log(res)
+                    if (res.data.errcode==0){
+                      this.$message.success('置顶成功');
+                      this.dialogVisible = false;
+                      this.fetchData()
+                    }
+                  })
+
+              } else {
+                console.log('error submit!!');
+                return false;
+              }
+            });
+          },
+          //推荐
+          recommendRow(row){
+            //取消置顶
+            if (row.topState===0||row.topState===1){
+              console.log('取消置顶',)
+              let params = {};
+              params.type = 'talent';
+              params.mainId = row.userId;
+              cancelTop(params).then(res=>{
+                console.log(res)
+                if (res.data.errcode===0){
+                  this.$message.success('取消成功');
+                  this.dialogVisible = false;
+                  this.fetchData();
+                }
+              })
+            }else {
+              //置顶
+              this.selectRow = row;
+              this.topForm.startEndTime = '';
+              this.dialogVisible = true;
+            }
+          },
+          //会员状态改变
+          handleStatusChange(){
+            this.fetchData()
+          },
+          //会员身份改变
+          handleIdentityChange(val){
+            console.log(val)
+            val==='专家'?this.isExpert = true : this.isExpert = false;
+
+            this.fetchData()
+          },
+          //省市改变
+          handleCityChange(val){
+            console.log(val)
+            if (val){
+              this.formInline.province = val[0];
+              this.formInline.city = val[1];
+              this.fetchData();
+            }else {
+              this.formInline.province = '';
+              this.formInline.city = '';
+              this.fetchData();
+            }
+          },
+          //账号性质改变
+          handleTypeChange(){
+            this.fetchData();
+          },
+          //获取所有的省
+          getAllPrivinceData(){
+            getAllProvince().then(res=>{
+              if(res.data.ret){
+                this.optionsArea = res.data.data;
+                for(let i=0;i<this.optionsArea.length;i++){
+                  this.optionsArea[i].label=this.optionsArea[i].name;
+                  this.optionsArea[i].value=this.optionsArea[i].regionId;
+                }
+              }
+
+            });
+          },
             //设置表格样式
             theadRowStyle(){
                 return "color:#333333;font-size:14px;font-weight:500;height:20px;line-height:20px;background:rgba(250,250,252,1);"
@@ -569,9 +791,9 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                                     this.factoBaseForm[key]=res.data.data[key];
                                 }
                             }
-                            
+
                         }
-                        
+
                     }
                 })
                 let oparam={};
@@ -592,13 +814,13 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                             if(res.data.data.hasOwnProperty(key)){
                                 this.baseform[key]=res.data.data[key];
                             }
-                            
+
                         }
                         for(let key in this.factoBaseForm){
                             if(res.data.data.hasOwnProperty(key)){
                                 this.factoBaseForm[key]=res.data.data[key];
                             }
-                            
+
                         }
                     }
                 })
@@ -631,7 +853,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                         });
                         this.permitForm.customRoleId=customRoleIdList?customRoleIdList:[];
                     }
-                    
+
                 })
                 this.dialogSetPermitFormVisible=true;
 
@@ -647,7 +869,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                     }else{
                         this.roleOptionsData=[];
                     }
-                    
+
                 })
             },
             //确认权限设置
@@ -702,7 +924,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                 this.fetchData();
             },
             //处理部门数据，返回符合渲染的数据格式
-            treeData(source, id, parentId, children){   
+            treeData(source, id, parentId, children){
                 let cloneData = JSON.parse(JSON.stringify(source))
                 return cloneData.filter(father=>{
                     let branchArr = cloneData.filter(child => father[id] == child[parentId]);
@@ -772,12 +994,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
                                 this.dialogClose();
                             })
                         }
-                        
+
                     } else {
                         return false;
                     }
                 });
-                
+
             },
             //编辑行
             editClick(row){
@@ -811,19 +1033,19 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             },
             //打开弹框前回调事件
             openDialog(){
-                
+
             },
             //获取表格数据
             fetchData(){
                 getAllMemAccountData(this.formInline).then(res=>{
                     if(res&&res.data.ret){
-                        
+
                         this.tableData=res.data.data.list;
                         for(let i=0;i<this.tableData.length;i++){
                             if(this.tableData[i].expertInfo&&this.tableData[i].facilitator){
                                 let facilitator=JSON.parse(JSON.stringify(this.tableData[i].facilitator));
                                 let expertInfo=JSON.parse(JSON.stringify(this.tableData[i].expertInfo));
-                                
+
                                 this.tableData[i].facilitator=null;
                                 this.tableData[i].expertInfo=null;
                                 let obj=JSON.parse(JSON.stringify(this.tableData[i]));
@@ -845,9 +1067,24 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
             handleCurrentChange(val){
                 this.formInline.pageNumber=val;
                 this.fetchData();
-            }
+              },
+            handleAreaChange(val){
+              console.log(val)
+              if (val.length > 0){
+                this.activeParams.provinceId = val[0];
+                this.activeParams.cityId = val[1];
+                this.activeParams.districtId = val[2];
+                this.getActiveList();
+              }else {
+                this.activeParams.provinceId = '';
+                this.activeParams.cityId = '';
+                this.activeParams.districtId = '';
+                this.getActiveList();
+              }
+            },
         },
         created () {
+            this.getAllPrivinceData();
             this.optionName=sessionStorage['username'];
             this.fetchData();
             //先处理成vue-treeselect的需求字段。
@@ -860,47 +1097,77 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 </script>
 
 <style lang="less">
-    thead .el-checkbox{
-        display:none;
+  .memberSelf {
+    .authorityTopDialog {
+      .el-dialog__header {
+        background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+        border-radius:3px 3px 0px 0px;
+        text-align: center;
+        padding: 10px 20px 10px;
+        .el-dialog__title{
+          font-size:18px;
+          font-weight:500;
+          color:rgba(255,255,255,1);
+        }
+        .el-dialog__headerbtn {
+          top: 12px;
+          .el-icon-close {
+            font-size: 22px;
+            color: #FFFFFF;
+          }
+        }
+      }
+      .el-dialog__footer {
+        text-align: center;
+        padding-bottom: 47px;
+      }
+      .el-dialog__body {
+        padding: 45px;
+      }
     }
-    .el-table tbody tr:hover>td { 
-        background-color:#E6F7FF!important
+    thead .el-checkbox{
+      display:none;
+    }
+    .el-table tbody tr:hover>td {
+      background-color:#E6F7FF!important
     }
     .search_input .el-input__inner{
-        border:1px solid #01A2E4;
-        width:293px;
-        border-top-left-radius:4px;
-        border-bottom-left-radius:4px;
+      border:1px solid #01A2E4;
+      width:293px;
+      border-top-left-radius:4px;
+      border-bottom-left-radius:4px;
     }
     .no_select .vue-treeselect__value-container{
-        display:none;
+      display:none;
     }
     .no_select .vue-treeselect__x-container{
-        display:none;
+      display:none;
     }
     .no_select .vue-treeselect__menu-container{
-        position: relative;
+      position: relative;
     }
     .no_select .vue-treeselect__control{
-        display: none!important;
+      display: none!important;
     }
     .point_class{
-        cursor: pointer;
-        font-size:16px;
-        font-family:PingFangSC-Medium,PingFang SC;
-        font-weight:500;
+      cursor: pointer;
+      font-size:16px;
+      font-family:PingFangSC-Medium,PingFang SC;
+      font-weight:500;
     }
     .set_auth_dialog .el-dialog__header{
-        text-align: center;
-        background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
-        // background: rgba(243,247,250,1);
-        height: 44px;
+      text-align: center;
+      background:linear-gradient(36deg,rgba(42,213,210,1) 0%,rgba(43,180,232,1) 100%);
+      // background: rgba(243,247,250,1);
+      height: 44px;
     }
     .set_auth_dialog .el-dialog__headerbtn{
-        top:15px;
+      top:15px;
     }
     .set_auth_dialog .el-dialog__title{
-        line-height: 8px;
-        color:#FFFFFF;
+      line-height: 8px;
+      color:#FFFFFF;
     }
+  }
+
 </style>

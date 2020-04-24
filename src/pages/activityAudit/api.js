@@ -222,4 +222,12 @@ export function reqmodifyActive(data){
     method:'post'
   })
 }
+//批量置顶
+export function reqBatchTopping(data){
+  return request({
+    url:'/manager/top/saveBatch',
+    data,
+    method:'post'
+  },false)
+}
 
