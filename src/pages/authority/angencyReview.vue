@@ -361,10 +361,11 @@
                         }
                         this.form.district=resData.provinceName+'/'+resData.cityName;
                         this.linkId = resData.linkUserId;
-                        this.form.companyTypeDetail=resData.companyType==1?'私企'
-                                                    :resData.companyType==2?'国企'
-                                                    :resData.companyType==3?'混合'
-                                                    :resData.companyType==4?'外资':''
+                        this.form.companyTypeDetail= resData.companyTypeLabel;
+                                                    // resData.companyType==1?'私企'
+                                                    // :resData.companyType==2?'国企'
+                                                    // :resData.companyType==3?'混合'
+                                                    // :resData.companyType==4?'外资':''
                     }
                     console.log('reslinkUserId',res.data.data);
                 })
